@@ -58,6 +58,11 @@ namespace InApp.UI
 
             onPathChanged?.Invoke();
         }
+        public void Refresh()
+        {
+            Show(CurrentPath);
+        }
+
         private void SpawnItem(string entryPath)
         {
             if (Path.GetExtension(entryPath) == ".meta") return;

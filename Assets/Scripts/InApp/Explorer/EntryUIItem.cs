@@ -42,7 +42,7 @@ namespace InApp.UI
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (IsPathDirectory())
+            if (eventData.button == PointerEventData.InputButton.Left && IsPathDirectory())
             {
                 view.Show(path);
             }

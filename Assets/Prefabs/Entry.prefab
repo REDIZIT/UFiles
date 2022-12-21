@@ -307,8 +307,8 @@ MonoBehaviour:
   modifyDate: {fileID: 157607037201512517}
   icon: {fileID: 1216328239324882035}
   background: {fileID: 1216328239326628483}
-  defaultColor: {r: 0.105882354, g: 0.105882354, b: 0.105882354, a: 1}
-  hoverColor: {r: 0.18039216, g: 0.18039216, b: 0.18039216, a: 1}
+  defaultColor: {r: 0.27450982, g: 0.27450982, b: 0.27450982, a: 0.1764706}
+  hoverColor: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 0.1764706}
   linkedFilesContent: {fileID: 3349861792364604773}
   linkedFilesGroup: {fileID: 3205040803960787903}
   linkButton: {fileID: 4087125954145968382}
