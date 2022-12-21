@@ -13,6 +13,7 @@ namespace InApp.UI
     public class EntryUIItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
         public bool IsSelected { get; private set; }
+        public string Path { get; private set; }
 
         [SerializeField] private TextMeshProUGUI name, size, modifyDate;
         [SerializeField] private Image icon;
@@ -27,7 +28,6 @@ namespace InApp.UI
         [SerializeField] private GameObject selectionIndicator;
 
         private bool isHovered, isLinkedHovered, isLinkedExpanded;
-        private string path;
         private List<EntryUIItem> linkedItems = new();
         private EntryUIItem linkedParent;
         private RectTransform rect;
@@ -101,7 +101,7 @@ namespace InApp.UI
 
         private void Refresh(string path)
         {
-            this.path = path;
+            this.Path = path;
 
             if (IsPathDirectory())
             {
@@ -145,11 +145,11 @@ namespace InApp.UI
         }
         private void CheckAndCreateLinkedFiles()
         {
-            bool hasLinkedItems = File.Exists(path + ".meta");
+            bool hasLinkedItems = File.Exists(Path + ".meta");
 
             if (hasLinkedItems)
             {
-                CreateLinkedItem(path + ".meta");
+                CreateLinkedItem(Path + ".meta");
             }
 
             linkButton.SetActive(hasLinkedItems);
@@ -173,7 +173,7 @@ namespace InApp.UI
 
         private bool IsPathDirectory()
         {
-            FileAttributes attr = File.GetAttributes(path);
+            FileAttributes attr = File.GetAttributes(Path);
             return (attr & FileAttributes.Directory) == FileAttributes.Directory;
         }
         private void FitSize()
@@ -212,11 +212,11 @@ namespace InApp.UI
         {
             if (IsPathDirectory())
             {
-                view.Show(path);
+                view.Show(Path);
             }
             else
             {
-                Process.Start(path);
+                Process.Start(Path);
             }
         }
 

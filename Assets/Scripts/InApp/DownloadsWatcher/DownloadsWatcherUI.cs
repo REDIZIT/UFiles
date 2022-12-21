@@ -44,7 +44,6 @@ namespace InApp
             else
             {
                 File.Move(filepath, targetFilename);
-                files.Refresh();
             }
         }
         private void CreateItem(string filepath)

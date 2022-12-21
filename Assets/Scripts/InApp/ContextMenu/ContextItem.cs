@@ -33,7 +33,6 @@ namespace InApp.UI
             window.Show(env, "123.txt", null, filepath =>
             {
                 File.Create(env.currentFolder + "/" + filepath).Dispose();
-                files.Refresh();
             });
         }
     }

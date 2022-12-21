@@ -19,14 +19,23 @@ namespace InApp.UI
 
         private List<EntryUIItem> entries = new();
         private List<EntryUIItem> selectedEntries = new();
+        private FileSystemWatcher fileWatcher = new();
+        private bool hasFileSystemChanges;
         private EntryUIItem.Pool pool;
-
 
         [Inject]
         private void Construct(EntryUIItem.Pool pool)
         {
             this.pool = pool;
+            fileWatcher.Filter = "*.*";
+            fileWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            fileWatcher.Created += FilesChanged;
+            fileWatcher.Deleted += FilesChanged;
+            fileWatcher.Renamed += FilesChanged;
+            fileWatcher.EnableRaisingEvents = true;
         }
+
+        
 
         private void Start()
         {
@@ -34,9 +43,22 @@ namespace InApp.UI
         }
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape) && selectedEntries.Count > 0)
+            if (selectedEntries.Count > 0)
             {
-                DeselectAll();
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    DeselectAll();
+                }
+                if (Input.GetKeyDown(KeyCode.Delete))
+                {
+                    DeleteSelected();
+                }
+            }
+
+            if (hasFileSystemChanges)
+            {
+                Show(CurrentPath);
+                hasFileSystemChanges = false;
             }
         }
 
@@ -62,11 +84,9 @@ namespace InApp.UI
                 SpawnItem(entryPath);
             }
 
+            fileWatcher.Path = CurrentPath;
+
             onPathChanged?.Invoke();
-        }
-        public void Refresh()
-        {
-            Show(CurrentPath);
         }
         public void OnItemClicked(EntryUIItem item)
         {
@@ -113,6 +133,21 @@ namespace InApp.UI
                 selectedItem.SetSelection(false);
             }
             selectedEntries.Clear();
+        }
+        private void DeleteSelected()
+        {
+            foreach (var entry in selectedEntries)
+            {
+                if (Directory.Exists(entry.Path)) Directory.Delete(entry.Path);
+                else File.Delete(entry.Path);
+
+                entry.SetSelection(false);
+            }
+            selectedEntries.Clear();
+        }
+        private void FilesChanged(object sender, FileSystemEventArgs e)
+        {
+            hasFileSystemChanges = true;
         }
     }
 
