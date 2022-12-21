@@ -16,7 +16,7 @@ namespace InApp.UI
         private ContextItemEnvironment env;
         private Action onCancel;
         private Action<string> onApply;
-        private bool isResetting;
+
 
         private void Update()
         {
@@ -28,12 +28,13 @@ namespace InApp.UI
             {
                 OnClickApply();
             }
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                OnClickCancel();
+            }
         }
         public void Show(ContextItemEnvironment env, string filename, Action onCancel, Action<string> onApply)
         {
-            isResetting = true;
-
-
             this.env = env;
             this.onCancel = onCancel;
             this.onApply = onApply;
@@ -42,8 +43,6 @@ namespace InApp.UI
 
             nameField.text = filename;
             nameField.Select();
-
-            isResetting = false;
         }
         public void Close()
         {

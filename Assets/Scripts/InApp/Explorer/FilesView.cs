@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using Zenject;
 
@@ -14,7 +15,8 @@ namespace InApp.UI
 
         [SerializeField] private Transform content;
 
-        private List<EntryUIItem> entries = new List<EntryUIItem>();
+        private List<EntryUIItem> entries = new();
+        private List<EntryUIItem> selectedEntries = new();
         private EntryUIItem.Pool pool;
 
 
@@ -30,9 +32,9 @@ namespace InApp.UI
         }
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (Input.GetKeyDown(KeyCode.Escape) && selectedEntries.Count > 0)
             {
-                Start();
+                DeselectAll();
             }
         }
 
@@ -62,6 +64,33 @@ namespace InApp.UI
         {
             Show(CurrentPath);
         }
+        public void OnItemClicked(EntryUIItem item)
+        {
+            bool isShift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+            bool isControl = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+
+            if (isShift == false && isControl == false)
+            {
+                DeselectAll();
+            }
+
+            if (isShift && selectedEntries.Count > 0)
+            {
+                int startIndex = entries.IndexOf(selectedEntries.Last());
+                int targetIndex = entries.IndexOf(item);
+                int min = Mathf.Min(targetIndex, startIndex);
+                int max = Mathf.Max(targetIndex, startIndex);
+
+                for (int i = min; i < max; i++)
+                {
+                    entries[i].SetSelection(true);
+                    selectedEntries.Add(entries[i]);
+                }
+            }
+
+            item.SetSelection(true);
+            selectedEntries.Add(item);
+        }
 
         private void SpawnItem(string entryPath)
         {
@@ -73,10 +102,13 @@ namespace InApp.UI
 
             entries.Add(item);
         }
-
-        private static bool FileOrDirectoryExists(string name)
+        private void DeselectAll()
         {
-            return Directory.Exists(name) || File.Exists(name);
+            foreach (var selectedItem in selectedEntries)
+            {
+                selectedItem.SetSelection(false);
+            }
+            selectedEntries.Clear();
         }
     }
 

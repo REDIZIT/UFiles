@@ -56,7 +56,7 @@ namespace InApp.UI
         {
             HideMenu();
 
-            ContextItemEnvironment env = new ContextItemEnvironment()
+            var env = new ContextItemEnvironment()
             {
                 currentFolder = files.CurrentPath
             };

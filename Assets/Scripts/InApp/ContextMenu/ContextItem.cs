@@ -14,6 +14,7 @@ namespace InApp.UI
     public class ContextItemEnvironment
     {
         public string currentFolder;
+        public string selectedEntryName;
     }
 
     public class CreateFileItem : ContextItem
@@ -34,6 +35,13 @@ namespace InApp.UI
                 File.Create(env.currentFolder + "/" + filepath).Dispose();
                 files.Refresh();
             });
+        }
+    }
+    public class RenameItem : ContextItem
+    {
+        public override void OnClick(ContextItemEnvironment env)
+        {
+            Debug.Log("Rename " + env.selectedEntryName);
         }
     }
 }

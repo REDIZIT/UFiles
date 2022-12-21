@@ -11,25 +11,32 @@ namespace InApp.UI
 {
     public class EntryUIItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
+        public bool IsSelected { get; private set; }
+
         [SerializeField] private TextMeshProUGUI name, size, modifyDate;
         [SerializeField] private Image icon;
         [SerializeField] private Image background;
 
-        [SerializeField] private Color defaultColor, hoverColor;
+        [SerializeField] private Color defaultColor, hoverColor, selectedColor;
 
         [SerializeField] private RectTransform linkedFilesContent, linkedFilesGroup;
         [SerializeField] private GameObject linkButton;
         [SerializeField] private RectTransform linkArrow;
+
+        [SerializeField] private GameObject selectionIndicator;
 
         private bool isHovered, isLinkedHovered, isLinkedExpanded;
         private string path;
         private List<EntryUIItem> linkedItems = new();
         private EntryUIItem linkedParent;
         private RectTransform rect;
+        private DateTime lastClickTime;
 
         private IconsSO icons;
         private FilesView view;
         private Pool pool;
+
+        private const int DOUBLE_CLICK_MS = 250;
 
         [Inject]
         private void Construct(IconsSO icons, FilesView view, Pool pool)
@@ -42,17 +49,19 @@ namespace InApp.UI
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            view.OnItemClicked(this);
+
             if (eventData.button == PointerEventData.InputButton.Left && IsPathDirectory())
             {
-                view.Show(path);
+                if ((DateTime.Now - lastClickTime).TotalMilliseconds <= DOUBLE_CLICK_MS)
+                {
+                    view.Show(path);
+                }
+                lastClickTime = DateTime.Now;
             }
         }
 
-        private bool IsPathDirectory()
-        {
-            FileAttributes attr = File.GetAttributes(path);
-            return (attr & FileAttributes.Directory) == FileAttributes.Directory;
-        }
+        
 
         public void OnPointerExit(PointerEventData eventData)
         {
@@ -80,6 +89,12 @@ namespace InApp.UI
         {
             isLinkedExpanded = !isLinkedExpanded;
             UpdateExpandLinkedItems();
+        }
+        public void SetSelection(bool isSelected)
+        {
+            IsSelected = isSelected;
+            selectionIndicator.SetActive(isSelected);
+            UpdateColor();
         }
 
 
@@ -154,6 +169,12 @@ namespace InApp.UI
             linkedFilesGroup.gameObject.SetActive(isLinkedExpanded);
             FitSize();
         }
+
+        private bool IsPathDirectory()
+        {
+            FileAttributes attr = File.GetAttributes(path);
+            return (attr & FileAttributes.Directory) == FileAttributes.Directory;
+        }
         private void FitSize()
         {
             float height = 32;
@@ -177,15 +198,14 @@ namespace InApp.UI
         }
         private void UpdateColor()
         {
-            Color dependDefaultColor = linkedParent == null ? defaultColor : Color.clear;
-            if (isHovered && isLinkedHovered == false)
-            {
-                background.color = isHovered ? hoverColor : dependDefaultColor;
-            }
-            else
-            {
-                background.color = dependDefaultColor;
-            }
+            background.color = GetBackgroundColor();
+        }
+        private Color GetBackgroundColor()
+        {
+            if (isHovered && isLinkedHovered == false) return hoverColor;
+            if (IsSelected) return selectedColor;
+
+            return linkedParent == null ? defaultColor : Color.clear;
         }
 
         public class Pool : MonoMemoryPool<string, EntryUIItem>
@@ -196,6 +216,7 @@ namespace InApp.UI
                 item.isHovered = false;
                 item.isLinkedHovered = false;
                 item.isLinkedExpanded = false;
+                item.SetSelection(false);
 
                 item.Refresh(p1);
 
