@@ -10,6 +10,8 @@ namespace InApp.UI
     public class FilesView : MonoBehaviour
     {
         public string CurrentPath { get; private set; }
+        public int EntriesCount => entries.Count;
+        public int SelectedEntriesCount => selectedEntries.Count;
 
         public Action onPathChanged;
 
@@ -43,11 +45,13 @@ namespace InApp.UI
             path = path.Replace("\\", "/").Replace(@"\", "/");
             CurrentPath = path;
 
+            DeselectAll();
             foreach (var item in entries)
             {
                 pool.Despawn(item);
             }
             entries.Clear();
+            
 
             foreach (string entryPath in Directory.GetDirectories(path))
             {

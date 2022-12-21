@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using TMPro;
 using UnityEngine;
@@ -51,11 +52,11 @@ namespace InApp.UI
         {
             view.OnItemClicked(this);
 
-            if (eventData.button == PointerEventData.InputButton.Left && IsPathDirectory())
+            if (eventData.button == PointerEventData.InputButton.Left)
             {
                 if ((DateTime.Now - lastClickTime).TotalMilliseconds <= DOUBLE_CLICK_MS)
                 {
-                    view.Show(path);
+                    Open();
                 }
                 lastClickTime = DateTime.Now;
             }
@@ -206,6 +207,17 @@ namespace InApp.UI
             if (IsSelected) return selectedColor;
 
             return linkedParent == null ? defaultColor : Color.clear;
+        }
+        private void Open()
+        {
+            if (IsPathDirectory())
+            {
+                view.Show(path);
+            }
+            else
+            {
+                Process.Start(path);
+            }
         }
 
         public class Pool : MonoMemoryPool<string, EntryUIItem>

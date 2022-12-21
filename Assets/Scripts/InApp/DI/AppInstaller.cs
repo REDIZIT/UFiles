@@ -10,11 +10,13 @@ namespace InApp.DI
 
         [SerializeField] private FilesView filesView;
         [SerializeField] private ContextMenuCreator contextMenu;
+        [SerializeField] private DownloadsWatcherUI downloads;
 
         [SerializeField] private EntryUIItem entryPrefab;
         [SerializeField] private PathBarSegment pathBarSegment;
         [SerializeField] private ContextMenuUIItem contextMenuItemPrefab;
         [SerializeField] private ContextMenuUI contextMenuPrefab;
+        [SerializeField] private DownloadUIItem downloadPrefab;
 
         [SerializeField] private Transform entriesPool;
 
@@ -27,6 +29,7 @@ namespace InApp.DI
 
             Container.BindInstance(filesView);
             Container.BindInstance(contextMenu);
+            Container.BindInstance(downloads);
 
             Container.BindMemoryPool<EntryUIItem, EntryUIItem.Pool>().FromComponentInNewPrefab(entryPrefab).UnderTransform(entriesPool);
             Container.BindMemoryPool<PathBarSegment, PathBarSegment.Pool>().FromComponentInNewPrefab(pathBarSegment);
@@ -34,11 +37,18 @@ namespace InApp.DI
             Container.BindMemoryPool<ContextMenuUIItem, ContextMenuUIItem.Pool>().FromComponentInNewPrefab(contextMenuItemPrefab).UnderTransform(entriesPool);
             Container.BindMemoryPool<ContextMenuUI, ContextMenuUI.Pool>().FromComponentInNewPrefab(contextMenuPrefab).UnderTransform(entriesPool);
 
+            BindPool<DownloadUIItem, DownloadUIItem.Pool>(downloadPrefab);
+
             BindWindows();
         }
         private void BindWindows()
         {
             Container.BindInstances(createRename);
+        }
+
+        private void BindPool<Item, Pool>(Item prefab) where Item : MonoBehaviour where Pool : IMemoryPool
+        {
+            Container.BindMemoryPool<Item, Pool>().FromComponentInNewPrefab(prefab).UnderTransform(entriesPool);
         }
     }
 }
