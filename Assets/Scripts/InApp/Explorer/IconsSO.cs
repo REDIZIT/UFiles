@@ -5,7 +5,7 @@ namespace InApp.UI
     [CreateAssetMenu(menuName = "SODB/Icons")]
     public class IconsSO : ScriptableObject
     {
-        public Sprite folderFill, folderEmpty, folderOpen;
-        public Sprite defaultFile;
+        public Texture2D folderFill, folderEmpty, folderOpen;
+        public Texture2D defaultFile;
     }
 }

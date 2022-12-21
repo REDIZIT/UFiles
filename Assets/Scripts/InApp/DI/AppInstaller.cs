@@ -25,6 +25,8 @@ namespace InApp.DI
 
         public override void InstallBindings()
         {
+            Texture.allowThreadedTextureCreation = true;
+
             Container.BindInstances(icons);
 
             Container.BindInstance(filesView);

@@ -16,7 +16,7 @@ namespace InApp.UI
         public string Path { get; private set; }
 
         [SerializeField] private TextMeshProUGUI name, size, modifyDate;
-        [SerializeField] private Image icon;
+        [SerializeField] private RawImage icon;
         [SerializeField] private Image background;
 
         [SerializeField] private Color defaultColor, hoverColor, selectedColor;
@@ -32,6 +32,7 @@ namespace InApp.UI
         private EntryUIItem linkedParent;
         private RectTransform rect;
         private DateTime lastClickTime;
+        private FilePreview preview;
 
         private IconsSO icons;
         private FilesView view;
@@ -46,6 +47,15 @@ namespace InApp.UI
             this.view = view;
             this.pool = pool;
             rect = GetComponent<RectTransform>();
+            preview = new FilePreview(icon);
+        }
+
+        private void Update()
+        {
+            if (preview.isLoading == false && preview.isLoaded == false)
+            {
+                preview.Load();
+            }
         }
 
         public void OnPointerClick(PointerEventData eventData)
@@ -101,7 +111,7 @@ namespace InApp.UI
 
         private void Refresh(string path)
         {
-            this.Path = path;
+            Path = path;
 
             if (IsPathDirectory())
             {
@@ -115,23 +125,23 @@ namespace InApp.UI
                     size.text = entriesCount + " элементов";
                     if (entriesCount > 0)
                     {
-                        icon.sprite = icons.folderFill;
+                        icon.texture = icons.folderFill;
                     }
                     else
                     {
-                        icon.sprite = icons.folderEmpty;
+                        icon.texture = icons.folderEmpty;
                     }
                 }
                 catch(UnauthorizedAccessException)
                 {
                     name.text += " [нет доступа]";
                     size.text = "нет доступа";
-                    icon.sprite = icons.folderEmpty;
+                    icon.texture = icons.folderEmpty;
                 }
             }
             else
             {
-                icon.sprite = icons.defaultFile;
+                icon.texture = icons.defaultFile;
                 FileInfo info = new FileInfo(path);
                 name.text = info.Name;
                 size.text = FileSizeUtil.BytesToString(info.Length);
@@ -142,6 +152,13 @@ namespace InApp.UI
             UpdateExpandLinkedItems();
 
             UpdateColor();
+
+            if (System.IO.Path.GetExtension(path) == ".png")
+            {
+                preview.filepath = path;
+                preview.isLoading = false;
+                preview.isLoaded = false;
+            }
         }
         private void CheckAndCreateLinkedFiles()
         {
