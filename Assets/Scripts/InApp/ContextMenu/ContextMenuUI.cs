@@ -6,6 +6,8 @@ namespace InApp.UI
 {
     public class ContextMenuUI : MonoBehaviour
     {
+        public RectTransform rect;
+
         [SerializeField] private Transform content;
 
         private ContextMenuUIItem.Pool pool;

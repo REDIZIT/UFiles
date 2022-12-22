@@ -50,7 +50,7 @@ namespace InApp.UI
             {
                 childMenu = creator.ShowMenu(model.children, Vector2.zero);
                 childMenu.transform.parent = transform;
-                childMenu.transform.localPosition = rect.sizeDelta / 2f;
+                childMenu.rect.anchoredPosition = new Vector3(-5, 4);
             }
         }
         public void OnPointerExit(PointerEventData eventData)
@@ -67,6 +67,7 @@ namespace InApp.UI
             protected override void Reinitialize(ContextItem p1, ContextMenuUIItem item)
             {
                 item.Refresh(p1);
+                item.childMenu = null;
                 base.Reinitialize(p1, item);
             }
         }

@@ -16,6 +16,10 @@ namespace InApp.UI
             text = "Удалить";
         }
 
+        public override Texture2D GetIcon()
+        {
+            return icons.context.delete;
+        }
         public override void Update()
         {
             base.Update();
