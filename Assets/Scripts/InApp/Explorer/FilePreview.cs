@@ -17,8 +17,15 @@ namespace InApp.UI
         {
             this.imageToSet = imageToSet;
         }
-        public void Load()
+        public bool CanHandle(string path)
         {
+            string ext = Path.GetExtension(path);
+            return ext == ".png" || ext == ".jpg";
+        }
+        public void Load(string filepath)
+        {
+            this.filepath = filepath;
+
             Profiler.BeginSample("Preview");
 
             isLoading = true;

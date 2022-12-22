@@ -54,7 +54,7 @@ namespace InApp.UI
         {
             if (preview.isLoading == false && preview.isLoaded == false)
             {
-                preview.Load();
+                preview.Load(Path);
             }
         }
 
@@ -153,7 +153,7 @@ namespace InApp.UI
 
             UpdateColor();
 
-            if (System.IO.Path.GetExtension(path) == ".png")
+            if (preview.CanHandle(path))
             {
                 preview.filepath = path;
                 preview.isLoading = false;

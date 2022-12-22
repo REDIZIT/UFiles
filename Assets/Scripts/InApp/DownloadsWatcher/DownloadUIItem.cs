@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using InApp.UI;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,14 +10,19 @@ namespace InApp
     public class DownloadUIItem : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI nameText;
-        [SerializeField] private Image icon;
+        [SerializeField] private RawImage icon;
 
         [Inject] private DownloadsWatcherUI ui;
         [Inject] private Pool pool;
 
         private string path;
+        private FilePreview preview;
 
 
+        private void Awake()
+        {
+            preview = new(icon);
+        }
         private void Update()
         {
             if (File.Exists(path) == false)
@@ -39,6 +45,11 @@ namespace InApp
         {
             this.path = path;
             nameText.text = Path.GetFileName(path);
+
+            if (preview.CanHandle(path))
+            {
+                preview.Load(path);
+            }
         }
         
 

@@ -21,6 +21,9 @@ namespace InApp.UI
         private HashSet<EntryUIItem> selectedEntries = new();
         private FileSystemWatcher fileWatcher = new();
         private bool hasFileSystemChanges;
+        private List<string> history = new();
+        private int historyIndex = -1;
+
         private EntryUIItem.Pool pool;
 
         [Inject]
@@ -60,12 +63,35 @@ namespace InApp.UI
                 Show(CurrentPath);
                 hasFileSystemChanges = false;
             }
+
+            if (Input.GetMouseButtonDown(3) && historyIndex > 0)
+            {
+                Debug.Log("Back");
+                historyIndex--;
+                Show(history[historyIndex], true);
+            }
+            if (Input.GetMouseButtonDown(4) && historyIndex < history.Count - 1)
+            {
+                historyIndex++;
+                Show(history[historyIndex], true);
+            }
         }
 
-        public void Show(string path)
+        public void Show(string path, bool fromHistrory = false)
         {
             path = path.Replace("\\", "/").Replace(@"\", "/");
             CurrentPath = path;
+
+            if (fromHistrory == false)
+            {
+                if (history.Count > 1)
+                {
+                    history.RemoveRange(historyIndex + 1, history.Count - historyIndex - 1);
+                }
+                history.Add(path);
+                historyIndex++;
+            }
+            
 
             DeselectAll();
             foreach (var item in entries)
