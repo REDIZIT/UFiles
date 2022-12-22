@@ -35,11 +35,13 @@ namespace InApp.DI
             Container.BindInstance(contextMenu);
             Container.BindInstance(downloads);
 
-            Container.BindMemoryPool<EntryUIItem, EntryUIItem.Pool>().FromComponentInNewPrefab(entryPrefab).UnderTransform(entriesPool);
-            Container.BindMemoryPool<PathBarSegment, PathBarSegment.Pool>().FromComponentInNewPrefab(pathBarSegment);
+            Container.Bind<UClipboard>().FromNew().AsSingle();
 
-            Container.BindMemoryPool<ContextMenuUIItem, ContextMenuUIItem.Pool>().FromComponentInNewPrefab(contextMenuItemPrefab).UnderTransform(entriesPool);
-            Container.BindMemoryPool<ContextMenuUI, ContextMenuUI.Pool>().FromComponentInNewPrefab(contextMenuPrefab).UnderTransform(entriesPool);
+            BindPool<EntryUIItem, EntryUIItem.Pool>(entryPrefab);
+            BindPool<PathBarSegment, PathBarSegment.Pool>(pathBarSegment);
+
+            BindPool<ContextMenuUIItem, ContextMenuUIItem.Pool>(contextMenuItemPrefab);
+            BindPool<ContextMenuUI, ContextMenuUI.Pool>(contextMenuPrefab);
 
             BindPool<DownloadUIItem, DownloadUIItem.Pool>(downloadPrefab);
             BindPool<UrlButton, UrlButton.Pool>(urlButtonPrefab);

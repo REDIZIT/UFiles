@@ -38,18 +38,16 @@ namespace InApp.UI
         private FilesView files;
         private Pool pool;
         private ContextMenuCreator contextCreator;
-        private CreateRenameWindow createWindow;
 
         private const int DOUBLE_CLICK_MS = 250;
 
         [Inject]
-        private void Construct(IconsSO icons, FilesView view, Pool pool, ContextMenuCreator contextCreator, CreateRenameWindow createWindow)
+        private void Construct(IconsSO icons, FilesView files, Pool pool, ContextMenuCreator contextCreator)
         {
             this.icons = icons;
-            this.files = view;
+            this.files = files;
             this.pool = pool;
             this.contextCreator = contextCreator;
-            this.createWindow = createWindow;
             rect = GetComponent<RectTransform>();
             preview = new FilePreview(icon);
         }
@@ -81,8 +79,11 @@ namespace InApp.UI
                 List<ContextItem> items = new()
                 {
                     new CreateEntryItem(),
-                    new DeleteFileItem(files),
-                    new RenameItem(),
+                    new RenameFileItem(),
+                    new CopyFileItem(UClipboard.CopyType.Copy),
+                    new CopyFileItem(UClipboard.CopyType.Cut),
+                    new PasteFileItem(),
+                    new DeleteFileItem(),
                 };
                 contextCreator.ShowMenu(items, Input.mousePosition);
             }

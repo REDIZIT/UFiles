@@ -14,8 +14,7 @@ namespace InApp.UI
         [SerializeField] private Button applyButton;
 
         private ContextItemEnvironment env;
-        private bool createDirectory;
-        private Action onCancel;
+        private EntryType entryType;
         private Action<string> onApply;
 
         private void Update()
@@ -33,16 +32,15 @@ namespace InApp.UI
                 OnClickCancel();
             }
         }
-        public void Show(ContextItemEnvironment env, bool createDirectory, string filename, Action onCancel, Action<string> onApply)
+        public void Show(ContextItemEnvironment env, string title, EntryType entryType,string filename, Action<string> onApply)
         {
             this.env = env;
-            this.createDirectory = createDirectory;
-            this.onCancel = onCancel;
+            this.entryType = entryType;
             this.onApply = onApply;
 
             gameObject.SetActive(true);
 
-            label.text = createDirectory ? "Создать папку" : "Создать файл";
+            label.text = title;
             nameField.text = filename;
             nameField.Select();
         }
@@ -52,7 +50,6 @@ namespace InApp.UI
         }
         public void OnClickCancel()
         {
-            onCancel?.Invoke();
             Close();
         }
         public void OnClickApply()
@@ -70,14 +67,7 @@ namespace InApp.UI
 
             text = env.currentFolder + "/" + text;
 
-            if (createDirectory)
-            {
-                return Directory.Exists(text) == false;
-            }
-            else
-            {
-                return File.Exists(text) == false;
-            }
+            return EntryUtils.Exists(text) == false;
         }
     }
 }

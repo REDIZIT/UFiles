@@ -10,8 +10,8 @@ namespace InApp.UI
         {
             text = "Создать";
 
-            children.Add(new CreateConcreteEntryItem(true));
-            children.Add(new CreateConcreteEntryItem(false));
+            children.Add(new CreateConcreteEntryItem(EntryType.Directory));
+            children.Add(new CreateConcreteEntryItem(EntryType.File));
         }
 
         public override Texture2D GetIcon()
@@ -23,25 +23,26 @@ namespace InApp.UI
     {
         [Inject] private CreateRenameWindow window;
 
-        private bool isFolder;
+        private EntryType entryType;
 
-        public CreateConcreteEntryItem(bool isFolder)
+        public CreateConcreteEntryItem(EntryType entryType)
         {
-            this.isFolder = isFolder;
-            text = isFolder ? "Папку" : "Файл";
+            this.entryType = entryType;
+            text = entryType == EntryType.Directory ? "Папку" : "Файл";
         }
 
         public override Texture2D GetIcon()
         {
-            return isFolder ? icons.folderEmpty : icons.defaultFile;
+            return entryType == EntryType.Directory ? icons.folderEmpty : icons.defaultFile;
         }
 
         public override void OnClick(ContextItemEnvironment env)
         {
-            window.Show(env, isFolder, "", null, filepath =>
+            string title = "Создать " + (entryType == EntryType.Directory ? "папку" : "файл");
+            window.Show(env, title, entryType, "", filepath =>
             {
                 string path = env.currentFolder + "/" + filepath;
-                if (isFolder)
+                if (entryType == EntryType.Directory)
                 {
                     Directory.CreateDirectory(path);
                 }

@@ -2,17 +2,18 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using Zenject;
 
 namespace InApp.UI
 {
     public class DeleteFileItem : ContextItem
     {
-        private FilesView files;
+        [Inject] private FilesView files;
+
         private bool isShifted;
 
-        public DeleteFileItem(FilesView files)
+        public DeleteFileItem()
         {
-            this.files = files;
             text = "Удалить";
         }
 

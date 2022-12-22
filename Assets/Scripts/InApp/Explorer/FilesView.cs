@@ -58,7 +58,7 @@ namespace InApp.UI
                 }
                 if (Input.GetKeyDown(KeyCode.Delete))
                 {
-                    DeleteSelected(Input.GetKey(KeyCode.LeftShift));
+                    DeleteSelected(Input.GetKey(KeyCode.LeftShift) == false);
                 }
             }
 
@@ -180,7 +180,8 @@ namespace InApp.UI
             {
                 context.ShowMenu(new List<ContextItem>()
                 {
-                    new CreateEntryItem()
+                    new CreateEntryItem(),
+                    new PasteFileItem(),
                 }, Input.mousePosition);
             }
         }
@@ -192,7 +193,11 @@ namespace InApp.UI
         }
         private void SpawnItem(string entryPath)
         {
-            if (Path.GetExtension(entryPath) == ".meta") return;
+            if (Path.GetExtension(entryPath) == ".meta")
+            {
+                string metaTargetFile = entryPath[..^".meta".Length];
+                if (EntryUtils.Exists(metaTargetFile)) return;
+            }
 
             var item = pool.Spawn(entryPath);
             item.transform.parent = content;
@@ -218,7 +223,7 @@ namespace InApp.UI
                 }
                 else
                 {
-                    if (Directory.Exists(entry.Path)) Directory.Delete(entry.Path);
+                    if (Directory.Exists(entry.Path)) Directory.Delete(entry.Path, true);
                     else File.Delete(entry.Path);
                 }
                

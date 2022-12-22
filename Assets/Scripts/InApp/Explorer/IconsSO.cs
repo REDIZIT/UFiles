@@ -14,6 +14,7 @@ namespace InApp.UI
         public class ContextIcons
         {
             public Texture2D create, rename, delete;
+            public Texture2D copy, cut, paste;
         }
     }
 }
