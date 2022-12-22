@@ -6,9 +6,6 @@ namespace InApp.UI
 {
     public class CreateEntryItem : ContextItem
     {
-        [Inject] private CreateRenameWindow window;
-        private bool createDirectory;
-
         public CreateEntryItem()
         {
             text = "Создать";
@@ -21,25 +18,11 @@ namespace InApp.UI
         {
             return icons.context.create;
         }
-
-        public override void OnClick(ContextItemEnvironment env)
-        {
-            window.Show(env, createDirectory, "", null, filepath =>
-            {
-                string path = env.currentFolder + "/" + filepath;
-                if (createDirectory)
-                {
-                    Directory.CreateDirectory(path);
-                }
-                else
-                {
-                    File.Create(path).Dispose();
-                }
-            });
-        }
     }
     public class CreateConcreteEntryItem : ContextItem
     {
+        [Inject] private CreateRenameWindow window;
+
         private bool isFolder;
 
         public CreateConcreteEntryItem(bool isFolder)
@@ -51,6 +34,22 @@ namespace InApp.UI
         public override Texture2D GetIcon()
         {
             return isFolder ? icons.folderEmpty : icons.defaultFile;
+        }
+
+        public override void OnClick(ContextItemEnvironment env)
+        {
+            window.Show(env, isFolder, "", null, filepath =>
+            {
+                string path = env.currentFolder + "/" + filepath;
+                if (isFolder)
+                {
+                    Directory.CreateDirectory(path);
+                }
+                else
+                {
+                    File.Create(path).Dispose();
+                }
+            });
         }
     }
 }
