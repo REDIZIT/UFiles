@@ -18,6 +18,8 @@ namespace InApp.DI
         [SerializeField] private ContextMenuUI contextMenuPrefab;
         [SerializeField] private DownloadUIItem downloadPrefab;
 
+        [SerializeField] private UrlButton urlButtonPrefab;
+
         [SerializeField] private Transform entriesPool;
 
         [Header("Windows")]
@@ -40,6 +42,7 @@ namespace InApp.DI
             Container.BindMemoryPool<ContextMenuUI, ContextMenuUI.Pool>().FromComponentInNewPrefab(contextMenuPrefab).UnderTransform(entriesPool);
 
             BindPool<DownloadUIItem, DownloadUIItem.Pool>(downloadPrefab);
+            BindPool<UrlButton, UrlButton.Pool>(urlButtonPrefab);
 
             BindWindows();
         }
