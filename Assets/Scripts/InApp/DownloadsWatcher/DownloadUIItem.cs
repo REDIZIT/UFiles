@@ -18,11 +18,6 @@ namespace InApp
         private string path;
         private FilePreview preview;
 
-
-        private void Awake()
-        {
-            preview = new(icon);
-        }
         private void Update()
         {
             if (File.Exists(path) == false)
@@ -43,6 +38,7 @@ namespace InApp
 
         private void Refresh(string path)
         {
+            preview = new(icon);
             this.path = path;
             nameText.text = Path.GetFileName(path);
 
