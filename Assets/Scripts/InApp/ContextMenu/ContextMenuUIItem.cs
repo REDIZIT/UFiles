@@ -16,7 +16,13 @@ namespace InApp.UI
         {
             this.menu = menu;
         }
-         
+
+        private void Update()
+        {
+            model.Update();
+            text.text = model.text;
+        }
+
         public void OnClick()
         {
             menu.OnItemClicked(model);

@@ -54,7 +54,7 @@ namespace InApp.UI
                 }
                 if (Input.GetKeyDown(KeyCode.Delete))
                 {
-                    DeleteSelected();
+                    DeleteSelected(Input.GetKey(KeyCode.LeftShift));
                 }
             }
 
@@ -66,7 +66,6 @@ namespace InApp.UI
 
             if (Input.GetMouseButtonDown(3) && historyIndex > 0)
             {
-                Debug.Log("Back");
                 historyIndex--;
                 Show(history[historyIndex], true);
             }
@@ -150,8 +149,19 @@ namespace InApp.UI
                 }
             }
 
+            SetMainSelectTo(item);
+        }
+        public void SetMainSelectTo(EntryUIItem item)
+        {
             item.SetSelection(true);
             selectedEntries.Add(item);
+        }
+        public IEnumerable<string> EnumerateSelectedFIles()
+        {
+            foreach (EntryUIItem item in selectedEntries)
+            {
+                yield return item.Path;
+            }
         }
 
         private void SpawnItem(string entryPath)
@@ -172,12 +182,20 @@ namespace InApp.UI
             }
             selectedEntries.Clear();
         }
-        private void DeleteSelected()
+        private void DeleteSelected(bool moveToBin)
         {
             foreach (var entry in selectedEntries)
             {
-                if (Directory.Exists(entry.Path)) Directory.Delete(entry.Path);
-                else File.Delete(entry.Path);
+                if (moveToBin)
+                {
+                    DeleteFileItem.FileOperationAPIWrapper.Send(entry.Path, DeleteFileItem.FileOperationAPIWrapper.FileOperationFlags.FOF_SILENT);
+                }
+                else
+                {
+                    if (Directory.Exists(entry.Path)) Directory.Delete(entry.Path);
+                    else File.Delete(entry.Path);
+                }
+               
 
                 entry.SetSelection(false);
             }

@@ -35,17 +35,21 @@ namespace InApp.UI
         private FilePreview preview;
 
         private IconsSO icons;
-        private FilesView view;
+        private FilesView files;
         private Pool pool;
+        private ContextMenuCreator contextCreator;
+        private CreateRenameWindow createWindow;
 
         private const int DOUBLE_CLICK_MS = 250;
 
         [Inject]
-        private void Construct(IconsSO icons, FilesView view, Pool pool)
+        private void Construct(IconsSO icons, FilesView view, Pool pool, ContextMenuCreator contextCreator, CreateRenameWindow createWindow)
         {
             this.icons = icons;
-            this.view = view;
+            this.files = view;
             this.pool = pool;
+            this.contextCreator = contextCreator;
+            this.createWindow = createWindow;
             rect = GetComponent<RectTransform>();
             preview = new FilePreview(icon);
         }
@@ -60,15 +64,26 @@ namespace InApp.UI
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            view.OnItemClicked(this);
-
             if (eventData.button == PointerEventData.InputButton.Left)
             {
+                files.OnItemClicked(this);
+
                 if ((DateTime.Now - lastClickTime).TotalMilliseconds <= DOUBLE_CLICK_MS)
                 {
                     Open();
                 }
                 lastClickTime = DateTime.Now;
+            }
+            else if (eventData.button == PointerEventData.InputButton.Right)
+            {
+                files.SetMainSelectTo(this);
+
+                List<ContextItem> items = new()
+                {
+                    new CreateFileItem(createWindow, files),
+                    new DeleteFileItem(files)
+                };
+                contextCreator.ShowMenu(items);
             }
         }
 
@@ -229,7 +244,7 @@ namespace InApp.UI
         {
             if (IsPathDirectory())
             {
-                view.Show(Path);
+                files.Show(Path);
             }
             else
             {

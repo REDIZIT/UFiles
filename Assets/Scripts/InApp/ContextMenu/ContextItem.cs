@@ -9,12 +9,14 @@ namespace InApp.UI
         public string text;
         public List<ContextItem> children = new();
 
+        public virtual void Update() { }
         public virtual void OnClick(ContextItemEnvironment env) { }
     }
     public class ContextItemEnvironment
     {
         public string currentFolder;
         public string selectedEntryName;
+        public IEnumerable<string> selectedFiles;
     }
 
     public class CreateFileItem : ContextItem
@@ -26,6 +28,7 @@ namespace InApp.UI
         {
             this.window = window;
             this.files = files;
+            text = "Создать файл";
         }
 
         public override void OnClick(ContextItemEnvironment env)

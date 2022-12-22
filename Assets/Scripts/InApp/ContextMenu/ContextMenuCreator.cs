@@ -12,42 +12,35 @@ namespace InApp.UI
         private ContextMenuUI.Pool pool;
         private ContextMenuUI menu;
         private FilesView files;
-        private CreateRenameWindow createRenameWindow;
 
         [Inject]
-        private void Construct(ContextMenuUI.Pool pool, FilesView files, CreateRenameWindow createRenameWindow)
+        private void Construct(ContextMenuUI.Pool pool, FilesView files)
         {
             this.pool = pool;
             this.files = files;
-            this.createRenameWindow = createRenameWindow;
         }
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(1))
-            {
-                if (menu != null)
-                {
-                    HideMenu();
-                }
-                else
-                {
-                    menu = pool.Spawn(new List<ContextItem>()
-                    { 
-                        new CreateFileItem(createRenameWindow, files) { text = "Create file" } 
-                    });
-                    menu.transform.parent = transform;
-                    menu.transform.position = Input.mousePosition;
-
-                    locker.SetActive(true);
-                }
-            }
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 HideMenu();
             }
         }
-
+        public void ShowMenu(List<ContextItem> items)
+        {
+            if (menu != null)
+            {
+                HideMenu();
+            }
+            else
+            {
+                menu = pool.Spawn(items);
+                menu.transform.parent = transform;
+                menu.transform.position = Input.mousePosition;
+                locker.SetActive(true);
+            }
+        }
         public void OnLockerClicked()
         {
             HideMenu();
@@ -58,7 +51,8 @@ namespace InApp.UI
 
             var env = new ContextItemEnvironment()
             {
-                currentFolder = files.CurrentPath
+                currentFolder = files.CurrentPath,
+                selectedFiles = files.EnumerateSelectedFIles()
             };
             item.OnClick(env);
         }
