@@ -18,7 +18,7 @@ namespace InApp.UI
         [SerializeField] private Transform content;
 
         private List<EntryUIItem> entries = new();
-        private List<EntryUIItem> selectedEntries = new();
+        private HashSet<EntryUIItem> selectedEntries = new();
         private FileSystemWatcher fileWatcher = new();
         private bool hasFileSystemChanges;
         private EntryUIItem.Pool pool;
@@ -98,17 +98,29 @@ namespace InApp.UI
                 DeselectAll();
             }
 
-            if (isShift && selectedEntries.Count > 0)
+            if (selectedEntries.Count > 0)
             {
-                int startIndex = entries.IndexOf(selectedEntries.Last());
-                int targetIndex = entries.IndexOf(item);
-                int min = Mathf.Min(targetIndex, startIndex);
-                int max = Mathf.Max(targetIndex, startIndex);
-
-                for (int i = min; i < max; i++)
+                if (isShift)
                 {
-                    entries[i].SetSelection(true);
-                    selectedEntries.Add(entries[i]);
+                    int startIndex = entries.IndexOf(selectedEntries.Last());
+                    int targetIndex = entries.IndexOf(item);
+                    int min = Mathf.Min(targetIndex, startIndex);
+                    int max = Mathf.Max(targetIndex, startIndex);
+
+                    for (int i = min; i < max; i++)
+                    {
+                        entries[i].SetSelection(true);
+                        selectedEntries.Add(entries[i]);
+                    }
+                }
+                else if (isControl)
+                {
+                    if (selectedEntries.Contains(item))
+                    {
+                        item.SetSelection(false);
+                        selectedEntries.Remove(item);
+                        return;
+                    }
                 }
             }
 
