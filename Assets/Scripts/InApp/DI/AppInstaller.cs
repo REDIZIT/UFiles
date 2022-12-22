@@ -35,7 +35,8 @@ namespace InApp.DI
             Container.BindInstance(contextMenu);
             Container.BindInstance(downloads);
 
-            Container.Bind<UClipboard>().FromNew().AsSingle();
+            Container.Bind<FileOperator>().AsSingle();
+            Container.Bind<UClipboard>().AsSingle();
 
             BindPool<EntryUIItem, EntryUIItem.Pool>(entryPrefab);
             BindPool<PathBarSegment, PathBarSegment.Pool>(pathBarSegment);

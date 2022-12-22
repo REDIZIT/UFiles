@@ -1,5 +1,4 @@
 using System.IO;
-using UnityEngine;
 
 namespace InApp
 {
@@ -42,10 +41,11 @@ namespace InApp
         }
         public static void Delete(string entryPath)
         {
-            EntryType type = GetType(entryPath);
-
-            if (type == EntryType.Directory) Directory.Delete(entryPath, true);
-            else File.Delete(entryPath);
+            if (TryGetType(entryPath, out EntryType type))
+            {
+                if (type == EntryType.Directory) Directory.Delete(entryPath, true);
+                else File.Delete(entryPath);
+            }
         }
         public static bool Exists(string entryPath)
         {

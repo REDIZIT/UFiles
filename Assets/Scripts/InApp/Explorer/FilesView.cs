@@ -22,17 +22,20 @@ namespace InApp.UI
         private HashSet<EntryUIItem> selectedEntries = new();
         private FileSystemWatcher fileWatcher = new();
         private bool hasFileSystemChanges;
-        private List<string> history = new();
-        private int historyIndex = -1;
+        private History<string> history = new(HistoryPointerType.TargetFrame);
 
         private EntryUIItem.Pool pool;
         private ContextMenuCreator context;
+        private FileOperator fileOperator;
 
         [Inject]
-        private void Construct(EntryUIItem.Pool pool, ContextMenuCreator context)
+        private void Construct(EntryUIItem.Pool pool, ContextMenuCreator context, FileOperator fileOperator)
         {
             this.pool = pool;
             this.context = context;
+            this.fileOperator = fileOperator;
+
+            fileOperator.onAnyOperationApplied += () => FilesChanged(null, null);
 
             fileWatcher.Filter = "*.*";
             fileWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
@@ -64,35 +67,34 @@ namespace InApp.UI
 
             if (hasFileSystemChanges)
             {
-                Show(CurrentPath);
+                Show(CurrentPath, false);
                 hasFileSystemChanges = false;
             }
 
-            if (Input.GetMouseButtonDown(3) && historyIndex > 0)
+            if (Input.GetMouseButtonDown(3) && history.TryUndo(out string directory))
             {
-                historyIndex--;
-                Show(history[historyIndex], true);
+                Show(directory, false);
             }
-            if (Input.GetMouseButtonDown(4) && historyIndex < history.Count - 1)
+            if (Input.GetMouseButtonDown(4) && history.TryRedo(out directory))
             {
-                historyIndex++;
-                Show(history[historyIndex], true);
+                Show(directory, false);
+            }
+
+            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+            {
+                if (Input.GetKeyDown(KeyCode.Z)) fileOperator.Undo();
+                if (Input.GetKeyDown(KeyCode.Y)) fileOperator.Redo();
             }
         }
 
-        public void Show(string path, bool fromHistrory = false)
+        public void Show(string path, bool saveToHistory = true)
         {
             path = path.Replace("\\", "/").Replace(@"\", "/");
             CurrentPath = path;
 
-            if (fromHistrory == false)
+            if (saveToHistory)
             {
-                if (history.Count > 1)
-                {
-                    history.RemoveRange(historyIndex + 1, history.Count - historyIndex - 1);
-                }
                 history.Add(path);
-                historyIndex++;
             }
             
 
