@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Zenject;
 
 namespace InApp.UI
 {
-    public class FilesView : MonoBehaviour
+    public class FilesView : MonoBehaviour, IPointerClickHandler
     {
         public string CurrentPath { get; private set; }
         public int EntriesCount => entries.Count;
@@ -25,11 +26,16 @@ namespace InApp.UI
         private int historyIndex = -1;
 
         private EntryUIItem.Pool pool;
+        private ContextMenuCreator context;
+        private CreateRenameWindow createWindow;
 
         [Inject]
-        private void Construct(EntryUIItem.Pool pool)
+        private void Construct(EntryUIItem.Pool pool, ContextMenuCreator context, CreateRenameWindow createWindow)
         {
             this.pool = pool;
+            this.context = context;
+            this.createWindow = createWindow;
+
             fileWatcher.Filter = "*.*";
             fileWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
             fileWatcher.Created += FilesChanged;
@@ -163,6 +169,18 @@ namespace InApp.UI
                 yield return item.Path;
             }
         }
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (eventData.button == PointerEventData.InputButton.Right)
+            {
+                context.ShowMenu(new List<ContextItem>()
+                {
+                    new CreateEntryItem(createWindow, false),
+                    new CreateEntryItem(createWindow, true),
+                });
+            }
+        }
+
 
         private void SpawnItem(string entryPath)
         {

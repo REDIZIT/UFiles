@@ -80,7 +80,8 @@ namespace InApp.UI
 
                 List<ContextItem> items = new()
                 {
-                    new CreateFileItem(createWindow, files),
+                    new CreateEntryItem(createWindow, false),
+                    new CreateEntryItem(createWindow, true),
                     new DeleteFileItem(files)
                 };
                 contextCreator.ShowMenu(items);

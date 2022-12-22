@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 namespace InApp.UI
@@ -17,27 +16,6 @@ namespace InApp.UI
         public string currentFolder;
         public string selectedEntryName;
         public IEnumerable<string> selectedFiles;
-    }
-
-    public class CreateFileItem : ContextItem
-    {
-        private CreateRenameWindow window;
-        private FilesView files;
-
-        public CreateFileItem(CreateRenameWindow window, FilesView files)
-        {
-            this.window = window;
-            this.files = files;
-            text = "Создать файл";
-        }
-
-        public override void OnClick(ContextItemEnvironment env)
-        {
-            window.Show(env, "123.txt", null, filepath =>
-            {
-                File.Create(env.currentFolder + "/" + filepath).Dispose();
-            });
-        }
     }
     public class RenameItem : ContextItem
     {
