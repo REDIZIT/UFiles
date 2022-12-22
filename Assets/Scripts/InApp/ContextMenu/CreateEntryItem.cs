@@ -1,17 +1,25 @@
 ﻿using System.IO;
+using UnityEngine;
+using Zenject;
 
 namespace InApp.UI
 {
     public class CreateEntryItem : ContextItem
     {
-        private CreateRenameWindow window;
+        [Inject] private CreateRenameWindow window;
         private bool createDirectory;
 
-        public CreateEntryItem(CreateRenameWindow window, bool createDirectory)
+        public CreateEntryItem()
         {
-            this.window = window;
-            this.createDirectory = createDirectory;
-            text = "Создать " + (createDirectory ? "папку" : "файл");
+            text = "Создать";
+
+            children.Add(new CreateConcreteEntryItem(true));
+            children.Add(new CreateConcreteEntryItem(false));
+        }
+
+        public override Texture2D GetIcon()
+        {
+            return icons.context.create;
         }
 
         public override void OnClick(ContextItemEnvironment env)
@@ -28,6 +36,21 @@ namespace InApp.UI
                     File.Create(path).Dispose();
                 }
             });
+        }
+    }
+    public class CreateConcreteEntryItem : ContextItem
+    {
+        private bool isFolder;
+
+        public CreateConcreteEntryItem(bool isFolder)
+        {
+            this.isFolder = isFolder;
+            text = isFolder ? "Папку" : "Файл";
+        }
+
+        public override Texture2D GetIcon()
+        {
+            return isFolder ? icons.folderEmpty : icons.defaultFile;
         }
     }
 }

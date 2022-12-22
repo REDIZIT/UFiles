@@ -16,3 +16,7 @@ MonoBehaviour:
   folderEmpty: {fileID: 2800000, guid: f9d585c393a255e44b0dc3ae9da80cd0, type: 3}
   folderOpen: {fileID: 2800000, guid: 9c33d9330724d5344b47fce8debe366b, type: 3}
   defaultFile: {fileID: 2800000, guid: 629f1a6a7e949724483083271f72bc3d, type: 3}
+  context:
+    create: {fileID: 2800000, guid: 0f9bf675bb6f870469e6f4acaee96d4e, type: 3}
+    rename: {fileID: 0}
+    delete: {fileID: 2800000, guid: 448b0ce0691ed0349a40967c5f72c4e7, type: 3}

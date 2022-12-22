@@ -76,15 +76,15 @@ namespace InApp.UI
             }
             else if (eventData.button == PointerEventData.InputButton.Right)
             {
-                files.SetMainSelectTo(this);
+                files.OnItemRightClick(this);
 
                 List<ContextItem> items = new()
                 {
-                    new CreateEntryItem(createWindow, false),
-                    new CreateEntryItem(createWindow, true),
-                    new DeleteFileItem(files)
+                    new CreateEntryItem(),
+                    new DeleteFileItem(files),
+                    new RenameItem(),
                 };
-                contextCreator.ShowMenu(items);
+                contextCreator.ShowMenu(items, Input.mousePosition);
             }
         }
 

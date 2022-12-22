@@ -7,5 +7,13 @@ namespace InApp.UI
     {
         public Texture2D folderFill, folderEmpty, folderOpen;
         public Texture2D defaultFile;
+
+        public ContextIcons context;
+
+        [System.Serializable]
+        public class ContextIcons
+        {
+            public Texture2D create, rename, delete;
+        }
     }
 }

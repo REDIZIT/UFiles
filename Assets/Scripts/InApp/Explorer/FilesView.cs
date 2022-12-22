@@ -27,14 +27,12 @@ namespace InApp.UI
 
         private EntryUIItem.Pool pool;
         private ContextMenuCreator context;
-        private CreateRenameWindow createWindow;
 
         [Inject]
-        private void Construct(EntryUIItem.Pool pool, ContextMenuCreator context, CreateRenameWindow createWindow)
+        private void Construct(EntryUIItem.Pool pool, ContextMenuCreator context)
         {
             this.pool = pool;
             this.context = context;
-            this.createWindow = createWindow;
 
             fileWatcher.Filter = "*.*";
             fileWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
@@ -140,8 +138,7 @@ namespace InApp.UI
 
                     for (int i = min; i < max; i++)
                     {
-                        entries[i].SetSelection(true);
-                        selectedEntries.Add(entries[i]);
+                        SelectItem(entries[i]);
                     }
                 }
                 else if (isControl)
@@ -155,13 +152,17 @@ namespace InApp.UI
                 }
             }
 
-            SetMainSelectTo(item);
+            SelectItem(item);
         }
-        public void SetMainSelectTo(EntryUIItem item)
+        public void OnItemRightClick(EntryUIItem item)
         {
-            item.SetSelection(true);
-            selectedEntries.Add(item);
+            if (selectedEntries.Contains(item) == false)
+            {
+                DeselectAll();
+                SelectItem(item);
+            }
         }
+
         public IEnumerable<string> EnumerateSelectedFIles()
         {
             foreach (EntryUIItem item in selectedEntries)
@@ -171,17 +172,24 @@ namespace InApp.UI
         }
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (eventData.button == PointerEventData.InputButton.Right)
+            if (eventData.button == PointerEventData.InputButton.Left)
+            {
+                DeselectAll();
+            }
+            else if (eventData.button == PointerEventData.InputButton.Right)
             {
                 context.ShowMenu(new List<ContextItem>()
                 {
-                    new CreateEntryItem(createWindow, false),
-                    new CreateEntryItem(createWindow, true),
-                });
+                    new CreateEntryItem()
+                }, Input.mousePosition);
             }
         }
 
-
+        private void SelectItem(EntryUIItem item)
+        {
+            item.SetSelection(true);
+            selectedEntries.Add(item);
+        }
         private void SpawnItem(string entryPath)
         {
             if (Path.GetExtension(entryPath) == ".meta") return;

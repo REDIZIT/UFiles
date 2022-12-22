@@ -10,14 +10,16 @@ namespace InApp.UI
         [SerializeField] private GameObject locker;
 
         private ContextMenuUI.Pool pool;
-        private ContextMenuUI menu;
+        private List<ContextMenuUI> menues = new();
         private FilesView files;
+        private DiContainer container;
 
         [Inject]
-        private void Construct(ContextMenuUI.Pool pool, FilesView files)
+        private void Construct(ContextMenuUI.Pool pool, FilesView files, DiContainer container)
         {
             this.pool = pool;
             this.files = files;
+            this.container = container;
         }
 
         private void Update()
@@ -27,19 +29,25 @@ namespace InApp.UI
                 HideMenu();
             }
         }
-        public void ShowMenu(List<ContextItem> items)
+        public ContextMenuUI ShowMenu(List<ContextItem> items, Vector2 screenPosition)
         {
-            if (menu != null)
+            foreach (var item in items)
             {
-                HideMenu();
+                container.Inject(item);
             }
-            else
-            {
-                menu = pool.Spawn(items);
-                menu.transform.parent = transform;
-                menu.transform.position = Input.mousePosition;
-                locker.SetActive(true);
-            }
+
+            var menu = pool.Spawn(items);
+            menu.transform.parent = transform;
+            menu.transform.position = screenPosition;
+            menues.Add(menu);
+            locker.SetActive(true);
+
+            return menu;
+        }
+        public void HideMenu(ContextMenuUI menu)
+        {
+            pool.Despawn(menu);
+            menues.Remove(menu);
         }
         public void OnLockerClicked()
         {
@@ -59,11 +67,13 @@ namespace InApp.UI
 
         private void HideMenu()
         {
-            if (menu == null) return;
+            foreach (var menu in menues)
+            {
+                pool.Despawn(menu);
+            }
 
-            pool.Despawn(menu);
             locker.SetActive(false);
-            menu = null;
+            menues.Clear();
         }
     }
 }
