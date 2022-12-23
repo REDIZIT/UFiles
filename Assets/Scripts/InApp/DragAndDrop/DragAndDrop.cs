@@ -1,10 +1,5 @@
-using DOExample;
 using System;
-using System.IO;
-using System.Threading;
-using System.Windows;
-using Unity.VisualScripting;
-using UnityEditor;
+using System.Windows.Forms;
 using UnityEngine;
 
 namespace InApp
@@ -14,30 +9,30 @@ namespace InApp
         public static void Start(string file)
         {
             Debug.Log("Start");
-            //Int32 NumItems = 1;
 
-            //DataObjectEx.SelectedItem[] SelectedItems = new DataObjectEx.SelectedItem[NumItems];
-            //for (Int32 ItemCount = 0; ItemCount < SelectedItems.Length; ItemCount++)
-            //{
-            //    // TODO: Get virtual file name
-            //    SelectedItems[ItemCount].FileName = "Some name";
-            //    SelectedItems[ItemCount].SourceFileName = "C:/1.txt";
-            //    // TODO: Get virtual file date
-            //    SelectedItems[ItemCount].WriteTime = new DateTime(2022, 12, 23);
-            //    // TODO: Get virtual file size
-            //    SelectedItems[ItemCount].FileSize = new FileInfo(file).Length;
-            //}
-            //DataObjectEx dataObject = new DataObjectEx(SelectedItems);
-            //dataObject.SetData(NativeMethods.CFSTR_FILEDESCRIPTORW, null);
-            //dataObject.SetData(NativeMethods.CFSTR_FILECONTENTS, null);
-            //dataObject.SetData(NativeMethods.CFSTR_PERFORMEDDROPEFFECT, null);
+            //Clipboard.ContainsText();
+            //Clipboard.Clear();
 
-            Debug.Log(GUIUtility.systemCopyBuffer);
+            //Debug.Log(Microsoft.PowerShell.Internal.Clipboard.GetText());
+            //Microsoft.PowerShell.Internal.Clipboard.SetText("12345");
+            //Microsoft.PowerShell.Internal.Clipboard.GetDropFilesPtr(new string[] { "C:/1.txt"});
 
-            //Clipboard.SetText("Clipped text", TextDataFormat.UnicodeText);
-            //Clipboard.SetDataObject(dataObject);
+            //DataObject data = new();
+            //data.SetText("Example");
+
+            //var control = new Control();
+            //control.QueryContinueDrag += Control_QueryContinueDrag;
+            //control.DoDragDrop(data, DragDropEffects.All);
+
+            Program.SetClipboardData(new System.Collections.Generic.List<string>() { "C:/1.txt" });
+            
 
             Debug.Log("Copied");
+        }
+
+        private static void Control_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
+        {
+            Debug.Log("Control_QueryContinueDrag");
         }
     }
 }

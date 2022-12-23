@@ -13,14 +13,10 @@ namespace InApp
         {
             if (Input.GetMouseButtonDown(0))
             {
-                //DragAndDrop.Start("C:/1.txt");
-                //new ClipboardTex
+                DragAndDrop.Start("C:/1.txt");
 
                 //var text = new ClipboardTexture();
                 //image.texture = text.GetClipboardTexture();
-
-                var tex = ClipboardImage.Copy();
-                image.texture = tex;
             }
         }
     }
