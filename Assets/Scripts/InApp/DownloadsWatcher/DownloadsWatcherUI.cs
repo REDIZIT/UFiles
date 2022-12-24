@@ -19,7 +19,7 @@ namespace InApp
             this.pool = pool;
             this.files = files;
 
-            watcher = new();
+            watcher = new DownloadsWatcher();   
         }
 
         private void Update()

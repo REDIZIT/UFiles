@@ -15,7 +15,7 @@ namespace InApp
     }
     public class History<T>
     {
-        private List<T> list = new();
+        private List<T> list = new List<T>();
         private int index = -1;
         private HistoryPointerType pointer;
 

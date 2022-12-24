@@ -7,7 +7,7 @@ namespace InApp.UI
     public class ContextItem
     {
         public string text;
-        public List<ContextItem> children = new();
+        public List<ContextItem> children = new List<ContextItem>();
 
         [Inject] protected IconsSO icons;
 

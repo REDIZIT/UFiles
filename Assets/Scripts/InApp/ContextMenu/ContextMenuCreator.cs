@@ -10,7 +10,7 @@ namespace InApp.UI
         [SerializeField] private GameObject locker;
 
         private ContextMenuUI.Pool pool;
-        private List<ContextMenuUI> menues = new();
+        private List<ContextMenuUI> menues = new List<ContextMenuUI>();
         private FilesView files;
         private DiContainer container;
 

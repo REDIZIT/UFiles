@@ -38,7 +38,7 @@ namespace InApp
 
         private void Refresh(string path)
         {
-            preview = new(icon);
+            preview = new FilePreview(icon);
             this.path = path;
             nameText.text = Path.GetFileName(path);
 

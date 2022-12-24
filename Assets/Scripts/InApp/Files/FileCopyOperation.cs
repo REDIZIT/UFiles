@@ -5,9 +5,9 @@ namespace InApp
 {
     public class FileCopyOperation : FileOperation
     {
-        private List<string> entriesToCopy = new();
+        private List<string> entriesToCopy = new List<string>();
         private string targetDirectory;
-        private List<string> copiedEntries = new();
+        private List<string> copiedEntries = new List<string>();
 
         public FileCopyOperation(List<string> entriesToCopy, string targetDirectory)
         {

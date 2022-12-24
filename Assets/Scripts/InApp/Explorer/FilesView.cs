@@ -18,11 +18,11 @@ namespace InApp.UI
 
         [SerializeField] private Transform content;
 
-        private List<EntryUIItem> entries = new();
-        private HashSet<EntryUIItem> selectedEntries = new();
-        private FileSystemWatcher fileWatcher = new();
+        private List<EntryUIItem> entries = new List<EntryUIItem>();
+        private HashSet<EntryUIItem> selectedEntries = new HashSet<EntryUIItem>();
+        private FileSystemWatcher fileWatcher = new FileSystemWatcher();
         private bool hasFileSystemChanges;
-        private History<string> history = new(HistoryPointerType.TargetFrame);
+        private History<string> history = new History<string>(HistoryPointerType.TargetFrame);
 
         private EntryUIItem.Pool pool;
         private ContextMenuCreator context;
@@ -197,7 +197,7 @@ namespace InApp.UI
         {
             if (Path.GetExtension(entryPath) == ".meta")
             {
-                string metaTargetFile = entryPath[..^".meta".Length];
+                string metaTargetFile = entryPath.Substring(0, entryPath.Length - ".meta".Length);
                 if (EntryUtils.Exists(metaTargetFile)) return;
             }
 

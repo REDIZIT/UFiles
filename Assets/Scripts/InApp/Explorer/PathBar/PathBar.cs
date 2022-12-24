@@ -12,7 +12,7 @@ namespace InApp.UI
         [SerializeField] private Transform content;
         [SerializeField] private TMP_InputField field;
 
-        private List<PathBarSegment> segments = new();
+        private List<PathBarSegment> segments = new List<PathBarSegment>();
 
         private FilesView view;
         private PathBarSegment.Pool pool;

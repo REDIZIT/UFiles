@@ -1,7 +1,4 @@
-using Mono.Cecil.Cil;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using Zenject;
 
 namespace InApp.DraggableList
 {

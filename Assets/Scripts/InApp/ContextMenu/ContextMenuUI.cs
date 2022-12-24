@@ -11,7 +11,7 @@ namespace InApp.UI
         [SerializeField] private Transform content;
 
         private ContextMenuUIItem.Pool pool;
-        private List<ContextMenuUIItem> spawnedItems = new();
+        private List<ContextMenuUIItem> spawnedItems = new List<ContextMenuUIItem>();
 
         [Inject]
         private void Construct(ContextMenuUIItem.Pool pool)

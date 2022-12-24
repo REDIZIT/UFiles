@@ -11,7 +11,7 @@ namespace InApp
     {
         public string mainFolder;
         public string buildPath;
-        public List<ProjectLink> links = new();
+        public List<ProjectLink> links = new List<ProjectLink>();
     }
     public class UrlButton : MonoBehaviour
     {

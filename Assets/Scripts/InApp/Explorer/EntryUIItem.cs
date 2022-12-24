@@ -28,7 +28,7 @@ namespace InApp.UI
         [SerializeField] private GameObject selectionIndicator;
 
         private bool isHovered, isLinkedHovered, isLinkedExpanded;
-        private List<EntryUIItem> linkedItems = new();
+        private List<EntryUIItem> linkedItems = new List<EntryUIItem>();    
         private EntryUIItem linkedParent;
         private RectTransform rect;
         private DateTime lastClickTime;
@@ -76,7 +76,7 @@ namespace InApp.UI
             {
                 files.OnItemRightClick(this);
 
-                List<ContextItem> items = new()
+                List<ContextItem> items = new List<ContextItem>()
                 {
                     new CreateEntryItem(),
                     new RenameFileItem(),

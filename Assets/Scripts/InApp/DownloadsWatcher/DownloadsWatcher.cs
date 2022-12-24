@@ -16,13 +16,13 @@ namespace InApp
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
         static extern int SHGetKnownFolderPath([MarshalAs(UnmanagedType.LPStruct)] Guid rfid, uint dwFlags, IntPtr hToken, out string pszPath);
 
-        public List<string> changedFiles = new();
+        public List<string> changedFiles = new List<string>();
         
         private FileSystemWatcher watcher;
 
         public DownloadsWatcher()
         {
-            watcher = new();
+            watcher = new FileSystemWatcher();
             watcher.Path = GetDownloadsPath();
             watcher.NotifyFilter = NotifyFilters.CreationTime;
             watcher.Filter = "*.*";

@@ -8,7 +8,7 @@ namespace InApp
     {
         [Inject] private FileOperator fileOperator;
 
-        private List<string> buffer = new();
+        private List<string> buffer = new List<string>();
         private CopyType copyType;
         
         public enum CopyType

@@ -6,7 +6,7 @@ namespace InApp
     {
         public Action onAnyOperationApplied;
 
-        private History<FileOperation> history = new(HistoryPointerType.CurrentFrame);
+        private History<FileOperation> history = new History<FileOperation>(HistoryPointerType.CurrentFrame);
 
         public void Run(FileOperation op)
         {
