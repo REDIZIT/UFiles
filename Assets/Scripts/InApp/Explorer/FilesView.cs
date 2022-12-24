@@ -27,13 +27,15 @@ namespace InApp.UI
         private EntryUIItem.Pool pool;
         private ContextMenuCreator context;
         private FileOperator fileOperator;
+        private UClipboard clipboard;
 
         [Inject]
-        private void Construct(EntryUIItem.Pool pool, ContextMenuCreator context, FileOperator fileOperator)
+        private void Construct(EntryUIItem.Pool pool, ContextMenuCreator context, FileOperator fileOperator, UClipboard clipboard)
         {
             this.pool = pool;
             this.context = context;
             this.fileOperator = fileOperator;
+            this.clipboard = clipboard;
 
             fileOperator.onAnyOperationApplied += () => FilesChanged(null, null);
 
@@ -53,37 +55,12 @@ namespace InApp.UI
         }
         private void Update()
         {
-            if (selectedEntries.Count > 0)
-            {
-                if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    DeselectAll();
-                }
-                if (Input.GetKeyDown(KeyCode.Delete))
-                {
-                    DeleteSelected(Input.GetKey(KeyCode.LeftShift) == false);
-                }
-            }
+            UpdateHotkeys();
 
             if (hasFileSystemChanges)
             {
                 Show(CurrentPath, false);
                 hasFileSystemChanges = false;
-            }
-
-            if (Input.GetMouseButtonDown(3) && history.TryUndo(out string directory))
-            {
-                Show(directory, false);
-            }
-            if (Input.GetMouseButtonDown(4) && history.TryRedo(out directory))
-            {
-                Show(directory, false);
-            }
-
-            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
-            {
-                if (Input.GetKeyDown(KeyCode.Z)) fileOperator.Undo();
-                if (Input.GetKeyDown(KeyCode.Y)) fileOperator.Redo();
             }
         }
 
@@ -188,6 +165,49 @@ namespace InApp.UI
             }
         }
 
+        private void UpdateHotkeys()
+        {
+            bool isControlled = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+
+            // Selection
+            if (selectedEntries.Count > 0)
+            {
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    DeselectAll();
+                }
+                if (Input.GetKeyDown(KeyCode.Delete))
+                {
+                    DeleteSelected(Input.GetKey(KeyCode.LeftShift) == false);
+                }
+            }
+
+            // History
+            if (Input.GetMouseButtonDown(3) && history.TryUndo(out string directory))
+            {
+                Show(directory, false);
+            }
+            if (Input.GetMouseButtonDown(4) && history.TryRedo(out directory))
+            {
+                Show(directory, false);
+            }
+            if (isControlled)
+            {
+                if (Input.GetKeyDown(KeyCode.Z)) fileOperator.Undo();
+                if (Input.GetKeyDown(KeyCode.Y)) fileOperator.Redo();
+            }
+
+            // Copy/paste
+            if (isControlled)
+            {
+                if (selectedEntries.Count > 0)
+                {
+                    if (Input.GetKeyDown(KeyCode.C)) clipboard.Copy(EnumerateSelectedFIles(), UClipboard.CopyType.Copy);
+                    if (Input.GetKeyDown(KeyCode.X)) clipboard.Copy(EnumerateSelectedFIles(), UClipboard.CopyType.Cut);
+                }
+                if (Input.GetKeyDown(KeyCode.V)) clipboard.Paste(CurrentPath);
+            }
+        }
         private void SelectItem(EntryUIItem item)
         {
             item.SetSelection(true);
@@ -229,9 +249,10 @@ namespace InApp.UI
                     else File.Delete(entry.Path);
                 }
                
-
                 entry.SetSelection(false);
             }
+
+            hasFileSystemChanges = true;
             selectedEntries.Clear();
         }
         private void FilesChanged(object sender, FileSystemEventArgs e)

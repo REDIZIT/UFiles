@@ -27,13 +27,6 @@ namespace InApp
         }
         public void Paste(string targetFolder)
         {
-            //foreach (string filepath in buffer)
-            //{
-            //    string filename = Path.GetFileName(filepath);
-            //    string targetFilepath = targetFolder + "/" + filename;
-
-            //    EntryUtils.Copy(filepath, targetFilepath);
-            //}
             fileOperator.Run(new FileCopyOperation(buffer, targetFolder));
             
             if (copyType == CopyType.Cut)
