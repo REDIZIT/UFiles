@@ -25,6 +25,7 @@ namespace InApp
             //control.DoDragDrop(data, DragDropEffects.All);
 
             Program.SetClipboardData(new System.Collections.Generic.List<string>() { "C:/1.txt" });
+
             
 
             Debug.Log("Copied");

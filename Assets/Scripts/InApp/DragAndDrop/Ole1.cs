@@ -1,3 +1,10 @@
+/*
+
+Article: Use C # to call the method of winAPI SetClipboardData (CF_HDROP, ptr)
+https://www.programmersought.com/article/95483718965/
+
+*/
+
 using System;
 using System.Collections.Generic;
 using System.Text;
