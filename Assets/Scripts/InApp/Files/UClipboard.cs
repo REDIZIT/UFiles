@@ -22,6 +22,8 @@ namespace InApp
             buffer.Clear();
             buffer.AddRange(items);
             this.copyType = copyType;
+
+            Program.SetClipboardData(buffer);
         }
         public void Paste(string targetFolder)
         {
