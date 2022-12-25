@@ -1,10 +1,10 @@
 using System;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace InApp.UI
 {
@@ -15,6 +15,8 @@ namespace InApp.UI
 
         private Answer answer;
         private FilePreview preview;
+
+        [Inject] private IconsSO icons;
 
         public class Model
         {
@@ -33,16 +35,26 @@ namespace InApp.UI
         protected override void OnAwake()
         {
             base.OnAwake();
+
             preview = new FilePreview(image);
         }
         protected override void OnShowed()
         {
             base.OnShowed();
-            preview.Load(model.filepath);
+
             nameText.text = Path.GetFileName(model.filepath);
             folderA.text = model.sourceFolder;
             folderB.text = model.targetFolder;
             answer = Answer.None;
+
+            if (preview.CanHandle(model.filepath))
+            {
+                preview.Load(model.filepath);
+            }
+            else
+            {
+                image.texture = EntryUtils.GetType(model.filepath) == EntryType.Directory ? icons.folderOpen : icons.defaultFile;
+            }
         }
         protected override async Task<Answer> GetAnswer()
         {
@@ -53,6 +65,19 @@ namespace InApp.UI
 
             Close();
             return answer;
+        }
+        protected override void OnUpdate()
+        {
+            base.OnUpdate();
+
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                OnOverwriteClicked();
+            }
+            else if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                OnCancelClicked();
+            }
         }
 
         public void OnOverwriteClicked()

@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace InApp.UI
 {
@@ -10,6 +9,10 @@ namespace InApp.UI
         private void Awake()
         {
             OnAwake();
+        }
+        private void Update()
+        {
+            OnUpdate();
         }
         public void Show(T model)
         {
@@ -27,5 +30,6 @@ namespace InApp.UI
         protected virtual void OnAwake() { }
         protected virtual void OnShowed() { }
         protected virtual void OnClosed() { }
+        protected virtual void OnUpdate() { }
     }
 }
