@@ -34,12 +34,19 @@ namespace InApp.UI
                 parentFolder = info.Directory.FullName;
             }
 
-            renameWindow.Show(env, "Переименовать", type, name, (newName) =>
+            renameWindow.Show(new CreateRenameWindow.Model()
             {
-                string sourcePath = parentFolder + "/" + name;
-                string targetPath = parentFolder + "/" + newName;
+                env = env,
+                title = "Переименовать",
+                entryType = type, 
+                filename = name,
+                onApply = newName =>
+                {
+                    string sourcePath = parentFolder + "/" + name;
+                    string targetPath = parentFolder + "/" + newName;
 
-                EntryUtils.Move(sourcePath, targetPath);
+                    EntryUtils.Move(sourcePath, targetPath);
+                }
             });
         }
     }

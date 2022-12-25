@@ -51,7 +51,7 @@ namespace InApp.UI
 
         private void Start()
         {
-            Show("C:\\Users\\redizit\\UFiles\\Assets");
+            Show("C:\\Test");
         }
         private void Update()
         {

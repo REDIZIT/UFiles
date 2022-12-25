@@ -32,12 +32,12 @@ namespace InApp
             if (type == EntryType.Directory) Directory.Move(sourcePath, targetPath);
             else File.Move(sourcePath, targetPath);
         }
-        public static void Copy(string sourcePath, string targetPath)
+        public static void Copy(string sourcePath, string targetPath, bool overwrite)
         {
             EntryType type = GetType(sourcePath);
 
             if (type == EntryType.Directory) CopyFilesRecursively(sourcePath, targetPath);
-            else File.Copy(sourcePath, targetPath);
+            else File.Copy(sourcePath, targetPath, overwrite);
         }
         public static void Delete(string entryPath)
         {
@@ -50,6 +50,32 @@ namespace InApp
         public static bool Exists(string entryPath)
         {
             return TryGetType(entryPath, out _);
+        }
+        public static string FindClosestFreeName(string entryPath)
+        {
+            EntryType type = GetType(entryPath);
+            int index = 1;
+
+            if (type == EntryType.Directory)
+            {
+                while (Directory.Exists(entryPath + " (" + index + ")") == false)
+                {
+                    index++;
+                }
+                return entryPath+ " (" + index + ")"; ;
+            }
+            else
+            {
+                var directory = new FileInfo(entryPath).Directory;
+                string name = Path.GetFileNameWithoutExtension(entryPath);
+                string extension = Path.GetExtension(entryPath);
+                string entryNewPath = directory + "/" + name + " ({0})" + extension;
+                while (File.Exists(string.Format(entryNewPath, index)))
+                {
+                    index++;
+                }
+                return string.Format(entryNewPath, index);
+            }
         }
 
         private static void CopyFilesRecursively(string sourcePath, string targetPath)

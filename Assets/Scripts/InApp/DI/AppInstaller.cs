@@ -24,6 +24,7 @@ namespace InApp.DI
 
         [Header("Windows")]
         [SerializeField] private CreateRenameWindow createRename;
+        [SerializeField] private CopyConflictWindow copyConflict;
 
         public override void InstallBindings()
         {
@@ -52,6 +53,7 @@ namespace InApp.DI
         private void BindWindows()
         {
             Container.BindInstances(createRename);
+            Container.BindInstances(copyConflict);
         }
 
         private void BindPool<Item, Pool>(Item prefab) where Item : MonoBehaviour where Pool : IMemoryPool

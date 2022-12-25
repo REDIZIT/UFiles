@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using InApp.UI;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
+using UnityEngine;
+using Zenject;
 
 namespace InApp
 {
@@ -9,13 +13,15 @@ namespace InApp
         private string targetDirectory;
         private List<string> copiedEntries = new List<string>();
 
+        [Inject] private CopyConflictWindow copyConflict;
+
         public FileCopyOperation(List<string> entriesToCopy, string targetDirectory)
         {
             this.entriesToCopy.AddRange(entriesToCopy);
             this.targetDirectory = targetDirectory;
         }
 
-        public override void Run()
+        public override async Task Run()
         {
             copiedEntries.Clear();
 
@@ -24,17 +30,37 @@ namespace InApp
                 string entryName = Path.GetFileName(entryPath);
                 string targetEntryPath = targetDirectory + "/" + entryName;
 
-                copiedEntries.Add(targetEntryPath);
-                EntryUtils.Copy(entryPath, targetEntryPath);
+                CopyConflictWindow.Answer answer = CopyConflictWindow.Answer.Overwrite;
+                if (File.Exists(targetEntryPath))
+                {
+                    answer = await copyConflict.ShowDialog(new CopyConflictWindow.Model()
+                    {
+                        filepath = targetEntryPath,
+                        sourceFolder = entryName,
+                        targetFolder = targetEntryPath
+                    });
+                }
+
+                if (answer == CopyConflictWindow.Answer.Rename)
+                {
+                    targetEntryPath = EntryUtils.FindClosestFreeName(targetEntryPath);
+                }
+
+                if (answer != CopyConflictWindow.Answer.Cancel)
+                {
+                    EntryUtils.Copy(entryPath, targetEntryPath, true);
+                    copiedEntries.Add(targetEntryPath);
+                }
             }
         }
-        public override void Undo()
+        public override Task Undo()
         {
             foreach (string entryPath in copiedEntries)
             {
                 EntryUtils.Delete(entryPath);
                 EntryUtils.Delete(entryPath + ".meta");
             }
+            return Task.CompletedTask;
         }
 
         public override string ToString()

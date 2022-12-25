@@ -1,21 +1,25 @@
 using System;
-using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace InApp.UI
 {
-    public class CreateRenameWindow : MonoBehaviour
+    public class CreateRenameWindow : Window<CreateRenameWindow.Model>
     {
         [SerializeField] private TextMeshProUGUI label;
         [SerializeField] private TMP_InputField nameField;
         [SerializeField] private GameObject existsGroup;
         [SerializeField] private Button applyButton;
 
-        private ContextItemEnvironment env;
-        private EntryType entryType;
-        private Action<string> onApply;
+        public class Model
+        {
+            public ContextItemEnvironment env;
+            public string title;
+            public EntryType entryType;
+            public string filename;
+            public Action<string> onApply;
+        }
 
         private void Update()
         {
@@ -32,21 +36,11 @@ namespace InApp.UI
                 OnClickCancel();
             }
         }
-        public void Show(ContextItemEnvironment env, string title, EntryType entryType,string filename, Action<string> onApply)
+        protected override void OnShowed()
         {
-            this.env = env;
-            this.entryType = entryType;
-            this.onApply = onApply;
-
-            gameObject.SetActive(true);
-
-            label.text = title;
-            nameField.text = filename;
+            label.text = model.title;
+            nameField.text = model.filename;
             nameField.Select();
-        }
-        public void Close()
-        {
-            gameObject.SetActive(false);
         }
         public void OnClickCancel()
         {
@@ -56,7 +50,7 @@ namespace InApp.UI
         {
             if (IsValid())
             {
-                onApply?.Invoke(nameField.text);
+                model.onApply?.Invoke(nameField.text);
                 Close();
             }
         }
@@ -65,7 +59,7 @@ namespace InApp.UI
             string text = nameField.text.Trim();
             if (string.IsNullOrWhiteSpace(text)) return false;
 
-            text = env.currentFolder + "/" + text;
+            text = model.env.currentFolder + "/" + text;
 
             return EntryUtils.Exists(text) == false;
         }

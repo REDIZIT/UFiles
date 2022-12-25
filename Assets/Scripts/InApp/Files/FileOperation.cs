@@ -1,8 +1,10 @@
-﻿namespace InApp
+﻿using System.Threading.Tasks;
+
+namespace InApp
 {
     public abstract class FileOperation
     {
-        public abstract void Run();
-        public abstract void Undo();
+        public abstract Task Run();
+        public abstract Task Undo();
     }
 }

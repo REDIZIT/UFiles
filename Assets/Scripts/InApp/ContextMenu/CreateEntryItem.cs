@@ -39,16 +39,23 @@ namespace InApp.UI
         public override void OnClick(ContextItemEnvironment env)
         {
             string title = "Создать " + (entryType == EntryType.Directory ? "папку" : "файл");
-            window.Show(env, title, entryType, "", filepath =>
+            window.Show(new CreateRenameWindow.Model()
             {
-                string path = env.currentFolder + "/" + filepath;
-                if (entryType == EntryType.Directory)
+                env = env,
+                title = title,
+                entryType = entryType,
+                filename = "",
+                onApply = filepath =>
                 {
-                    Directory.CreateDirectory(path);
-                }
-                else
-                {
-                    File.Create(path).Dispose();
+                    string path = env.currentFolder + "/" + filepath;
+                    if (entryType == EntryType.Directory)
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    else
+                    {
+                        File.Create(path).Dispose();
+                    }
                 }
             });
         }
