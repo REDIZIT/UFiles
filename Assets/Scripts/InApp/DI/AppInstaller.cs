@@ -1,3 +1,4 @@
+using InApp.Sidebar;
 using InApp.UI;
 using UnityEngine;
 using Zenject;
@@ -17,6 +18,7 @@ namespace InApp.DI
         [SerializeField] private ContextMenuUIItem contextMenuItemPrefab;
         [SerializeField] private ContextMenuUI contextMenuPrefab;
         [SerializeField] private DownloadUIItem downloadPrefab;
+        [SerializeField] private SidebarFolder sidebarFolderPrefab;
 
         [SerializeField] private UrlButton urlButtonPrefab;
 
@@ -47,6 +49,8 @@ namespace InApp.DI
 
             BindPool<DownloadUIItem, DownloadUIItem.Pool>(downloadPrefab);
             BindPool<UrlButton, UrlButton.Pool>(urlButtonPrefab);
+
+            Container.BindFactory<string, Transform, SidebarFolder, SidebarFolder.Factory>().FromComponentInNewPrefab(sidebarFolderPrefab).AsSingle();
 
             BindWindows();
         }
