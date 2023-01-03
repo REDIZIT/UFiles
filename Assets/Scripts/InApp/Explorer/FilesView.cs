@@ -10,7 +10,7 @@ namespace InApp.UI
 {
     public class FilesView : MonoBehaviour, IPointerClickHandler
     {
-        public string CurrentPath { get; private set; }
+        public string CurrentPath => tab == null ? "C:/" : tab.path.GetFullPath();
         public int EntriesCount => entries.Count;
         public int SelectedEntriesCount => selectedEntries.Count;
 
@@ -28,6 +28,8 @@ namespace InApp.UI
         private ContextMenuCreator context;
         private FileOperator fileOperator;
         private UClipboard clipboard;
+
+        private Tab tab;
 
         [Inject]
         private void Construct(EntryUIItem.Pool pool, ContextMenuCreator context, FileOperator fileOperator, UClipboard clipboard)
@@ -47,12 +49,7 @@ namespace InApp.UI
             fileWatcher.EnableRaisingEvents = true;
         }
 
-        
-
-        private void Start()
-        {
-            Show("C:\\Test");
-        }
+       
         private void Update()
         {
             UpdateHotkeys();
@@ -64,10 +61,15 @@ namespace InApp.UI
             }
         }
 
+        public void OpenTab(Tab tab)
+        {
+            this.tab = tab;
+            Show(tab.path.GetFullPath(), false);
+        }
         public void Show(string path, bool saveToHistory = true)
         {
             path = path.Replace("\\", "/").Replace(@"\", "/");
-            CurrentPath = path;
+            tab.path.Set(path);
 
             if (saveToHistory)
             {

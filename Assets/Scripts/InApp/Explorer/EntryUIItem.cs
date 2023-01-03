@@ -38,16 +38,19 @@ namespace InApp.UI
         private FilesView files;
         private Pool pool;
         private ContextMenuCreator contextCreator;
+        private TabUI tabs;
 
         private const int DOUBLE_CLICK_MS = 250;
 
         [Inject]
-        private void Construct(IconsSO icons, FilesView files, Pool pool, ContextMenuCreator contextCreator)
+        private void Construct(IconsSO icons, FilesView files, Pool pool, ContextMenuCreator contextCreator, TabUI tabs)
         {
             this.icons = icons;
             this.files = files;
             this.pool = pool;
             this.contextCreator = contextCreator;
+            this.tabs = tabs;
+
             rect = GetComponent<RectTransform>();
             preview = new FilePreview(icon);
         }
@@ -86,6 +89,11 @@ namespace InApp.UI
                     new DeleteFileItem(),
                 };
                 contextCreator.ShowMenu(items, Input.mousePosition);
+            }
+            else if (eventData.button == PointerEventData.InputButton.Middle)
+            {
+                bool switchToNew = Input.GetKey(KeyCode.LeftShift) == false;
+                tabs.OpenNew(new EntryPath(Path), switchToNew);
             }
         }
 

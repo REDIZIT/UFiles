@@ -12,6 +12,7 @@ namespace InApp.DI
         [SerializeField] private FilesView filesView;
         [SerializeField] private ContextMenuCreator contextMenu;
         [SerializeField] private DownloadsWatcherUI downloads;
+        [SerializeField] private TabUI tabs;
 
         [SerializeField] private EntryUIItem entryPrefab;
         [SerializeField] private PathBarSegment pathBarSegment;
@@ -21,6 +22,8 @@ namespace InApp.DI
         [SerializeField] private SidebarFolder sidebarFolderPrefab;
 
         [SerializeField] private UrlButton urlButtonPrefab;
+
+        [SerializeField] private TabUIItem tabPrefab;
 
         [SerializeField] private Transform entriesPool;
 
@@ -32,11 +35,12 @@ namespace InApp.DI
         {
             Texture.allowThreadedTextureCreation = true;
 
-            Container.BindInstances(icons);
+            Container.BindInstance(icons);
 
             Container.BindInstance(filesView);
             Container.BindInstance(contextMenu);
             Container.BindInstance(downloads);
+            Container.BindInstance(tabs);
 
             Container.Bind<FileOperator>().AsSingle();
             Container.Bind<UClipboard>().AsSingle();
@@ -50,14 +54,16 @@ namespace InApp.DI
             BindPool<DownloadUIItem, DownloadUIItem.Pool>(downloadPrefab);
             BindPool<UrlButton, UrlButton.Pool>(urlButtonPrefab);
 
+            BindPool<TabUIItem, TabUIItem.Pool>(tabPrefab);
+
             Container.BindFactory<string, Transform, SidebarFolder, SidebarFolder.Factory>().FromComponentInNewPrefab(sidebarFolderPrefab).AsSingle();
 
             BindWindows();
         }
         private void BindWindows()
         {
-            Container.BindInstances(createRename);
-            Container.BindInstances(copyConflict);
+            Container.BindInstance(createRename);
+            Container.BindInstance(copyConflict);
         }
 
         private void BindPool<Item, Pool>(Item prefab) where Item : MonoBehaviour where Pool : IMemoryPool
