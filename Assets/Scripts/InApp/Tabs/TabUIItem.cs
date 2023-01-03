@@ -49,8 +49,9 @@ namespace InApp
                 pool.Despawn(this);
                 tabs.OnCloseTabClicked(model);
             }
-        }
 
+            FitSize();
+        }
         private void OnEnable()
         {
             tabs.onActiveTabChanged += Update;
@@ -63,7 +64,11 @@ namespace InApp
         public void OnClick()
         {
             tabs.OnTabClicked(model);
-        }       
+        }
+        private void FitSize()
+        {
+            rect.sizeDelta = new Vector2(tabs.TabWidth, rect.sizeDelta.y);
+        }
 
 
         public class Pool : MonoMemoryPool<Tab, TabUIItem>

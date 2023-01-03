@@ -2,17 +2,20 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Zenject;
 
 namespace InApp
 {
-    public class TabUI : MonoBehaviour
+    public class TabUI : MonoBehaviour, IPointerExitHandler
     {
         public Tab ActiveTab { get; private set; }
+        public float TabWidth { get; private set; }
 
         public Action onActiveTabChanged;
 
-        [SerializeField] private Transform tabsContent;
+        [SerializeField] private RectTransform tabsContent;
+        [SerializeField] private RectTransform addButton;
 
         private List<Tab> tabs = new List<Tab>();
 
@@ -44,6 +47,9 @@ namespace InApp
             {
                 OnTabClicked(model);
             }
+
+            RecalculateTabWidth();
+            OnTabsCountChanged();
         }
 
         public void OnAddTabClicked()
@@ -63,6 +69,8 @@ namespace InApp
             if (index > tabs.Count - 1) index = tabs.Count - 1;
 
             SwitchTab(tabs[index]);
+
+            OnTabsCountChanged();
         }
         private void SwitchTab(Tab tab)
         {
@@ -70,6 +78,20 @@ namespace InApp
             onActiveTabChanged?.Invoke();
 
             files.OpenTab(tab);
+        }
+        private void OnTabsCountChanged()
+        {
+            addButton.transform.SetAsLastSibling();
+        }
+        private void RecalculateTabWidth()
+        {
+            float totalWidth = tabsContent.rect.width - addButton.rect.width;
+            TabWidth = Mathf.Min(totalWidth / tabs.Count, 240);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            RecalculateTabWidth();
         }
     }
 }
