@@ -44,8 +44,8 @@ public class Borderless : MonoBehaviour
         }
         else
         {
-            WinAPI.SetWindowLong(hWnd, GWL_STYLE, (uint)(style & ~(WS_CAPTION | WS_SIZEBOX))); //removes caption and the sizebox from current style.
-            WinAPI.SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW); //Make the window render above toolbar.
+            WinAPI.SetWindowLong(hWnd, GWL_STYLE, (uint)(style & ~(WS_MINIMIZEBOX))); //removes caption and the sizebox from current style.
+            //WinAPI.SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW); //Make the window render above toolbar.
         }
     }
 

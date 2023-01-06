@@ -37,14 +37,40 @@ namespace InApp.DI
 
             Container.BindInstance(icons);
 
+            InstallSettings();
+
+            BindInstances();
+            
+            Container.Bind<FileOperator>().AsSingle();
+            Container.Bind<UClipboard>().AsSingle();
+
+            BindUIItems();
+            
+            Container.BindFactory<string, Transform, SidebarFolder, SidebarFolder.Factory>().FromComponentInNewPrefab(sidebarFolderPrefab).AsSingle();
+
+            BindWindows();
+        }
+        private void InstallSettings()
+        {
+            SettingsManager manager = new SettingsManager();
+            Container.BindInstance(manager);
+            manager.InstallBindings(Container);
+        }
+        private void BindInstances()
+        {
             Container.BindInstance(filesView);
             Container.BindInstance(contextMenu);
             Container.BindInstance(downloads);
             Container.BindInstance(tabs);
+        }
+        private void BindWindows()
+        {
+            Container.BindInstance(createRename);
+            Container.BindInstance(copyConflict);
+        }
 
-            Container.Bind<FileOperator>().AsSingle();
-            Container.Bind<UClipboard>().AsSingle();
-
+        private void BindUIItems()
+        {
             BindPool<EntryUIItem, EntryUIItem.Pool>(entryPrefab);
             BindPool<PathBarSegment, PathBarSegment.Pool>(pathBarSegment);
 
@@ -55,17 +81,7 @@ namespace InApp.DI
             BindPool<UrlButton, UrlButton.Pool>(urlButtonPrefab);
 
             BindPool<TabUIItem, TabUIItem.Pool>(tabPrefab);
-
-            Container.BindFactory<string, Transform, SidebarFolder, SidebarFolder.Factory>().FromComponentInNewPrefab(sidebarFolderPrefab).AsSingle();
-
-            BindWindows();
         }
-        private void BindWindows()
-        {
-            Container.BindInstance(createRename);
-            Container.BindInstance(copyConflict);
-        }
-
         private void BindPool<Item, Pool>(Item prefab) where Item : MonoBehaviour where Pool : IMemoryPool
         {
             Container.BindMemoryPool<Item, Pool>().FromComponentInNewPrefab(prefab).UnderTransform(entriesPool);

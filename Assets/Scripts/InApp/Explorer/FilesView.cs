@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Stopwatch = System.Diagnostics.Stopwatch;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -28,16 +29,18 @@ namespace InApp.UI
         private ContextMenuCreator context;
         private FileOperator fileOperator;
         private UClipboard clipboard;
+        private Settings settings;
 
         private Tab tab;
 
         [Inject]
-        private void Construct(EntryUIItem.Pool pool, ContextMenuCreator context, FileOperator fileOperator, UClipboard clipboard)
+        private void Construct(EntryUIItem.Pool pool, ContextMenuCreator context, FileOperator fileOperator, UClipboard clipboard, Settings settings)
         {
             this.pool = pool;
             this.context = context;
             this.fileOperator = fileOperator;
             this.clipboard = clipboard;
+            this.settings = settings;
 
             fileOperator.onAnyOperationApplied += () => FilesChanged(null, null);
 
@@ -64,10 +67,17 @@ namespace InApp.UI
         public void OpenTab(Tab tab)
         {
             this.tab = tab;
+            Refresh();
+        }
+        public void Refresh()
+        {
             Show(tab.path.GetFullPath(), false);
         }
         public void Show(string path, bool saveToHistory = true)
         {
+            Stopwatch w = Stopwatch.StartNew();
+            
+
             path = path.Replace("\\", "/").Replace(@"\", "/");
             tab.path.Set(path);
 
@@ -75,28 +85,43 @@ namespace InApp.UI
             {
                 history.Add(path);
             }
-            
 
+            Stopwatch w1 = Stopwatch.StartNew();
             DeselectAll();
             foreach (var item in entries)
             {
                 pool.Despawn(item);
             }
             entries.Clear();
-            
+            w1.Stop();
+            Debug.Log(" -- cleared in " + w1.ElapsedMilliseconds);
 
-            foreach (string entryPath in Directory.GetDirectories(path))
+            w1.Restart();
+            var folderSortingData = settings.folderSortingData.FirstOrDefault(d => d.path == path);
+
+            IEnumerable<string> folderEnties = Directory.GetDirectories(path).Union(Directory.GetFiles(path));
+
+            if (folderSortingData != null && folderSortingData.isSortingByDate)
+            {
+                folderEnties = EntryUtils.OrderByModifyDate(folderEnties);
+            }
+            w1.Stop();
+            Debug.Log(" -- enties handled in " + w1.ElapsedMilliseconds);
+
+            w1.Restart();
+            foreach (string entryPath in folderEnties)
             {
                 SpawnItem(entryPath);
             }
-            foreach (string entryPath in Directory.GetFiles(path))
-            {
-                SpawnItem(entryPath);
-            }
+            w1.Stop();
+            Debug.Log(" -- spawned in " + w1.ElapsedMilliseconds);
 
             fileWatcher.Path = CurrentPath;
 
             onPathChanged?.Invoke();
+
+            w.Stop();
+            Debug.Log("Showed in " + w.ElapsedMilliseconds + "ms");
         }
         public void OnItemClicked(EntryUIItem item)
         {

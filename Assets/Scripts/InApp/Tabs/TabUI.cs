@@ -16,6 +16,7 @@ namespace InApp
 
         [SerializeField] private RectTransform tabsContent;
         [SerializeField] private RectTransform addButton;
+        [SerializeField] private WindowScript window;
 
         private List<Tab> tabs = new List<Tab>();
 

@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace InApp
 {
@@ -76,6 +78,20 @@ namespace InApp
                 }
                 return string.Format(entryNewPath, index);
             }
+        }
+        public static IEnumerable<string> OrderByModifyDate(IEnumerable<string> enties)
+        {
+            return enties.OrderByDescending(e =>
+            {
+                if (Directory.Exists(e))
+                {
+                    return new DirectoryInfo(e).LastWriteTime;
+                }
+                else
+                {
+                    return new FileInfo(e).LastWriteTime;
+                }
+            });
         }
 
         private static void CopyFilesRecursively(string sourcePath, string targetPath)
