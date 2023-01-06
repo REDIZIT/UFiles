@@ -6,6 +6,8 @@ namespace InApp
     public class Settings
     {
         public List<FolderSortingData> folderSortingData = new List<FolderSortingData>();
+        public SidebarData sidebar = new SidebarData();
+
         public SettingsManager manager;
 
         private Settings(SettingsManager manager)
@@ -22,6 +24,14 @@ namespace InApp
                 path = "C:/Users/redizit/Downloads",
                 type = FolderSortingData.Type.BySize
             });
+
+            settings.sidebar = new SidebarData()
+            {
+                favourite = new List<string>()
+                {
+                    "C:/Users/redizit/Downloads"
+                }
+            };
 
             return settings;
         }
@@ -56,5 +66,11 @@ namespace InApp
             /// </summary>
             BySize
         }
+    }
+
+    [Serializable]
+    public class SidebarData
+    {
+        public List<string> favourite = new List<string>();
     }
 }

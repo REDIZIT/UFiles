@@ -79,6 +79,11 @@ namespace InApp
                 return string.Format(entryNewPath, index);
             }
         }
+        public static string GetName(string path)
+        {
+            if (Directory.Exists(path)) return new DirectoryInfo(path).Name;
+            else return new FileInfo(path).Name;
+        }
 
         private static void CopyFilesRecursively(string sourcePath, string targetPath)
         {

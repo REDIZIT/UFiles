@@ -7,10 +7,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Zenject;
+using Debug = UnityEngine.Debug;
 
 namespace InApp.UI
 {
-    public class EntryUIItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+    public class EntryUIItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler
     {
         public bool IsSelected { get; private set; }
         public string Path { get; private set; }
@@ -33,6 +34,7 @@ namespace InApp.UI
         private RectTransform rect;
         private DateTime lastClickTime;
         private FilePreview preview;
+        private AppDragDrop dragDrop;
 
         private IconsSO icons;
         private FilesView files;
@@ -43,13 +45,14 @@ namespace InApp.UI
         private const int DOUBLE_CLICK_MS = 250;
 
         [Inject]
-        private void Construct(IconsSO icons, FilesView files, Pool pool, ContextMenuCreator contextCreator, TabUI tabs)
+        private void Construct(IconsSO icons, FilesView files, Pool pool, ContextMenuCreator contextCreator, TabUI tabs, AppDragDrop dragDrop)
         {
             this.icons = icons;
             this.files = files;
             this.pool = pool;
             this.contextCreator = contextCreator;
             this.tabs = tabs;
+            this.dragDrop = dragDrop;
 
             rect = GetComponent<RectTransform>();
             preview = new FilePreview(icon);
@@ -270,6 +273,18 @@ namespace InApp.UI
             }
         }
 
+        public void OnDrag(PointerEventData eventData)
+        {
+            if (dragDrop.IsDragging == false)
+            {
+                dragDrop.StartDrag(new EntryData()
+                {
+                    path = Path,
+                    icon = preview.GetSprite()
+                });
+            }
+        }
+
         public class Pool : MonoMemoryPool<EntryUIItem>
         {
             protected override void Reinitialize(EntryUIItem item)
@@ -285,6 +300,20 @@ namespace InApp.UI
                 item.linkedItems.Clear();
 
                 base.OnDespawned(item);
+            }
+        }
+        public class EntryData : DragDropData
+        {
+            public string path;
+            public Sprite icon;
+
+            public override Sprite GetIcon()
+            {
+                return icon;
+            }
+            public override string GetDisplayText()
+            {
+                return EntryUtils.GetName(path);
             }
         }
     }

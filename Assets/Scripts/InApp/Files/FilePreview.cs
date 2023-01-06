@@ -47,5 +47,9 @@ namespace InApp.UI
 
             Profiler.EndSample();
         }
+        public Sprite GetSprite()
+        {
+            return Sprite.Create((Texture2D)imageToSet.texture, new Rect(0, 0, imageToSet.texture.width, imageToSet.texture.height), Vector2.one / 2f);
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace InApp.DI
         [SerializeField] private ContextMenuCreator contextMenu;
         [SerializeField] private DownloadsWatcherUI downloads;
         [SerializeField] private TabUI tabs;
+        [SerializeField] private AppDragDrop dragDrop;
 
         [SerializeField] private EntryUIItem entryPrefab;
         [SerializeField] private PathBarSegment pathBarSegment;
@@ -62,6 +63,7 @@ namespace InApp.DI
             Container.BindInstance(contextMenu);
             Container.BindInstance(downloads);
             Container.BindInstance(tabs);
+            Container.BindInstance(dragDrop);
         }
         private void BindWindows()
         {
