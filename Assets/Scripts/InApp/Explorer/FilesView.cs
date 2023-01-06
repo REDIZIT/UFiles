@@ -75,9 +75,6 @@ namespace InApp.UI
         }
         public void Show(string path, bool saveToHistory = true)
         {
-            Stopwatch w = Stopwatch.StartNew();
-            
-
             path = path.Replace("\\", "/").Replace(@"\", "/");
             tab.path.Set(path);
 
@@ -86,42 +83,60 @@ namespace InApp.UI
                 history.Add(path);
             }
 
-            Stopwatch w1 = Stopwatch.StartNew();
             DeselectAll();
-            foreach (var item in entries)
-            {
-                pool.Despawn(item);
-            }
-            entries.Clear();
-            w1.Stop();
-            Debug.Log(" -- cleared in " + w1.ElapsedMilliseconds);
 
-            w1.Restart();
+
+            // Handling files and folders
             var folderSortingData = settings.folderSortingData.FirstOrDefault(d => d.path == path);
-
             IEnumerable<string> folderEnties = Directory.GetDirectories(path).Union(Directory.GetFiles(path));
+
+            folderEnties.Where(p =>
+            {
+                if (Path.GetExtension(p) == ".meta")
+                {
+                    string metaTargetFile = p.Substring(0, p.Length - ".meta".Length);
+                    if (EntryUtils.Exists(metaTargetFile)) return false;
+                }
+                return true;
+            });
 
             if (folderSortingData != null && folderSortingData.isSortingByDate)
             {
                 folderEnties = EntryUtils.OrderByModifyDate(folderEnties);
             }
-            w1.Stop();
-            Debug.Log(" -- enties handled in " + w1.ElapsedMilliseconds);
 
-            w1.Restart();
-            foreach (string entryPath in folderEnties)
+            // Spawning and despawning UIItems
+            int spawnedCount = entries.Count;
+            int targetCount = folderEnties.Count();
+
+            if (spawnedCount > targetCount)
             {
-                SpawnItem(entryPath);
+                for (int i = 0; i < spawnedCount - targetCount; i++)
+                {
+                    pool.Despawn(entries[0]);
+                    entries.RemoveAt(0);
+                }
             }
-            w1.Stop();
-            Debug.Log(" -- spawned in " + w1.ElapsedMilliseconds);
+            else if (spawnedCount < targetCount)
+            {
+                for (int i = 0; i < targetCount - spawnedCount; i++)
+                {
+                    SpawnItem();
+                }
+            }
 
+            // Refreshing UIItems
+            int j = 0;
+            foreach (var entry in folderEnties)
+            {
+                entries[j].Refresh(entry);
+                j++;
+            }
+
+            
+            // Updating FileWatcher
             fileWatcher.Path = CurrentPath;
-
             onPathChanged?.Invoke();
-
-            w.Stop();
-            Debug.Log("Showed in " + w.ElapsedMilliseconds + "ms");
         }
         public void OnItemClicked(EntryUIItem item)
         {
@@ -240,15 +255,9 @@ namespace InApp.UI
             item.SetSelection(true);
             selectedEntries.Add(item);
         }
-        private void SpawnItem(string entryPath)
+        private void SpawnItem()
         {
-            if (Path.GetExtension(entryPath) == ".meta")
-            {
-                string metaTargetFile = entryPath.Substring(0, entryPath.Length - ".meta".Length);
-                if (EntryUtils.Exists(metaTargetFile)) return;
-            }
-
-            var item = pool.Spawn(entryPath);
+            var item = pool.Spawn();
             item.transform.parent = content;
             item.transform.SetAsLastSibling();
 

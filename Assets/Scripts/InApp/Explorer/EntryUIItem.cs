@@ -134,8 +134,15 @@ namespace InApp.UI
         }
 
 
-        private void Refresh(string path)
+        public void Refresh(string path)
         {
+            linkedParent = null;
+            isHovered = false;
+            isLinkedHovered = false;
+            isLinkedExpanded = false;
+            SetSelection(false);
+
+
             Path = path;
 
             if (IsPathDirectory())
@@ -199,7 +206,8 @@ namespace InApp.UI
         }
         private void CreateLinkedItem(string filepath)
         {
-            var inst = pool.Spawn(filepath);
+            var inst = pool.Spawn();
+            inst.Refresh(filepath);
             inst.transform.parent = linkedFilesContent;
             inst.linkedParent = this;
             linkedItems.Add(inst);
@@ -262,19 +270,11 @@ namespace InApp.UI
             }
         }
 
-        public class Pool : MonoMemoryPool<string, EntryUIItem>
+        public class Pool : MonoMemoryPool<EntryUIItem>
         {
-            protected override void Reinitialize(string p1, EntryUIItem item)
+            protected override void Reinitialize(EntryUIItem item)
             {
-                item.linkedParent = null;
-                item.isHovered = false;
-                item.isLinkedHovered = false;
-                item.isLinkedExpanded = false;
-                item.SetSelection(false);
-
-                item.Refresh(p1);
-
-                base.Reinitialize(p1, item);
+                base.Reinitialize(item);
             }
             protected override void OnDespawned(EntryUIItem item)
             {

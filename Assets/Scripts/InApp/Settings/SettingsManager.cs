@@ -6,7 +6,11 @@ namespace InApp
 {
     public class SettingsManager
     {
-        private const string FOLDER_PATH = "/data/";
+#if UNITY_EDITOR
+        private const string FOLDER_PATH = "/../Build/Data/";
+#elif UNITY_STANDALONE
+        private const string FOLDER_PATH = "/../Data/";
+#endif
         private const string FILE_NAME = "settings.json";
 
         public void InstallBindings(DiContainer container)
