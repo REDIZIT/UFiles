@@ -1,15 +1,17 @@
 using InApp.UI;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Zenject;
 
 namespace InApp.Sidebar
 {
-    public class SidebarFolder : MonoBehaviour
+    public class SidebarFolder : MonoBehaviour, IPointerClickHandler
     {
         [SerializeField] private Image icon;
         [SerializeField] private TextMeshProUGUI label;
@@ -19,11 +21,18 @@ namespace InApp.Sidebar
         private IPath path;
 
         private FilesView files;
+        private ContextMenuCreator contextCreator;
+        private TabUI tabs;
+        private SidebarGroup group;
 
         [Inject]
-        private void Construct(FilesView files, string path, Transform parent)
+        private void Construct(FilesView files, ContextMenuCreator contextCreator, TabUI tabs, SidebarGroup group, string path, Transform parent)
         {
             this.files = files;
+            this.contextCreator = contextCreator;
+            this.tabs = tabs;
+            this.group = group;
+
             Refresh(new EntryPath(path));
             transform.parent = parent;
         }
@@ -34,7 +43,7 @@ namespace InApp.Sidebar
         }
         private void Refresh(IPath folderPath)
         {
-            this.path = folderPath;
+            path = folderPath;
             label.text = folderPath.GetDisplayName();
 
             DirectoryInfo d = new DirectoryInfo(folderPath.GetFullPath());
@@ -61,10 +70,49 @@ namespace InApp.Sidebar
             fillCircle.fillAmount = 1 - info.TotalFreeSpace / (float)info.TotalSize;
         }
 
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if(eventData.button == PointerEventData.InputButton.Right)
+            {
+                contextCreator.ShowMenu(new List<ContextItem>()
+                {
+                    new RemoveFromFavouriteItem(path, group)
+                });
+            }
+            else if (eventData.button == PointerEventData.InputButton.Middle)
+            {
+                tabs.OpenNew(path, true);
+            }
+        }
 
-        
+        public class RemoveFromFavouriteItem : ContextItem
+        {
+            private IPath path;
+            private SidebarGroup group;
 
-        public class Factory : PlaceholderFactory<string, Transform, SidebarFolder>
+            [Inject] private Settings settings;
+
+            public RemoveFromFavouriteItem(IPath path, SidebarGroup group)
+            {
+                this.path = path;
+                this.group = group;
+                text = "Убрать из избранного";
+            }
+
+            public override void OnClick(ContextItemEnvironment env)
+            {
+                base.OnClick(env);
+                settings.sidebar.favourite.RemoveAll(p => p == path.GetFullPath());
+                settings.Save();
+                group.Refresh();
+            }
+
+            public override Texture2D GetIcon()
+            {
+                return icons.favourite.texture;
+            }
+        }
+        public class Factory : PlaceholderFactory<SidebarGroup, string, Transform, SidebarFolder>
         {
         }
     }

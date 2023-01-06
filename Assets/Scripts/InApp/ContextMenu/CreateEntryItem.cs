@@ -16,7 +16,7 @@ namespace InApp.UI
 
         public override Texture2D GetIcon()
         {
-            return icons.context.create;
+            return icons.context.create.texture;
         }
     }
     public class CreateConcreteEntryItem : ContextItem
@@ -33,7 +33,7 @@ namespace InApp.UI
 
         public override Texture2D GetIcon()
         {
-            return entryType == EntryType.Directory ? icons.folderEmpty : icons.defaultFile;
+            return entryType == EntryType.Directory ? icons.folderEmpty.texture : icons.defaultFile.texture;
         }
 
         public override void OnClick(ContextItemEnvironment env)

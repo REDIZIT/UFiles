@@ -29,7 +29,7 @@ namespace InApp.UI
                 HideMenu();
             }
         }
-        public ContextMenuUI ShowMenu(List<ContextItem> items, Vector2 screenPosition)
+        public ContextMenuUI ShowMenu(List<ContextItem> items, Vector2 screenPosition = default)
         {
             foreach (var item in items)
             {
@@ -38,7 +38,7 @@ namespace InApp.UI
 
             var menu = pool.Spawn(items);
             menu.transform.parent = transform;
-            menu.transform.position = screenPosition;
+            menu.transform.position = screenPosition == default ? (Vector2)Input.mousePosition : screenPosition;
             menues.Add(menu);
             locker.SetActive(true);
 

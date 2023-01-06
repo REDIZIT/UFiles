@@ -17,7 +17,7 @@ namespace InApp.UI
 
         public override Texture2D GetIcon()
         {
-            return type == UClipboard.CopyType.Copy ? icons.context.copy : icons.context.cut;
+            return type == UClipboard.CopyType.Copy ? icons.context.copy.texture : icons.context.cut.texture;
         }
         public override void OnClick(ContextItemEnvironment env)
         {

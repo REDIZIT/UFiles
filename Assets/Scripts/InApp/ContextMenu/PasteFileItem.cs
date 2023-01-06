@@ -14,7 +14,7 @@ namespace InApp.UI
 
         public override Texture2D GetIcon()
         {
-            return icons.context.paste;
+            return icons.context.paste.texture;
         }
 
         public override void OnClick(ContextItemEnvironment env)

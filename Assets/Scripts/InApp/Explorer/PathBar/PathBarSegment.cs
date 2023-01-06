@@ -1,21 +1,26 @@
 ﻿using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Zenject;
 
 namespace InApp.UI
 {
-    public class PathBarSegment : MonoBehaviour
+    public class PathBarSegment : MonoBehaviour, IDragHandler
     {
         [SerializeField] private TextMeshProUGUI name;
         [SerializeField] private RectTransform rectToResize;
 
         private string path;
         private FilesView view;
+        private AppDragDrop dragDrop;
+        private IconsSO icons;
 
         [Inject]
-        private void Construct(FilesView view)
+        private void Construct(FilesView view, AppDragDrop dragDrop, IconsSO icons)
         {
             this.view = view;
+            this.dragDrop = dragDrop;
+            this.icons = icons;
         }
 
         public void Refresh(string segment, string path)
@@ -27,6 +32,17 @@ namespace InApp.UI
         public void OnClick()
         {
             view.Show(path);
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            if (dragDrop.IsDragging) return;
+
+            dragDrop.StartDrag(new EntryUIItem.EntryData()
+            {
+                icon = icons.folderFill,
+                path = path,
+            });
         }
 
         public class Pool : MemoryPool<string, string, PathBarSegment>

@@ -160,23 +160,23 @@ namespace InApp.UI
                     size.text = entriesCount + " элементов";
                     if (entriesCount > 0)
                     {
-                        icon.texture = icons.folderFill;
+                        icon.texture = icons.folderFill.texture;
                     }
                     else
                     {
-                        icon.texture = icons.folderEmpty;
+                        icon.texture = icons.folderEmpty.texture;
                     }
                 }
                 catch(UnauthorizedAccessException)
                 {
                     name.text += " [нет доступа]";
                     size.text = "нет доступа";
-                    icon.texture = icons.folderEmpty;
+                    icon.texture = icons.folderEmpty.texture;
                 }
             }
             else
             {
-                icon.texture = icons.defaultFile;
+                icon.texture = icons.defaultFile.texture;
                 FileInfo info = new FileInfo(path);
                 name.text = info.Name;
                 size.text = FileSizeUtil.BytesToString(info.Length);

@@ -47,7 +47,7 @@ namespace InApp.DI
 
             BindUIItems();
             
-            Container.BindFactory<string, Transform, SidebarFolder, SidebarFolder.Factory>().FromComponentInNewPrefab(sidebarFolderPrefab).AsSingle();
+            Container.BindFactory<SidebarGroup, string, Transform, SidebarFolder, SidebarFolder.Factory>().FromComponentInNewPrefab(sidebarFolderPrefab).AsSingle();
 
             BindWindows();
         }

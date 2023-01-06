@@ -5,16 +5,18 @@ namespace InApp.UI
     [CreateAssetMenu(menuName = "SODB/Icons")]
     public class IconsSO : ScriptableObject
     {
-        public Texture2D folderFill, folderEmpty, folderOpen;
-        public Texture2D defaultFile;
+        public Sprite folderFill, folderEmpty, folderOpen;
+        public Sprite defaultFile;
 
         public ContextIcons context;
+
+        public Sprite favourite;
 
         [System.Serializable]
         public class ContextIcons
         {
-            public Texture2D create, rename, delete;
-            public Texture2D copy, cut, paste;
+            public Sprite create, rename, delete;
+            public Sprite copy, cut, paste;
         }
     }
 }

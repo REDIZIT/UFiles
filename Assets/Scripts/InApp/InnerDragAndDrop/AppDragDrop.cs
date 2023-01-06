@@ -50,7 +50,7 @@ namespace InApp
                 }
 
 
-                bool targetWillTake = target != null && target.WillTake(holdingItem);
+                bool targetWillTake = target != null && target.WillHandleDrop(holdingItem);
 
                 if (targetWillTake)
                 {
@@ -77,7 +77,7 @@ namespace InApp
 
         private void UpdateTooltip()
         {
-            if (activeTarget == null || holdingItem == null || activeTarget.WillTake(holdingItem) == false)
+            if (activeTarget == null || holdingItem == null || activeTarget.WillHandleDrop(holdingItem) == false)
             {
                 tooltip.gameObject.SetActive(false);
             }
@@ -112,7 +112,7 @@ namespace InApp
         /// <summary>
         /// Return true if this target will handle drop events, and return false to ignore this drag data item
         /// </summary>
-        bool WillTake(DragDropData data);
+        bool WillHandleDrop(DragDropData data);
         void OnMouseOver(DragDropData data);
         void OnMouseExit();
         void OnDrop(DragDropData data);

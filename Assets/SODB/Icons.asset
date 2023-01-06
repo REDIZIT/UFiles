@@ -12,14 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f38159f80cd7b54ba1d3017636d0058, type: 3}
   m_Name: Icons
   m_EditorClassIdentifier: 
-  folderFill: {fileID: 2800000, guid: ceedb5a2869cc8a4b988cfd3c52d5863, type: 3}
-  folderEmpty: {fileID: 2800000, guid: f9d585c393a255e44b0dc3ae9da80cd0, type: 3}
-  folderOpen: {fileID: 2800000, guid: 9c33d9330724d5344b47fce8debe366b, type: 3}
-  defaultFile: {fileID: 2800000, guid: 629f1a6a7e949724483083271f72bc3d, type: 3}
+  folderFill: {fileID: 21300000, guid: ceedb5a2869cc8a4b988cfd3c52d5863, type: 3}
+  folderEmpty: {fileID: 21300000, guid: f9d585c393a255e44b0dc3ae9da80cd0, type: 3}
+  folderOpen: {fileID: 21300000, guid: 9c33d9330724d5344b47fce8debe366b, type: 3}
+  defaultFile: {fileID: 21300000, guid: 629f1a6a7e949724483083271f72bc3d, type: 3}
   context:
-    create: {fileID: 2800000, guid: 0f9bf675bb6f870469e6f4acaee96d4e, type: 3}
-    rename: {fileID: 2800000, guid: e1e9d9a1b24ee2e44a0be8e3995f5cfd, type: 3}
-    delete: {fileID: 2800000, guid: 448b0ce0691ed0349a40967c5f72c4e7, type: 3}
-    copy: {fileID: 2800000, guid: 5106a328f26ae7b4a86303031822dcf6, type: 3}
-    cut: {fileID: 2800000, guid: 38ce7766b2440d4428e3e7d15f33f9f3, type: 3}
-    paste: {fileID: 2800000, guid: d7f1c30e2a5e6e74a996bc80c57ec279, type: 3}
+    create: {fileID: 21300000, guid: 0f9bf675bb6f870469e6f4acaee96d4e, type: 3}
+    rename: {fileID: 21300000, guid: e1e9d9a1b24ee2e44a0be8e3995f5cfd, type: 3}
+    delete: {fileID: 21300000, guid: 448b0ce0691ed0349a40967c5f72c4e7, type: 3}
+    copy: {fileID: 21300000, guid: 5106a328f26ae7b4a86303031822dcf6, type: 3}
+    cut: {fileID: 21300000, guid: 38ce7766b2440d4428e3e7d15f33f9f3, type: 3}
+    paste: {fileID: 21300000, guid: d7f1c30e2a5e6e74a996bc80c57ec279, type: 3}
+  favourite: {fileID: 21300000, guid: 71d98e680696e8b4ca925356f0af543b, type: 3}

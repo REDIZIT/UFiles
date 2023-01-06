@@ -53,7 +53,7 @@ namespace InApp.UI
             }
             else
             {
-                image.texture = EntryUtils.GetType(model.filepath) == EntryType.Directory ? icons.folderOpen : icons.defaultFile;
+                image.texture = EntryUtils.GetType(model.filepath) == EntryType.Directory ? icons.folderOpen.texture : icons.defaultFile.texture;
             }
         }
         protected override async Task<Answer> GetAnswer()

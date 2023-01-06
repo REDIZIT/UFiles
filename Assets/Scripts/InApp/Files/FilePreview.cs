@@ -17,6 +17,7 @@ namespace InApp.UI
         {
             this.imageToSet = imageToSet;
         }
+
         public bool CanHandle(string path)
         {
             string ext = Path.GetExtension(path);

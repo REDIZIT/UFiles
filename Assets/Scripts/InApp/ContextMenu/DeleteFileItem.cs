@@ -19,7 +19,7 @@ namespace InApp.UI
 
         public override Texture2D GetIcon()
         {
-            return icons.context.delete;
+            return icons.context.delete.texture;
         }
         public override void Update()
         {
