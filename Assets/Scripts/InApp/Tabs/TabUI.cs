@@ -28,7 +28,10 @@ namespace InApp
         {
             this.pool = pool;
             this.files = files;
+        }
 
+        private void Start()
+        {
             OnAddTabClicked();
         }
 

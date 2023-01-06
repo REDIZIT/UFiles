@@ -424,8 +424,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   text: {fileID: 9062600379624720429}
   image: {fileID: 2747117926568035011}
-  activeColor: {r: 0.14901961, g: 0.14901961, b: 0.14901961, a: 0.5019608}
-  activeHighlighted: {r: 0.14901961, g: 0.14901961, b: 0.14901961, a: 0.5019608}
+  activeColor: {r: 0.14901961, g: 0.14901961, b: 0.14901961, a: 0.7490196}
+  activeHighlighted: {r: 0.14901961, g: 0.14901961, b: 0.14901961, a: 0.7490196}
 --- !u!114 &2747117926568035011
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -449,7 +449,7 @@ MonoBehaviour:
   m_Colors:
     m_NormalColor: {r: 0.14901961, g: 0.14901961, b: 0.14901961, a: 0}
     m_HighlightedColor: {r: 0.14901961, g: 0.14901961, b: 0.14901961, a: 0.16078432}
-    m_PressedColor: {r: 0.14901961, g: 0.14901961, b: 0.14901961, a: 0.34901962}
+    m_PressedColor: {r: 0.14901961, g: 0.14901961, b: 0.14901961, a: 0.7490196}
     m_SelectedColor: {r: 0.14901961, g: 0.14901961, b: 0.14901961, a: 0.5019608}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1

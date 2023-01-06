@@ -101,7 +101,7 @@ namespace InApp.UI
 
             System.Diagnostics.Stopwatch w = System.Diagnostics.Stopwatch.StartNew();
             folderEnties = EntriesSorter.Sort(folderEnties, folderSortingData == null ? FolderSortingData.Type.None : folderSortingData.type);
-            if (folderSortingData.isReversed)
+            if (folderSortingData != null && folderSortingData.isReversed)
             {
                 folderEnties = folderEnties.Reverse();
             }
