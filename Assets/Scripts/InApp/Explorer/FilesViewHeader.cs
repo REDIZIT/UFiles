@@ -16,19 +16,37 @@ namespace InApp.UI
             this.settings = settings;
         }
 
-        public void OnHeaderClicked()
+        public void OnHeaderClicked(int typeNumber)
         {
+            FolderSortingData.Type type = (FolderSortingData.Type)typeNumber;
             var data = settings.folderSortingData.FirstOrDefault(d => d.path == files.CurrentPath);
             if (data != null)
             {
-                data.isSortingByDate = !data.isSortingByDate;
+                if (data.type == type)
+                {
+                    if (data.isReversed == false)
+                    {
+                        data.isReversed = true;
+                    }
+                    else
+                    {
+                        data.type = FolderSortingData.Type.None;
+                        data.isReversed = false;
+                    }
+                }
+                else
+                {
+                    data.type = type;
+                    data.isReversed = false;
+                }
             }
             else
             {
                 data = new FolderSortingData()
                 {
                     path = files.CurrentPath,
-                    isSortingByDate = true
+                    type = type,
+                    isReversed = true
                 };
                 settings.folderSortingData.Add(data);
             }

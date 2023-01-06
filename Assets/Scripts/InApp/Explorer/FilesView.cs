@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Stopwatch = System.Diagnostics.Stopwatch;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -100,10 +99,14 @@ namespace InApp.UI
                 return true;
             });
 
-            if (folderSortingData != null && folderSortingData.isSortingByDate)
+            System.Diagnostics.Stopwatch w = System.Diagnostics.Stopwatch.StartNew();
+            folderEnties = EntriesSorter.Sort(folderEnties, folderSortingData == null ? FolderSortingData.Type.None : folderSortingData.type);
+            if (folderSortingData.isReversed)
             {
-                folderEnties = EntryUtils.OrderByModifyDate(folderEnties);
+                folderEnties = folderEnties.Reverse();
             }
+            w.Stop();
+            Debug.Log("Sorted in " + w.ElapsedMilliseconds + "ms");
 
             // Spawning and despawning UIItems
             int spawnedCount = entries.Count;

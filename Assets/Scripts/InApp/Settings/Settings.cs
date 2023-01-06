@@ -20,7 +20,7 @@ namespace InApp
             settings.folderSortingData.Add(new FolderSortingData()
             {
                 path = "C:/Users/redizit/Downloads",
-                isSortingByDate = true
+                type = FolderSortingData.Type.BySize
             });
 
             return settings;
@@ -31,10 +31,30 @@ namespace InApp
             manager.Save(this);
         }
     }
+
+
     [Serializable]
     public class FolderSortingData
     {
         public string path;
-        public bool isSortingByDate;
+        public Type type;
+        public bool isReversed;
+
+        public enum Type
+        {
+            None,
+            /// <summary>
+            /// By default from A to Z
+            /// </summary>
+            ByName,
+            /// <summary>
+            /// By default from new to old
+            /// </summary>
+            ByDate,
+            /// <summary>
+            /// By default from big to small
+            /// </summary>
+            BySize
+        }
     }
 }

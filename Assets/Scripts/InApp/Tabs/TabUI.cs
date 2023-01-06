@@ -55,7 +55,7 @@ namespace InApp
 
         public void OnAddTabClicked()
         {
-            OpenNew(new EntryPath("C:/"), true);
+            OpenNew(new EntryPath("C:/Users/redizit/Downloads"), true);
         }
         public void OnTabClicked(Tab model)
         {
