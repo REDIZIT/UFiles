@@ -99,14 +99,11 @@ namespace InApp.UI
                 return true;
             });
 
-            System.Diagnostics.Stopwatch w = System.Diagnostics.Stopwatch.StartNew();
             folderEnties = EntriesSorter.Sort(folderEnties, folderSortingData == null ? FolderSortingData.Type.None : folderSortingData.type);
             if (folderSortingData != null && folderSortingData.isReversed)
             {
                 folderEnties = folderEnties.Reverse();
             }
-            w.Stop();
-            Debug.Log("Sorted in " + w.ElapsedMilliseconds + "ms");
 
             // Spawning and despawning UIItems
             int spawnedCount = entries.Count;

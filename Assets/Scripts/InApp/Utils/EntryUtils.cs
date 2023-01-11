@@ -85,6 +85,15 @@ namespace InApp
             else return new FileInfo(path).Name;
         }
 
+        public static IEnumerable<string> GetDrives()
+        {
+            foreach (DriveInfo drive in DriveInfo.GetDrives())
+            {
+                yield return drive.Name;
+            }
+        }
+
+
         private static void CopyFilesRecursively(string sourcePath, string targetPath)
         {
             Directory.CreateDirectory(targetPath);
@@ -98,5 +107,7 @@ namespace InApp
                 File.Copy(newPath, newPath.Replace(sourcePath, targetPath), true);
             }
         }
+
+       
     }
 }
