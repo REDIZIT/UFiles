@@ -183,6 +183,7 @@ namespace InApp.UI
                 modifyDate.text = FileSizeUtil.PrettyModifyDate(info.LastWriteTime);
             }
 
+            ClearLinkedItems();
             CheckAndCreateLinkedFiles();
             UpdateExpandLinkedItems();
 
@@ -194,6 +195,14 @@ namespace InApp.UI
                 preview.isLoading = false;
                 preview.isLoaded = false;
             }
+        }
+        private void ClearLinkedItems()
+        {
+            foreach (EntryUIItem linkedItem in linkedItems)
+            {
+                pool.Despawn(linkedItem);
+            }
+            linkedItems.Clear();
         }
         private void CheckAndCreateLinkedFiles()
         {
@@ -214,6 +223,8 @@ namespace InApp.UI
             inst.transform.parent = linkedFilesContent;
             inst.linkedParent = this;
             linkedItems.Add(inst);
+
+            Debug.Log("Linked count: " + linkedItems.Count);
 
             inst.UpdateColor();
         }
@@ -287,10 +298,6 @@ namespace InApp.UI
 
         public class Pool : MonoMemoryPool<EntryUIItem>
         {
-            protected override void Reinitialize(EntryUIItem item)
-            {
-                base.Reinitialize(item);
-            }
             protected override void OnDespawned(EntryUIItem item)
             {
                 foreach (EntryUIItem linkedItem in item.linkedItems)

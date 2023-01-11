@@ -89,7 +89,7 @@ namespace InApp.UI
             var folderSortingData = settings.folderSortingData.FirstOrDefault(d => d.path == path);
             IEnumerable<string> folderEnties = Directory.GetDirectories(path).Union(Directory.GetFiles(path));
 
-            folderEnties.Where(p =>
+            folderEnties = folderEnties.Where(p =>
             {
                 if (Path.GetExtension(p) == ".meta")
                 {
