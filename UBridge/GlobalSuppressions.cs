@@ -6,3 +6,4 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Style", "IDE0059:Ненужное присваивание значения", Justification = "<Ожидание>", Scope = "member", Target = "~M:UFilesBridge.IconExtractor.GetIcon(System.String,System.String)")]
+[assembly: SuppressMessage("Interoperability", "CA1416:Проверка совместимости платформы", Justification = "<Ожидание>", Scope = "member", Target = "~M:UBridge.GetFileIconCommand.Perform")]

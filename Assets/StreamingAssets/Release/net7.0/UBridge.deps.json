@@ -6,12 +6,12 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v7.0": {
-      "UFilesBridge/1.0.0": {
+      "UBridge/1.0.0": {
         "dependencies": {
           "System.Drawing.Common": "7.0.0"
         },
         "runtime": {
-          "UFilesBridge.dll": {}
+          "UBridge.dll": {}
         }
       },
       "Microsoft.Win32.SystemEvents/7.0.0": {
@@ -52,7 +52,7 @@
     }
   },
   "libraries": {
-    "UFilesBridge/1.0.0": {
+    "UBridge/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

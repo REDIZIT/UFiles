@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
+using System.Linq;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.Profiling;
 using Debug = UnityEngine.Debug;
 
 namespace InApp
@@ -17,7 +16,7 @@ namespace InApp
         private Dictionary<string, byte[]> loadedIcons = new Dictionary<string, byte[]>();
         private List<string> notHandledPathes = new List<string>();
 
-        private TcpClient client;
+        private Process process;
         private Thread t;
 
         public void Start()
@@ -27,28 +26,28 @@ namespace InApp
         }
         public void Stop()
         {
-            if (client != null)
+            if (process != null && process.HasExited == false)
             {
-                Debug.Log("Close");
-                client.Client.Disconnect(false);
-                client.Close();
+                process.Kill();
             }
             t?.Abort();
         }
         public void UnityUpdate()
         {
-            foreach (var kv in loadedIcons)
+            Profiler.BeginSample("Bridge texture creation");
+            foreach (var key in loadedIcons.Keys.ToArray())
             {
                 Texture2D tex = new Texture2D(1, 1);
-                tex.LoadImage(kv.Value);
+                tex.LoadImage(loadedIcons[key]);
 
-                requests[kv.Key]?.Invoke(tex);
-                requests.Remove(kv.Key);
+                requests[key]?.Invoke(tex);
+                requests.Remove(key);
 
-                Debug.Log("Texture created for " + kv.Key);
+                Debug.Log("Texture created for " + key);
             }
 
             loadedIcons.Clear();
+            Profiler.EndSample();
         }
         public void RequestIcon(string filepath, Action<Texture2D> callback)
         {
@@ -60,7 +59,6 @@ namespace InApp
             }
             else
             {
-                Debug.Log("Request " + filepath);
                 requests.Add(filepath, callback);
                 notHandledPathes.Add(filepath);
             }
@@ -70,20 +68,22 @@ namespace InApp
         private void StartBridge()
         {
             StartProcess();
-            StartTCP();
+            StartSendLoop();
         }
         private void StartProcess()
         {
-            string exePath = Application.streamingAssetsPath + "/Release/net7.0/UFilesBridge.exe";
+            string exePath = Application.streamingAssetsPath + "/Release/net7.0/UBridge.exe";
             ProcessStartInfo info = new ProcessStartInfo(exePath);
-            //info.WindowStyle = ProcessWindowStyle.Hidden;
-            Process.Start(info);
-        }
-        private void StartTCP()
-        {
-            client = new TcpClient();
-            client.Connect(new IPAddress(new byte[] { 127, 0, 0, 1 }), 1703);
+            info.CreateNoWindow = true;
 
+            info.UseShellExecute = false;
+            info.RedirectStandardInput = true;
+            info.RedirectStandardOutput = true;
+
+            process = Process.Start(info);
+        }
+        private void StartSendLoop()
+        {
             while (true)
             {
                 if (notHandledPathes.Count > 0)
@@ -91,21 +91,21 @@ namespace InApp
                     SendCommand(notHandledPathes[0]);
                     notHandledPathes.RemoveAt(0);
                 }
-                Thread.Sleep(20);
             }
         }
         private void SendCommand(string path)
         {
-            var stream = client.GetStream();
-            Debug.Log("Send request " + path);
-            stream.Write(Encoding.UTF8.GetBytes(path), 0, path.Length);
+            Log("Send " + path);
+            var stream = process.StandardInput;
+            stream.WriteLine(path);
 
-            byte[] buffer = new byte[1024 * 100];
-            stream.Read(buffer, 0, buffer.Length);
+            var outstream = process.StandardOutput.BaseStream;
 
+            Log(process.StandardOutput.ReadLine());
+
+            byte[] buffer = new byte[1024];
+            outstream.Read(buffer, 0, buffer.Length);
             loadedIcons.Add(path, buffer);
-
-            stream.Flush();
         }
         private void Log(string messsage)
         {
