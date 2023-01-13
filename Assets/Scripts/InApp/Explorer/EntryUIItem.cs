@@ -34,6 +34,7 @@ namespace InApp.UI
         private RectTransform rect;
         private DateTime lastClickTime;
         private FilePreview preview;
+        private Bridge bridge;
         private AppDragDrop dragDrop;
 
         private IconsSO icons;
@@ -45,7 +46,7 @@ namespace InApp.UI
         private const int DOUBLE_CLICK_MS = 250;
 
         [Inject]
-        private void Construct(IconsSO icons, FilesView files, Pool pool, ContextMenuCreator contextCreator, TabUI tabs, AppDragDrop dragDrop)
+        private void Construct(IconsSO icons, FilesView files, Pool pool, ContextMenuCreator contextCreator, TabUI tabs, AppDragDrop dragDrop, Bridge bridge)
         {
             this.icons = icons;
             this.files = files;
@@ -53,17 +54,18 @@ namespace InApp.UI
             this.contextCreator = contextCreator;
             this.tabs = tabs;
             this.dragDrop = dragDrop;
+            this.bridge = bridge;
 
             rect = GetComponent<RectTransform>();
-            preview = new FilePreview(icon);
+            //preview = new FilePreview(icon);
         }
 
         private void Update()
         {
-            if (preview.isLoading == false && preview.isLoaded == false)
-            {
-                preview.Load(Path);
-            }
+            //if (preview.isLoading == false && preview.isLoaded == false)
+            //{
+            //    preview.Load(Path);
+            //}
         }
 
         public void OnPointerClick(PointerEventData eventData)
@@ -189,12 +191,20 @@ namespace InApp.UI
 
             UpdateColor();
 
-            if (preview.CanHandle(path))
+            if (EntryUtils.GetType(path) == EntryType.File)
             {
-                preview.filepath = path;
-                preview.isLoading = false;
-                preview.isLoaded = false;
+                bridge.RequestIcon(path, (tex) =>
+                {
+                    icon.texture = tex;
+                });
             }
+           
+            //if (preview.CanHandle(path))
+            //{
+            //    preview.filepath = path;
+            //    preview.isLoading = false;
+            //    preview.isLoaded = false;
+            //}
         }
         private void ClearLinkedItems()
         {

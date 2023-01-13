@@ -50,6 +50,9 @@ namespace InApp.DI
             Container.BindFactory<SidebarGroup, string, Transform, SidebarFolder, SidebarFolder.Factory>().FromComponentInNewPrefab(sidebarFolderPrefab).AsSingle();
 
             BindWindows();
+
+
+            Container.Bind<Bridge>().AsSingle();
         }
         private void InstallSettings()
         {
