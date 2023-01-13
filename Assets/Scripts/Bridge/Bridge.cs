@@ -25,6 +25,16 @@ namespace InApp
             t = new Thread(StartBridge);
             t.Start();
         }
+        public void Stop()
+        {
+            if (client != null)
+            {
+                Debug.Log("Close");
+                client.Client.Disconnect(false);
+                client.Close();
+            }
+            t?.Abort();
+        }
         public void UnityUpdate()
         {
             foreach (var kv in loadedIcons)
@@ -74,7 +84,10 @@ namespace InApp
         private void StartProcess()
         {
             string exePath = Application.streamingAssetsPath + "/Release/net7.0/UFilesBridge.exe";
-            Process.Start(exePath);
+            ProcessStartInfo info = new ProcessStartInfo(exePath);
+            info.CreateNoWindow = false;
+            info.WindowStyle = ProcessWindowStyle.Hidden;
+            Process.Start(info);
         }
         private void StartTCP()
         {
@@ -88,7 +101,7 @@ namespace InApp
                     SendCommand(notHandledPathes[0]);
                     notHandledPathes.RemoveAt(0);
                 }
-                Thread.Sleep(100);
+                Thread.Sleep(20);
             }
         }
         private void SendCommand(string path)
@@ -97,7 +110,7 @@ namespace InApp
             Debug.Log("Send request " + path);
             stream.Write(Encoding.UTF8.GetBytes(path), 0, path.Length);
 
-            byte[] buffer = new byte[1024 * 2];
+            byte[] buffer = new byte[1024 * 100];
             stream.Read(buffer, 0, buffer.Length);
 
             loadedIcons.Add(path, buffer);

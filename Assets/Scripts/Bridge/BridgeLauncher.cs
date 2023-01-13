@@ -17,6 +17,10 @@ namespace InApp
         {
             bridge.Start();
         }
+        private void OnApplicationQuit()
+        {
+            bridge.Stop();
+        }
         private void Update()
         {
             bridge.UnityUpdate();
