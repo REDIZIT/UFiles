@@ -69,24 +69,14 @@ namespace InApp
 
         private void StartBridge()
         {
-            Stopwatch w = Stopwatch.StartNew();
-
             StartProcess();
-
-            w.Stop();
-            Log("Start time: " + w.ElapsedMilliseconds);
-            w.Restart();
-
             StartTCP();
-
-            Log("Bridge work time: " + w.ElapsedMilliseconds);
         }
         private void StartProcess()
         {
             string exePath = Application.streamingAssetsPath + "/Release/net7.0/UFilesBridge.exe";
             ProcessStartInfo info = new ProcessStartInfo(exePath);
-            info.CreateNoWindow = false;
-            info.WindowStyle = ProcessWindowStyle.Hidden;
+            //info.WindowStyle = ProcessWindowStyle.Hidden;
             Process.Start(info);
         }
         private void StartTCP()

@@ -11,6 +11,10 @@
 /[Uu]ser[Ss]ettings/
 /icons
 
+/UBridge/obj
+/UBridge/bin
+
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/
@@ -47,6 +51,8 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+
+!*UBridge.csproj
 
 # Unity3D generated meta files
 *.pidb.meta
