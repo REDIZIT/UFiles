@@ -42,8 +42,6 @@ namespace InApp
 
                 requests[key]?.Invoke(tex);
                 requests.Remove(key);
-
-                Debug.Log("Texture created for " + key);
             }
 
             loadedIcons.Clear();
@@ -95,7 +93,6 @@ namespace InApp
         }
         private void SendCommand(string path)
         {
-            Log("Send " + path);
             var stream = process.StandardInput;
             stream.WriteLine(path);
 

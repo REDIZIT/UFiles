@@ -9,12 +9,15 @@ namespace InApp.DI
     {
         [SerializeField] private IconsSO icons;
 
+        [Header("Components")]
         [SerializeField] private FilesView filesView;
         [SerializeField] private ContextMenuCreator contextMenu;
         [SerializeField] private DownloadsWatcherUI downloads;
         [SerializeField] private TabUI tabs;
         [SerializeField] private AppDragDrop dragDrop;
+        [SerializeField] private PicturePreview picturePreview;
 
+        [Header("Prefabs")]
         [SerializeField] private EntryUIItem entryPrefab;
         [SerializeField] private PathBarSegment pathBarSegment;
         [SerializeField] private ContextMenuUIItem contextMenuItemPrefab;
@@ -67,6 +70,7 @@ namespace InApp.DI
             Container.BindInstance(downloads);
             Container.BindInstance(tabs);
             Container.BindInstance(dragDrop);
+            Container.BindInstance(picturePreview);
         }
         private void BindWindows()
         {

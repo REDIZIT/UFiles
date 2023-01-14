@@ -27,6 +27,7 @@ namespace InApp.UI
         [SerializeField] private RectTransform linkArrow;
 
         [SerializeField] private GameObject selectionIndicator;
+        [SerializeField] private PointerHandler previewImage;
 
         private bool isHovered, isLinkedHovered, isLinkedExpanded;
         private List<EntryUIItem> linkedItems = new List<EntryUIItem>();    
@@ -36,6 +37,7 @@ namespace InApp.UI
         private FilePreview preview;
         private Bridge bridge;
         private AppDragDrop dragDrop;
+        private PicturePreview picturePreview;
 
         private IconsSO icons;
         private FilesView files;
@@ -46,7 +48,7 @@ namespace InApp.UI
         private const int DOUBLE_CLICK_MS = 250;
 
         [Inject]
-        private void Construct(IconsSO icons, FilesView files, Pool pool, ContextMenuCreator contextCreator, TabUI tabs, AppDragDrop dragDrop, Bridge bridge)
+        private void Construct(IconsSO icons, FilesView files, Pool pool, ContextMenuCreator contextCreator, TabUI tabs, AppDragDrop dragDrop, Bridge bridge, PicturePreview picturePreview)
         {
             this.icons = icons;
             this.files = files;
@@ -55,17 +57,11 @@ namespace InApp.UI
             this.tabs = tabs;
             this.dragDrop = dragDrop;
             this.bridge = bridge;
+            this.picturePreview = picturePreview;
 
             rect = GetComponent<RectTransform>();
-            //preview = new FilePreview(icon);
-        }
 
-        private void Update()
-        {
-            //if (preview.isLoading == false && preview.isLoaded == false)
-            //{
-            //    preview.Load(Path);
-            //}
+            BindPointerHandlers();
         }
 
         public void OnPointerClick(PointerEventData eventData)
@@ -198,13 +194,17 @@ namespace InApp.UI
                     icon.texture = tex;
                 });
             }
-           
-            //if (preview.CanHandle(path))
-            //{
-            //    preview.filepath = path;
-            //    preview.isLoading = false;
-            //    preview.isLoaded = false;
-            //}
+        }
+        private void BindPointerHandlers()
+        {
+            previewImage.onPointerEnter += () =>
+            {
+                picturePreview.TryOpen(Path, previewImage.Rect);
+            };
+            previewImage.onPointerExit += () =>
+            {
+                picturePreview.Hide();
+            };
         }
         private void ClearLinkedItems()
         {
