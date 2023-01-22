@@ -5,7 +5,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <BaseOutputPath>C:\Users\redizit\UFiles\Assets\StreamingAssets</BaseOutputPath>
+    <BaseOutputPath>..\Assets\StreamingAssets</BaseOutputPath>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
   </PropertyGroup>
 

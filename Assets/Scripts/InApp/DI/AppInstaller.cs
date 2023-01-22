@@ -56,6 +56,8 @@ namespace InApp.DI
 
 
             Container.Bind<Bridge>().AsSingle();
+
+            Container.Bind<ArchiveViewer>().AsSingle();
         }
         private void InstallSettings()
         {

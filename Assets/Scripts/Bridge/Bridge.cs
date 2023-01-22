@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Imaging;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -60,7 +62,7 @@ namespace InApp
                 requests.Add(filepath, callback);
                 notHandledPathes.Add(filepath);
             }
-            
+
         }
 
         private void StartBridge()
@@ -86,23 +88,17 @@ namespace InApp
             {
                 if (notHandledPathes.Count > 0)
                 {
-                    SendCommand(notHandledPathes[0]);
+                    SendFileIconCommand(notHandledPathes[0]);
                     notHandledPathes.RemoveAt(0);
                 }
             }
         }
-        private void SendCommand(string path)
+        private void SendFileIconCommand(string path)
         {
-            var stream = process.StandardInput;
-            stream.WriteLine(path);
+            //GetFileIconCommand command = new GetFileIconCommand();
+            //command.process = process;
 
-            var outstream = process.StandardOutput.BaseStream;
-
-            Log(process.StandardOutput.ReadLine());
-
-            byte[] buffer = new byte[1024];
-            outstream.Read(buffer, 0, buffer.Length);
-            loadedIcons.Add(path, buffer);
+            
         }
         private void Log(string messsage)
         {
@@ -112,4 +108,48 @@ namespace InApp
             });
         }
     }
+    public abstract class BridgeCommand
+    {
+        public Process process;
+
+        public void Perform()
+        {
+            WriteLine(GetType().Name);
+
+            OnPerform();
+        }
+        protected abstract void OnPerform();
+
+        protected void WriteLine(string message)
+        {
+            process.StandardInput.WriteLine(message);
+        }
+    }
+    public class GetFileIconCommand : BridgeCommand
+    {
+        private string path;
+
+        public GetFileIconCommand(string path)
+        {
+            this.path = path;
+        }
+
+        protected override void OnPerform()
+        {
+            WriteLine(path);
+
+            var outstream = process.StandardOutput.BaseStream;
+
+            byte[] buffer = new byte[1024];
+            outstream.Read(buffer, 0, buffer.Length);
+            //loadedIcons.Add(path, buffer);
+        }
+    }
+    //public class ExtractArchiveCommand : BridgeCommand
+    //{
+    //    public void Perform()
+    //    {
+
+    //    }
+    //}
 }

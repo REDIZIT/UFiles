@@ -29,17 +29,19 @@ namespace InApp.UI
         private FileOperator fileOperator;
         private UClipboard clipboard;
         private Settings settings;
+        private ArchiveViewer archiveViewer;
 
         private Tab tab;
 
         [Inject]
-        private void Construct(EntryUIItem.Pool pool, ContextMenuCreator context, FileOperator fileOperator, UClipboard clipboard, Settings settings)
+        private void Construct(EntryUIItem.Pool pool, ContextMenuCreator context, FileOperator fileOperator, UClipboard clipboard, Settings settings, ArchiveViewer archiveViewer)
         {
             this.pool = pool;
             this.context = context;
             this.fileOperator = fileOperator;
             this.clipboard = clipboard;
             this.settings = settings;
+            this.archiveViewer = archiveViewer;
 
             fileOperator.onAnyOperationApplied += () => FilesChanged(null, null);
 
@@ -75,7 +77,17 @@ namespace InApp.UI
         public void Show(string path, bool saveToHistory = true)
         {
             path = path.Replace("\\", "/").Replace(@"\", "/");
-            tab.path.Set(path);
+
+            if (ArchiveViewer.IsArchive(path))
+            {
+                tab.path = archiveViewer.OpenArchive(path);
+                path = tab.path.GetFullPath();
+            }
+            else
+            {
+                tab.path.Set(path);
+            }
+            
 
             if (saveToHistory)
             {

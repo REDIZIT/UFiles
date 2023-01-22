@@ -234,8 +234,6 @@ namespace InApp.UI
             inst.linkedParent = this;
             linkedItems.Add(inst);
 
-            Debug.Log("Linked count: " + linkedItems.Count);
-
             inst.UpdateColor();
         }
         private void UpdateExpandLinkedItems()
@@ -284,7 +282,7 @@ namespace InApp.UI
         }
         private void Open()
         {
-            if (IsPathDirectory())
+            if (IsPathDirectory() || ArchiveViewer.IsArchive(Path))
             {
                 files.Show(Path);
             }
