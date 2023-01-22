@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
+using System.Threading;
 using TMPro;
 using UnityEngine;
+using Zenject;
 
 namespace InApp.UI
 {
@@ -10,24 +12,60 @@ namespace InApp.UI
     {
         [SerializeField] private TextMeshProUGUI pathText;
     }
-    public class ArchiveViewer
+    public class ArchiveViewer : IDisposable
     {
+        [Inject] private Bridge bridge;
+
+        private string archivesTempFolder;
         private List<ArchivePath> opennedArchives = new List<ArchivePath>();
+        private string bridgeResponse;
+        private int waitCount;
 
         public static bool IsArchive(string path)
         {
             string ext = Path.GetExtension(path);
             return ext == ".rar" || ext == ".zip";
         }
+
+        public ArchiveViewer()
+        {
+            archivesTempFolder = Application.temporaryCachePath + "/Archives";
+        }
+        public void Dispose()
+        {
+            foreach (string dir in Directory.EnumerateDirectories(archivesTempFolder))
+            {
+                Directory.Delete(dir, true);
+            }
+        }
+
         public IPath OpenArchive(string pathToArchive)
         {
-            string tempFolder = Application.temporaryCachePath + "/" + Path.GetFileNameWithoutExtension(pathToArchive);
+            string tempFolder = archivesTempFolder + "/" + Path.GetFileNameWithoutExtension(pathToArchive);
             Debug.Log("Extract archive to " + tempFolder);
 
-            Directory.Delete(tempFolder, true);
+            bridgeResponse = string.Empty;
+            waitCount = 0;
 
-            ZipFile.ExtractToDirectory(pathToArchive, tempFolder);
-            return new ArchivePath(pathToArchive, tempFolder);
+            bridge.Enqueue(new ExtractArchiveCommand(pathToArchive, tempFolder, OnExtractCompleted));
+
+            while(string.IsNullOrEmpty(bridgeResponse) && waitCount < 60 * 3)
+            {
+                Thread.Sleep(16);
+                waitCount++;
+            }
+
+            Debug.Log("Response: " + bridgeResponse + ", waited: " + (waitCount * 16) + "ms");
+
+            ArchivePath path = new ArchivePath(pathToArchive, tempFolder);
+            opennedArchives.Add(path);
+
+            return path;
+        }
+
+        private void OnExtractCompleted(string message)
+        {
+            bridgeResponse = message;
         }
     }
     public class ArchivePath : IPath
@@ -52,8 +90,28 @@ namespace InApp.UI
 
         public void Set(string path)
         {
-            //throw new System.Exception("Not implemented set, path = " + path);
             pathToTempFolder = path;
+        }
+    }
+    public class ExtractArchiveCommand : BridgeCommand
+    {
+        private string archivePath, tempFolderPath;
+        private Action<string> callback;
+
+        public ExtractArchiveCommand(string archivePath, string tempFolderPath, Action<string> callback)
+        {
+            this.archivePath = archivePath;
+            this.tempFolderPath = tempFolderPath;
+            this.callback = callback;
+        }
+
+        protected override void OnPerform()
+        {
+            WriteLine(archivePath);
+            WriteLine(tempFolderPath);
+
+            string message = ReadLine();
+            callback(message);
         }
     }
 }

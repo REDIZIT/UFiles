@@ -50,7 +50,6 @@ namespace InApp.DI
             Container.Bind<UClipboard>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<FilePreview>().AsSingle();
-            //Container.Bind<FilePreview>().AsSingle();
 
             BindUIItems();
             
@@ -61,7 +60,7 @@ namespace InApp.DI
 
             Container.Bind<Bridge>().AsSingle();
 
-            Container.Bind<ArchiveViewer>().AsSingle();
+            Container.BindInterfacesAndSelfTo<ArchiveViewer>().AsSingle();
         }
         private void InstallSettings()
         {

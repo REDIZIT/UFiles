@@ -77,6 +77,10 @@ namespace InApp
         {
             process.StandardInput.WriteLine(message);
         }
+        protected string ReadLine()
+        {
+            return process.StandardOutput.ReadLine();
+        }
         protected void Log(string messsage)
         {
             UnityMainThreadDispatcher.Instance().Enqueue(() =>

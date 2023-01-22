@@ -55,11 +55,4 @@ namespace UBridge
             map.Save(Console.OpenStandardOutput(), ImageFormat.Png);
         }
     }
-    public class ExtractArchiveCommand : ICommand
-    {
-        public void Perform()
-        {
-
-        }
-    }
 }
