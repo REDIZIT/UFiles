@@ -48,7 +48,7 @@ namespace InApp.UI
         private const int DOUBLE_CLICK_MS = 250;
 
         [Inject]
-        private void Construct(IconsSO icons, FilesView files, Pool pool, ContextMenuCreator contextCreator, TabUI tabs, AppDragDrop dragDrop, Bridge bridge, PicturePreview picturePreview)
+        private void Construct(IconsSO icons, FilesView files, Pool pool, ContextMenuCreator contextCreator, TabUI tabs, AppDragDrop dragDrop, Bridge bridge, PicturePreview picturePreview, FilePreview preview)
         {
             this.icons = icons;
             this.files = files;
@@ -58,6 +58,7 @@ namespace InApp.UI
             this.dragDrop = dragDrop;
             this.bridge = bridge;
             this.picturePreview = picturePreview;
+            this.preview = preview;
 
             rect = GetComponent<RectTransform>();
 
@@ -189,10 +190,7 @@ namespace InApp.UI
 
             if (EntryUtils.GetType(path) == EntryType.File)
             {
-                bridge.RequestIcon(path, (tex) =>
-                {
-                    icon.texture = tex;
-                });
+                preview.RequestIcon(path, icon);
             }
         }
         private void BindPointerHandlers()
@@ -299,7 +297,7 @@ namespace InApp.UI
                 dragDrop.StartDrag(new EntryData()
                 {
                     path = Path,
-                    icon = preview.GetSprite()
+                    icon = icon.texture.ToSprite()
                 });
             }
         }

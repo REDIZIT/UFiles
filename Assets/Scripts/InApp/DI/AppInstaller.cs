@@ -1,5 +1,6 @@
 using InApp.Sidebar;
 using InApp.UI;
+using System.ComponentModel;
 using UnityEngine;
 using Zenject;
 
@@ -47,6 +48,9 @@ namespace InApp.DI
             
             Container.Bind<FileOperator>().AsSingle();
             Container.Bind<UClipboard>().AsSingle();
+
+            Container.BindInterfacesAndSelfTo<FilePreview>().AsSingle();
+            //Container.Bind<FilePreview>().AsSingle();
 
             BindUIItems();
             

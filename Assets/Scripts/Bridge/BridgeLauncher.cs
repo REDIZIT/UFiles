@@ -21,9 +21,5 @@ namespace InApp
         {
             bridge.Stop();
         }
-        private void Update()
-        {
-            bridge.UnityUpdate();
-        }
     }
 }

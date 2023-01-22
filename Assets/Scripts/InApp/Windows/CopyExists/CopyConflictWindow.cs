@@ -14,8 +14,8 @@ namespace InApp.UI
         [SerializeField] private TextMeshProUGUI nameText, folderA, folderB;
 
         private Answer answer;
-        private FilePreview preview;
 
+        [Inject] private FilePreview preview;
         [Inject] private IconsSO icons;
 
         public class Model
@@ -31,13 +31,6 @@ namespace InApp.UI
             Overwrite,
             Rename,
         }
-
-        protected override void OnAwake()
-        {
-            base.OnAwake();
-
-            preview = new FilePreview(image);
-        }
         protected override void OnShowed()
         {
             base.OnShowed();
@@ -47,14 +40,16 @@ namespace InApp.UI
             folderB.text = model.targetFolder;
             answer = Answer.None;
 
-            if (preview.CanHandle(model.filepath))
-            {
-                preview.Load(model.filepath);
-            }
-            else
-            {
-                image.texture = EntryUtils.GetType(model.filepath) == EntryType.Directory ? icons.folderOpen.texture : icons.defaultFile.texture;
-            }
+            preview.RequestIcon(model.filepath, image);
+
+            //if (preview.CanHandle(model.filepath))
+            //{
+            //    preview.Load(model.filepath);
+            //}
+            //else
+            //{
+            //    image.texture = EntryUtils.GetType(model.filepath) == EntryType.Directory ? icons.folderOpen.texture : icons.defaultFile.texture;
+            //}
         }
         protected override async Task<Answer> GetAnswer()
         {

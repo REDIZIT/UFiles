@@ -14,9 +14,10 @@ namespace InApp
 
         [Inject] private DownloadsWatcherUI ui;
         [Inject] private Pool pool;
+        [Inject] private FilePreview preview;
 
         private string path;
-        private FilePreview preview;
+        
 
         private void Update()
         {
@@ -38,14 +39,9 @@ namespace InApp
 
         private void Refresh(string path)
         {
-            preview = new FilePreview(icon);
             this.path = path;
             nameText.text = Path.GetFileName(path);
-
-            if (preview.CanHandle(path))
-            {
-                preview.Load(path);
-            }
+            preview.RequestIcon(path, icon);
         }
         
 
