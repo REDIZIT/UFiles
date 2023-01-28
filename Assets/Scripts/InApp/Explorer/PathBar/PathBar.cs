@@ -16,12 +16,14 @@ namespace InApp.UI
 
         private FilesView view;
         private PathBarSegment.Pool pool;
+        private TabUI tabs;
 
         [Inject]
-        private void Construct(FilesView view, PathBarSegment.Pool pool)
+        private void Construct(FilesView view, PathBarSegment.Pool pool, TabUI tabs)
         {
             this.view = view;
             this.pool = pool;
+            this.tabs = tabs;
             view.onPathChanged += Build;
         }
         private void OnDestroy()
@@ -55,14 +57,9 @@ namespace InApp.UI
             }
         }
 
-        private List<PathBarSegment> GetSegments()
-        {
-            return segments;
-        }
-
         private void Build()
         {
-            string[] pathSegments = view.CurrentPath.Split('/');
+            string[] pathSegments = tabs.ActiveTab.path.GetFullPath().Split('/');
 
             foreach (var segment in segments)
             {

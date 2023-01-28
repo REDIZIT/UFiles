@@ -22,26 +22,23 @@ namespace InApp.UI
         private HashSet<EntryUIItem> selectedEntries = new HashSet<EntryUIItem>();
         private FileSystemWatcher fileWatcher = new FileSystemWatcher();
         private bool hasFileSystemChanges;
-        private History<string> history = new History<string>(HistoryPointerType.TargetFrame);
 
         private EntryUIItem.Pool pool;
         private ContextMenuCreator context;
         private FileOperator fileOperator;
         private UClipboard clipboard;
         private Settings settings;
-        private ArchiveViewer archiveViewer;
 
         private Tab tab;
 
         [Inject]
-        private void Construct(EntryUIItem.Pool pool, ContextMenuCreator context, FileOperator fileOperator, UClipboard clipboard, Settings settings, ArchiveViewer archiveViewer)
+        private void Construct(EntryUIItem.Pool pool, ContextMenuCreator context, FileOperator fileOperator, UClipboard clipboard, Settings settings)
         {
             this.pool = pool;
             this.context = context;
             this.fileOperator = fileOperator;
             this.clipboard = clipboard;
             this.settings = settings;
-            this.archiveViewer = archiveViewer;
 
             fileOperator.onAnyOperationApplied += () => FilesChanged(null, null);
 
@@ -60,42 +57,33 @@ namespace InApp.UI
 
             if (hasFileSystemChanges)
             {
-                Show(CurrentPath, false);
+                Refresh();
                 hasFileSystemChanges = false;
             }
         }
 
         public void OpenTab(Tab tab)
         {
+            if (this.tab != null)
+            {
+                this.tab.onPathChanged -= Refresh;
+            }
+
             this.tab = tab;
+
+            this.tab.onPathChanged += Refresh;
+
             Refresh();
         }
         public void Refresh()
         {
-            Show(tab.path.GetFullPath(), false);
+            Show(tab.path.GetFullPath());
         }
-        public void Show(string path, bool saveToHistory = true)
+        public void Show(string path)
         {
             path = path.Replace("\\", "/").Replace(@"\", "/");
 
-            if (ArchiveViewer.IsArchive(path))
-            {
-                tab.path = archiveViewer.OpenArchive(path);
-                path = tab.path.GetFullPath();
-            }
-            else
-            {
-                tab.path.Set(path);
-            }
-            
-
-            if (saveToHistory)
-            {
-                history.Add(path);
-            }
-
             DeselectAll();
-
 
             // Handling files and folders
             var folderSortingData = settings.folderSortingData.FirstOrDefault(d => d.path == path);
@@ -141,7 +129,7 @@ namespace InApp.UI
             int j = 0;
             foreach (var entry in folderEnties)
             {
-                entries[j].Refresh(entry);
+                entries[j].Refresh(entry.Replace(@"\", "/"));
                 j++;
             }
 
@@ -236,24 +224,14 @@ namespace InApp.UI
                 }
             }
 
-            // History
-            if (Input.GetMouseButtonDown(3) && history.TryUndo(out string directory))
-            {
-                Show(directory, false);
-            }
-            if (Input.GetMouseButtonDown(4) && history.TryRedo(out directory))
-            {
-                Show(directory, false);
-            }
+
             if (isControlled)
             {
+                // File operatior undo/redo
                 if (Input.GetKeyDown(KeyCode.Z)) fileOperator.Undo();
                 if (Input.GetKeyDown(KeyCode.Y)) fileOperator.Redo();
-            }
 
-            // Copy/paste
-            if (isControlled)
-            {
+                // Copy/Cut/Paste
                 if (selectedEntries.Count > 0)
                 {
                     if (Input.GetKeyDown(KeyCode.C)) clipboard.Copy(EnumerateSelectedFIles(), UClipboard.CopyType.Copy);

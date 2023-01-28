@@ -5,10 +5,6 @@ using Zenject;
 
 namespace InApp
 {
-    public class Tab
-    {
-        public IPath path;
-    }
     public class TabUIItem : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI text;

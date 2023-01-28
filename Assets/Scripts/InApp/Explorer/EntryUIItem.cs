@@ -7,7 +7,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Zenject;
-using Debug = UnityEngine.Debug;
 
 namespace InApp.UI
 {
@@ -35,7 +34,6 @@ namespace InApp.UI
         private RectTransform rect;
         private DateTime lastClickTime;
         private FilePreview preview;
-        private Bridge bridge;
         private AppDragDrop dragDrop;
         private PicturePreview picturePreview;
 
@@ -48,7 +46,7 @@ namespace InApp.UI
         private const int DOUBLE_CLICK_MS = 250;
 
         [Inject]
-        private void Construct(IconsSO icons, FilesView files, Pool pool, ContextMenuCreator contextCreator, TabUI tabs, AppDragDrop dragDrop, Bridge bridge, PicturePreview picturePreview, FilePreview preview)
+        private void Construct(IconsSO icons, FilesView files, Pool pool, ContextMenuCreator contextCreator, TabUI tabs, AppDragDrop dragDrop, PicturePreview picturePreview, FilePreview preview)
         {
             this.icons = icons;
             this.files = files;
@@ -56,7 +54,6 @@ namespace InApp.UI
             this.contextCreator = contextCreator;
             this.tabs = tabs;
             this.dragDrop = dragDrop;
-            this.bridge = bridge;
             this.picturePreview = picturePreview;
             this.preview = preview;
 
@@ -282,7 +279,7 @@ namespace InApp.UI
         {
             if (IsPathDirectory() || ArchiveViewer.IsArchive(Path))
             {
-                files.Show(Path);
+                tabs.ActiveTab.Open(Path);
             }
             else
             {

@@ -2,6 +2,7 @@
 using System.Drawing.Imaging;
 using System.Drawing;
 using System.Reflection;
+using System.Text;
 
 namespace UBridge
 {
@@ -11,6 +12,8 @@ namespace UBridge
 
         public static void Main()
         {
+            Console.OutputEncoding = Encoding.UTF8;
+
             BakeCommandTypes();
 
             while (true)

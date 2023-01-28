@@ -1,96 +1,52 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 namespace InApp.UI
 {
     public class ArchiveHeader : MonoBehaviour
     {
+        [SerializeField] private GameObject content;
+        [SerializeField] private RectTransform filesScrollView;
         [SerializeField] private TextMeshProUGUI pathText;
-    }
-    public class ArchiveViewer : IDisposable
-    {
-        [Inject] private Bridge bridge;
+        [SerializeField] private RawImage icon;
 
-        private string archivesTempFolder;
-        private List<ArchivePath> opennedArchives = new List<ArchivePath>();
-        private string bridgeResponse;
-        private int waitCount;
+        [Inject] private TabUI tabs;
+        [Inject] private FilePreview preview;
 
-        public static bool IsArchive(string path)
-        {
-            string ext = Path.GetExtension(path);
-            return ext == ".rar" || ext == ".zip";
-        }
+        private ArchivePath path;
 
-        public ArchiveViewer()
+        private void Update()
         {
-            archivesTempFolder = Application.temporaryCachePath + "/Archives";
-        }
-        public void Dispose()
-        {
-            foreach (string dir in Directory.EnumerateDirectories(archivesTempFolder))
+            if (tabs.ActiveTab.path is ArchivePath archivePath)
             {
-                Directory.Delete(dir, true);
+                content.SetActive(true);
+                filesScrollView.offsetMax = new Vector2(filesScrollView.offsetMax.x, -42);
+
+                if (path == null || path.pathToArchive != archivePath.pathToArchive)
+                {
+                    path = archivePath;
+                    OnPathChanged();
+                }
+            }
+            else
+            {
+                content.SetActive(false);
+                filesScrollView.offsetMax = new Vector2(filesScrollView.offsetMax.x, 0);
             }
         }
-
-        public IPath OpenArchive(string pathToArchive)
+        public void OnDefaultAppClicked()
         {
-            string tempFolder = archivesTempFolder + "/" + Path.GetFileNameWithoutExtension(pathToArchive);
-            Debug.Log("Extract archive to " + tempFolder);
-
-            bridgeResponse = string.Empty;
-            waitCount = 0;
-
-            bridge.Enqueue(new ExtractArchiveCommand(pathToArchive, tempFolder, OnExtractCompleted));
-
-            while(string.IsNullOrEmpty(bridgeResponse) && waitCount < 60 * 3)
-            {
-                Thread.Sleep(16);
-                waitCount++;
-            }
-
-            Debug.Log("Response: " + bridgeResponse + ", waited: " + (waitCount * 16) + "ms");
-
-            ArchivePath path = new ArchivePath(pathToArchive, tempFolder);
-            opennedArchives.Add(path);
-
-            return path;
+            System.Diagnostics.Process.Start(path.pathToArchive);
         }
 
-        private void OnExtractCompleted(string message)
+        private void OnPathChanged()
         {
-            bridgeResponse = message;
-        }
-    }
-    public class ArchivePath : IPath
-    {
-        private string pathToArchive, pathToTempFolder;
-
-        public ArchivePath(string pathToArchive, string pathToTempFolder)
-        {
-            this.pathToArchive = pathToArchive;
-            this.pathToTempFolder = pathToTempFolder;
-        }
-
-        public string GetDisplayName()
-        {
-            return Path.GetFileNameWithoutExtension(pathToArchive);
-        }
-
-        public string GetFullPath()
-        {
-            return pathToTempFolder;
-        }
-
-        public void Set(string path)
-        {
-            pathToTempFolder = path;
+            pathText.text = Path.GetFileName(path.pathToArchive);
+            preview.RequestIcon(path.pathToArchive, icon);
         }
     }
     public class ExtractArchiveCommand : BridgeCommand

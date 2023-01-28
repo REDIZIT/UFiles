@@ -22,10 +22,12 @@ namespace InApp
 
         private TabUIItem.Pool pool;
         private FilesView files;
+        private DiContainer container;
 
         [Inject]
-        private void Construct(TabUIItem.Pool pool, FilesView files)
+        private void Construct(DiContainer container, TabUIItem.Pool pool, FilesView files)
         {
+            this.container = container;
             this.pool = pool;
             this.files = files;
         }
@@ -34,13 +36,24 @@ namespace InApp
         {
             OnAddTabClicked();
         }
+        private void Update()
+        {
+            // History
+            if (Input.GetMouseButtonDown(3))
+            {
+                ActiveTab.TryUndo();
+            }
+            if (Input.GetMouseButtonDown(4))
+            {
+                ActiveTab.TryRedo();
+            }
+        }
 
         public void OpenNew(IPath path, bool switchToNew)
         {
-            Tab model = new Tab()
-            {
-                path = path
-            };
+            Tab model = new Tab(path);
+
+            container.Inject(model);
 
             var inst = pool.Spawn(model);
             inst.transform.parent = tabsContent;
