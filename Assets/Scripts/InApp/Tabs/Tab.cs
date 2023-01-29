@@ -1,6 +1,4 @@
-﻿using InApp.UI;
-using System;
-using Zenject;
+﻿using System;
 
 namespace InApp
 {
@@ -11,8 +9,6 @@ namespace InApp
         public Action onPathChanged;
 
         private History<Folder> history = new History<Folder>(HistoryPointerType.TargetFrame);
-
-        [Inject] private ArchiveViewer archiveViewer;
 
         public Tab(Folder startFolder)
         {
@@ -34,6 +30,18 @@ namespace InApp
             {
                 Folder = folder;
                 onPathChanged?.Invoke();
+            }
+        }
+        public void TryUndoUntil(Func<Folder, bool> func)
+        {
+            while (history.TryUndo(out Folder folder))
+            {
+                if (func(folder))
+                {
+                    Folder = folder;
+                    onPathChanged?.Invoke();
+                    break;
+                }
             }
         }
         public void TryRedo()

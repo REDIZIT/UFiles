@@ -16,19 +16,18 @@ namespace InApp.UI
 
         [Inject] private TabUI tabs;
         [Inject] private FilePreview preview;
-        [Inject] private ArchiveViewer viewer;
 
-        private ArchivePath path;
+        private ArchiveFolder path;
 
         private void Update()
         {
-            if (viewer.IsInArchive(tabs.ActiveTab.Folder.GetFullPath()))
+            if (tabs.ActiveTab.Folder is ArchiveFolder archiveFolder)
             {
                 content.SetActive(true);
                 filesScrollView.offsetMax = new Vector2(filesScrollView.offsetMax.x, -42);
 
-                //path = tabs.ActiveTab.path.get;
-                //pathText.text = Path.GetFileName(path.pathToArchive);
+                path = archiveFolder;
+                pathText.text = new FileInfo(archiveFolder.ArchiveFilePath).Name;
             }
             else
             {
@@ -38,13 +37,16 @@ namespace InApp.UI
         }
         public void OnDefaultAppClicked()
         {
-            System.Diagnostics.Process.Start(path.pathToArchive);
+            System.Diagnostics.Process.Start(path.ArchiveFilePath);
+        }
+        public void OnBackClicked()
+        {
+            tabs.ActiveTab.TryUndoUntil(f => f is ArchiveFolder == false);
         }
 
         private void OnPathChanged()
         {
-            
-            //preview.RequestIcon(path.pathToArchive, icon);
+            preview.RequestIcon(path.ArchiveFilePath, icon);
         }
     }
     public class ExtractArchiveCommand : BridgeCommand
