@@ -25,11 +25,11 @@ namespace InApp.UI
 
         private void Start()
         {
-            tabs.onActiveTabPathChanged += OnPathChanged;
+            tabs.onActiveTabPathChanged += Refresh;
         }
         private void OnDestroy()
         {
-            tabs.onActiveTabPathChanged -= OnPathChanged;
+            tabs.onActiveTabPathChanged -= Refresh;
         }
         public void OnDefaultAppClicked()
         {
@@ -45,12 +45,14 @@ namespace InApp.UI
             {
                 ClearHistory();
             }
+            Refresh();
         }
         public void OnExtractClicked()
         {
             isSelectingExtractFolder = true;
 
             ClearHistory();
+            Refresh();
         }
         public void OnExtractConfirmClicked()
         {
@@ -60,29 +62,12 @@ namespace InApp.UI
             string dest = tabs.ActiveTab.Folder.GetFullPath();
             fileOperator.Run(new FolderMoveOperation(source, dest, FolderMoveOperation.Type.ContentWithFolderRemove));
             isSelectingExtractFolder = false;
+
+            Refresh();
         }
 
-        private void UpdateDisabled()
+        private void Refresh()
         {
-            content.SetActive(false);
-            filesScrollView.offsetMax = new Vector2(filesScrollView.offsetMax.x, 0);
-        }
-        private void UpdateEnabled(bool isExtractionState)
-        {
-            content.SetActive(true);
-            filesScrollView.offsetMax = new Vector2(filesScrollView.offsetMax.x, -42);
-
-            defaultRightSide.SetActive(isExtractionState == false);
-            extractRightSide.SetActive(isExtractionState);
-        }
-        private void ClearHistory()
-        {
-            tabs.ActiveTab.TryUndoUntil(f => f is ArchiveFolder == false);
-        }
-        private void OnPathChanged()
-        {
-            Debug.Log("On path changed");
-
             if (isSelectingExtractFolder)
             {
                 UpdateEnabled(true);
@@ -102,6 +87,23 @@ namespace InApp.UI
             {
                 UpdateDisabled();
             }
+        }
+        private void UpdateDisabled()
+        {
+            content.SetActive(false);
+            filesScrollView.offsetMax = new Vector2(filesScrollView.offsetMax.x, 0);
+        }
+        private void UpdateEnabled(bool isExtractionState)
+        {
+            content.SetActive(true);
+            filesScrollView.offsetMax = new Vector2(filesScrollView.offsetMax.x, -42);
+
+            defaultRightSide.SetActive(isExtractionState == false);
+            extractRightSide.SetActive(isExtractionState);
+        }
+        private void ClearHistory()
+        {
+            tabs.ActiveTab.TryUndoUntil(f => f is ArchiveFolder == false);
         }
     }
     public class ExtractArchiveCommand : BridgeCommand

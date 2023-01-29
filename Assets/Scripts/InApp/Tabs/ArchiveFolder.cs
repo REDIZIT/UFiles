@@ -30,7 +30,6 @@ namespace InApp
         [Inject]
         private void Construct(ArchiveViewer viewer)
         {
-            Debug.Log("Construct, viewer = " + viewer);
             this.viewer = viewer;
             archivePath = viewer.OpenArchive(ArchiveFilePath);
             ExtractedFolderPath = archivePath.GetFullPath();
@@ -65,7 +64,6 @@ namespace InApp
         }
         public void Close()
         {
-            Debug.Log("Is viewer null? " + (viewer == null));
             viewer.CloseArchive(archivePath);
         }
     }
