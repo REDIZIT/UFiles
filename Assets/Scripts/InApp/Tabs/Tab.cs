@@ -1,4 +1,5 @@
 ﻿using System;
+using Zenject;
 
 namespace InApp
 {
@@ -9,9 +10,11 @@ namespace InApp
         public Action onPathChanged;
 
         private History<Folder> history = new History<Folder>(HistoryPointerType.TargetFrame);
+        private DiContainer container;
 
-        public Tab(Folder startFolder)
+        public Tab(Folder startFolder, DiContainer container)
         {
+            this.container = container;
             Folder = startFolder;
             history.Add(Folder);
         }
@@ -22,6 +25,14 @@ namespace InApp
 
             history.Add(Folder);
 
+            onPathChanged?.Invoke();
+        }
+        public void Open(string localFolderPath)
+        {
+            Folder = new LocalFolder(localFolderPath);
+            container.Inject(Folder);
+
+            history.Add(Folder);
             onPathChanged?.Invoke();
         }
         public void TryUndo()

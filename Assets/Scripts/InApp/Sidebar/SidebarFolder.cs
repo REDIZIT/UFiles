@@ -37,7 +37,7 @@ namespace InApp.Sidebar
 
         public void OnClick()
         {
-            files.Show(path.GetFullPath());
+            tabs.ActiveTab.Open(path.GetFullPath());
         }
         private void Refresh(IPath folderPath)
         {

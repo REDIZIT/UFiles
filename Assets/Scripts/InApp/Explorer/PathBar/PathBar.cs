@@ -48,7 +48,7 @@ namespace InApp.UI
             {
                 if (Directory.Exists(field.text))
                 {
-                    view.Show(field.text);
+                    tabs.ActiveTab.Open(field.text);
                 }
                 else
                 {

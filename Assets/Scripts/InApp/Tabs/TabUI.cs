@@ -52,7 +52,7 @@ namespace InApp
         public void OpenNew(Folder folder, bool switchToNew)
         {
             container.Inject(folder);
-            Tab model = new Tab(folder);
+            Tab model = new Tab(folder, container);
             container.Inject(model);
 
             var inst = pool.Spawn(model);
