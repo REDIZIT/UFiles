@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using TMPro;
 using UnityEngine;
@@ -13,7 +12,8 @@ namespace InApp.UI
     public class EntryUIItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler
     {
         public bool IsSelected { get; private set; }
-        public string Path { get; private set; }
+        public Entry Entry { get; private set; }
+        public string Path => Entry.GetFullPathFor(tabs.ActiveTab.Folder);
 
         [SerializeField] private TextMeshProUGUI name, size, modifyDate;
         [SerializeField] private RawImage icon;
@@ -92,7 +92,7 @@ namespace InApp.UI
             else if (eventData.button == PointerEventData.InputButton.Middle)
             {
                 bool switchToNew = Input.GetKey(KeyCode.LeftShift) == false;
-                tabs.OpenNew(new EntryPath(Path), switchToNew);
+                tabs.OpenNew(new LocalFolder(Path), switchToNew);
             }
         }
 
@@ -133,7 +133,7 @@ namespace InApp.UI
         }
 
 
-        public void Refresh(string path)
+        public void Refresh(Entry entry)
         {
             linkedParent = null;
             isHovered = false;
@@ -141,42 +141,37 @@ namespace InApp.UI
             isLinkedExpanded = false;
             SetSelection(false);
 
+            Entry = entry;
 
-            Path = path;
-
-            if (IsPathDirectory())
+            if (entry.isFolder)
             {
-                DirectoryInfo info = new DirectoryInfo(path);
-                name.text = info.Name;
-                modifyDate.text = FileSizeUtil.PrettyModifyDate(info.LastWriteTime);
-                
-                try
-                {
-                    int entriesCount = Directory.GetFileSystemEntries(path).Length;
-                    size.text = entriesCount + " элементов";
-                    if (entriesCount > 0)
-                    {
-                        icon.texture = icons.folderFill.texture;
-                    }
-                    else
-                    {
-                        icon.texture = icons.folderEmpty.texture;
-                    }
-                }
-                catch(UnauthorizedAccessException)
+                name.text = entry.name;
+                modifyDate.text = FileSizeUtil.PrettyModifyDate(entry.lastWriteTime);
+
+                long entriesCount = entry.size;
+                if (entriesCount == -1)
                 {
                     name.text += " [нет доступа]";
                     size.text = "нет доступа";
                     icon.texture = icons.folderEmpty.texture;
                 }
+                else if (entriesCount > 0)
+                {
+                    icon.texture = icons.folderFill.texture;
+                    size.text = entriesCount + " элементов";
+                }
+                else
+                {
+                    icon.texture = icons.folderEmpty.texture;
+                    size.text = "Нет элементов";
+                }
             }
             else
             {
                 icon.texture = icons.defaultFile.texture;
-                FileInfo info = new FileInfo(path);
-                name.text = info.Name;
-                size.text = FileSizeUtil.BytesToString(info.Length);
-                modifyDate.text = FileSizeUtil.PrettyModifyDate(info.LastWriteTime);
+                name.text = entry.name;
+                size.text = FileSizeUtil.BytesToString(entry.size);
+                modifyDate.text = FileSizeUtil.PrettyModifyDate(entry.lastWriteTime);
             }
 
             ClearLinkedItems();
@@ -185,9 +180,9 @@ namespace InApp.UI
 
             UpdateColor();
 
-            if (EntryUtils.GetType(path) == EntryType.File)
+            if (entry.isFolder == false)
             {
-                preview.RequestIcon(path, icon);
+                preview.RequestIcon(Path, icon);
             }
         }
         private void BindPointerHandlers()
@@ -211,20 +206,21 @@ namespace InApp.UI
         }
         private void CheckAndCreateLinkedFiles()
         {
-            bool hasLinkedItems = File.Exists(Path + ".meta");
+            Debug.Log("Linked items disabled");
+            //bool hasLinkedItems = File.Exists(Path + ".meta");
 
-            if (hasLinkedItems)
-            {
-                CreateLinkedItem(Path + ".meta");
-            }
+            //if (hasLinkedItems)
+            //{
+            //    CreateLinkedItem(Path + ".meta");
+            //}
 
-            linkButton.SetActive(hasLinkedItems);
-            linkedFilesGroup.gameObject.SetActive(hasLinkedItems);
+            //linkButton.SetActive(hasLinkedItems);
+            //linkedFilesGroup.gameObject.SetActive(hasLinkedItems);
         }
-        private void CreateLinkedItem(string filepath)
+        private void CreateLinkedItem(Entry entry)
         {
             var inst = pool.Spawn();
-            inst.Refresh(filepath);
+            inst.Refresh(entry);
             inst.transform.parent = linkedFilesContent;
             inst.linkedParent = this;
             linkedItems.Add(inst);
@@ -279,11 +275,11 @@ namespace InApp.UI
         {
             if (IsPathDirectory() || ArchiveViewer.IsArchive(Path))
             {
-                tabs.ActiveTab.Open(Path);
+                tabs.ActiveTab.Open(Entry);
             }
             else
             {
-                Process.Start(Path);
+                System.Diagnostics.Process.Start(Path);
             }
         }
 

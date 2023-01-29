@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using UnityEngine;
 using Zenject;
@@ -33,8 +34,21 @@ namespace InApp.UI
                 Directory.Delete(dir, true);
             }
         }
+        public bool IsInArchive(string entryPath)
+        {
+            return entryPath.StartsWith(archivesTempFolder);
+        }
 
         public ArchivePath OpenArchive(string pathToArchive)
+        {
+            ArchivePath opennedArchive = opennedArchives.FirstOrDefault(p => p.pathToArchive == pathToArchive);
+            if (opennedArchive != null) return opennedArchive;
+
+
+            return ExtractArchive(pathToArchive);
+        }
+
+        private ArchivePath ExtractArchive(string pathToArchive)
         {
             string tempFolder = archivesTempFolder + "/" + Path.GetFileNameWithoutExtension(pathToArchive);
             Debug.Log("Extract archive to " + tempFolder);
@@ -44,7 +58,7 @@ namespace InApp.UI
 
             bridge.Enqueue(new ExtractArchiveCommand(pathToArchive, tempFolder, OnExtractCompleted));
 
-            while(string.IsNullOrEmpty(bridgeResponse) && waitCount < 60 * 3)
+            while (string.IsNullOrEmpty(bridgeResponse) && waitCount < 60 * 3)
             {
                 Thread.Sleep(16);
                 waitCount++;
@@ -57,7 +71,6 @@ namespace InApp.UI
 
             return path;
         }
-
         private void OnExtractCompleted(string message)
         {
             bridgeResponse = message;

@@ -9,6 +9,7 @@ namespace InApp
     {
         [SerializeField] private TextMeshProUGUI text;
         [SerializeField] private Button image;
+        [SerializeField] private GameObject outline;
 
         [SerializeField] private Color activeColor, activeHighlighted;
 
@@ -36,9 +37,10 @@ namespace InApp
         private void Update()
         {
             bool isActive = model == tabs.ActiveTab;
-            text.text = model.path.GetDisplayName();
+            text.text = model.Folder.GetShortName();
 
             image.colors = isActive ? activeBlock : defaultBlock;
+            outline.SetActive(isActive);
 
             if (Input.GetMouseButtonDown(2) && RectTransformUtility.RectangleContainsScreenPoint(rect, Input.mousePosition))
             {

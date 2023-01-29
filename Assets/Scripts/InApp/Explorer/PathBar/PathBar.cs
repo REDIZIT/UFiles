@@ -59,7 +59,7 @@ namespace InApp.UI
 
         private void Build()
         {
-            string[] pathSegments = tabs.ActiveTab.path.GetFullPath().Split('/');
+            string[] pathSegments = tabs.ActiveTab.Folder.GetFullPath().Split('/');
 
             foreach (var segment in segments)
             {

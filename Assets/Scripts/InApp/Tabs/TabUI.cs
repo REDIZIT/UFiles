@@ -49,10 +49,10 @@ namespace InApp
             }
         }
 
-        public void OpenNew(IPath path, bool switchToNew)
+        public void OpenNew(Folder folder, bool switchToNew)
         {
-            Tab model = new Tab(path);
-
+            container.Inject(folder);
+            Tab model = new Tab(folder);
             container.Inject(model);
 
             var inst = pool.Spawn(model);
@@ -71,7 +71,7 @@ namespace InApp
 
         public void OnAddTabClicked()
         {
-            OpenNew(new EntryPath("C:/Users/redizit/Downloads"), true);
+            OpenNew(new LocalFolder("C:/Users/redizit/Downloads"), true);
         }
         public void OnTabClicked(Tab model)
         {

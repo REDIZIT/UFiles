@@ -10,15 +10,15 @@ namespace InApp.UI
 {
     public class FilesView : MonoBehaviour, IPointerClickHandler
     {
-        public string CurrentPath => tab == null ? "C:/" : tab.path.GetFullPath();
-        public int EntriesCount => entries.Count;
+        public string CurrentPath => tab == null ? "C:/" : tab.Folder.GetFullPath();
+        public int EntriesCount => spawnedItems.Count;
         public int SelectedEntriesCount => selectedEntries.Count;
 
         public Action onPathChanged;
 
         [SerializeField] private Transform content;
 
-        private List<EntryUIItem> entries = new List<EntryUIItem>();
+        private List<EntryUIItem> spawnedItems = new List<EntryUIItem>();
         private HashSet<EntryUIItem> selectedEntries = new HashSet<EntryUIItem>();
         private FileSystemWatcher fileWatcher = new FileSystemWatcher();
         private bool hasFileSystemChanges;
@@ -77,7 +77,7 @@ namespace InApp.UI
         }
         public void Refresh()
         {
-            Show(tab.path.GetFullPath());
+            Show(CurrentPath);
         }
         public void Show(string path)
         {
@@ -87,34 +87,36 @@ namespace InApp.UI
 
             // Handling files and folders
             var folderSortingData = settings.folderSortingData.FirstOrDefault(d => d.path == path);
-            IEnumerable<string> folderEnties = Directory.GetDirectories(path).Union(Directory.GetFiles(path));
 
-            folderEnties = folderEnties.Where(p =>
-            {
-                if (Path.GetExtension(p) == ".meta")
-                {
-                    string metaTargetFile = p.Substring(0, p.Length - ".meta".Length);
-                    if (EntryUtils.Exists(metaTargetFile)) return false;
-                }
-                return true;
-            });
+            //IEnumerable<string> folderEnties = Directory.GetDirectories(path).Union(Directory.GetFiles(path));
 
-            folderEnties = EntriesSorter.Sort(folderEnties, folderSortingData == null ? FolderSortingData.Type.None : folderSortingData.type);
-            if (folderSortingData != null && folderSortingData.isReversed)
-            {
-                folderEnties = folderEnties.Reverse();
-            }
+            //folderEnties = folderEnties.Where(p =>
+            //{
+            //    if (Path.GetExtension(p) == ".meta")
+            //    {
+            //        string metaTargetFile = p.Substring(0, p.Length - ".meta".Length);
+            //        if (EntryUtils.Exists(metaTargetFile)) return false;
+            //    }
+            //    return true;
+            //});
+
+            //folderEnties = EntriesSorter.Sort(folderEnties, folderSortingData == null ? FolderSortingData.Type.None : folderSortingData.type);
+            //if (folderSortingData != null && folderSortingData.isReversed)
+            //{
+            //    folderEnties = folderEnties.Reverse();
+            //}
+            var entries = tab.Folder.GetEntries().ToArray();
 
             // Spawning and despawning UIItems
-            int spawnedCount = entries.Count;
-            int targetCount = folderEnties.Count();
+            int spawnedCount = spawnedItems.Count;
+            int targetCount = entries.Count();
 
             if (spawnedCount > targetCount)
             {
                 for (int i = 0; i < spawnedCount - targetCount; i++)
                 {
-                    pool.Despawn(entries[0]);
-                    entries.RemoveAt(0);
+                    pool.Despawn(spawnedItems[0]);
+                    spawnedItems.RemoveAt(0);
                 }
             }
             else if (spawnedCount < targetCount)
@@ -127,9 +129,9 @@ namespace InApp.UI
 
             // Refreshing UIItems
             int j = 0;
-            foreach (var entry in folderEnties)
+            foreach (var entry in entries)
             {
-                entries[j].Refresh(entry.Replace(@"\", "/"));
+                spawnedItems[j].Refresh(entry);
                 j++;
             }
 
@@ -152,14 +154,14 @@ namespace InApp.UI
             {
                 if (isShift)
                 {
-                    int startIndex = entries.IndexOf(selectedEntries.Last());
-                    int targetIndex = entries.IndexOf(item);
+                    int startIndex = spawnedItems.IndexOf(selectedEntries.Last());
+                    int targetIndex = spawnedItems.IndexOf(item);
                     int min = Mathf.Min(targetIndex, startIndex);
                     int max = Mathf.Max(targetIndex, startIndex);
 
                     for (int i = min; i < max; i++)
                     {
-                        SelectItem(entries[i]);
+                        SelectItem(spawnedItems[i]);
                     }
                 }
                 else if (isControl)
@@ -251,7 +253,7 @@ namespace InApp.UI
             item.transform.parent = content;
             item.transform.SetAsLastSibling();
 
-            entries.Add(item);
+            spawnedItems.Add(item);
         }
         private void DeselectAll()
         {

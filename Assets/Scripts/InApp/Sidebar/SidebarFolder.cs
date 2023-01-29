@@ -1,8 +1,6 @@
 using InApp.UI;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -81,7 +79,7 @@ namespace InApp.Sidebar
             }
             else if (eventData.button == PointerEventData.InputButton.Middle)
             {
-                tabs.OpenNew(path, true);
+                tabs.OpenNew(new LocalFolder(path.GetFullPath()), true);
             }
         }
 

@@ -6,50 +6,42 @@ namespace InApp
 {
     public class Tab
     {
-        public IPath path;
+        public Folder Folder { get; private set; }
 
         public Action onPathChanged;
 
-        private History<string> history = new History<string>(HistoryPointerType.TargetFrame);
+        private History<Folder> history = new History<Folder>(HistoryPointerType.TargetFrame);
 
         [Inject] private ArchiveViewer archiveViewer;
 
-        public Tab(IPath path)
+        public Tab(Folder startFolder)
         {
-            this.path = path;
-            history.Add(path.GetFullPath());
+            Folder = startFolder;
+            history.Add(Folder);
         }
 
-        public void Open(string entryFullPath, bool saveToHistory = true)
+        public void Open(Entry entry)
         {
-            if (ArchiveViewer.IsArchive(entryFullPath))
-            {
-                path = archiveViewer.OpenArchive(entryFullPath);
-            }
-            else
-            {
-                path = new EntryPath(entryFullPath);
+            Folder = Folder.Open(entry);
 
-                if (saveToHistory)
-                {
-                    history.Add(entryFullPath);
-                }
-            }
+            history.Add(Folder);
 
             onPathChanged?.Invoke();
         }
         public void TryUndo()
         {
-            if (history.TryUndo(out string path))
+            if (history.TryUndo(out Folder folder))
             {
-                Open(path, false);
+                Folder = folder;
+                onPathChanged?.Invoke();
             }
         }
         public void TryRedo()
         {
-            if (history.TryRedo(out string path))
+            if (history.TryRedo(out Folder folder))
             {
-                Open(path, false);
+                Folder = folder;
+                onPathChanged?.Invoke();
             }
         }
     }
