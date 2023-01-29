@@ -13,6 +13,7 @@ namespace InApp
         public float TabWidth { get; private set; }
 
         public Action onActiveTabChanged;
+        public Action onActiveTabPathChanged;
 
         [SerializeField] private RectTransform tabsContent;
         [SerializeField] private RectTransform addButton;
@@ -91,7 +92,15 @@ namespace InApp
         }
         private void SwitchTab(Tab tab)
         {
+            if (ActiveTab != null)
+            {
+                ActiveTab.onPathChanged -= OnActiveTabPathChanged;
+            }
+
             ActiveTab = tab;
+
+            ActiveTab.onPathChanged += OnActiveTabPathChanged;
+
             onActiveTabChanged?.Invoke();
 
             files.OpenTab(tab);
@@ -104,6 +113,10 @@ namespace InApp
         {
             float totalWidth = tabsContent.rect.width - addButton.rect.width;
             TabWidth = Mathf.Min(totalWidth / tabs.Count, 240);
+        }
+        private void OnActiveTabPathChanged()
+        {
+            onActiveTabPathChanged?.Invoke();
         }
 
         public void OnPointerExit(PointerEventData eventData)

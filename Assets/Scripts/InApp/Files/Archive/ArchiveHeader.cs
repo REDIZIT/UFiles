@@ -11,42 +11,97 @@ namespace InApp.UI
     {
         [SerializeField] private GameObject content;
         [SerializeField] private RectTransform filesScrollView;
-        [SerializeField] private TextMeshProUGUI pathText;
+        [SerializeField] private TextMeshProUGUI pathText, actionText;
         [SerializeField] private RawImage icon;
+
+        [SerializeField] private GameObject defaultRightSide, extractRightSide;
 
         [Inject] private TabUI tabs;
         [Inject] private FilePreview preview;
+        [Inject] private FileOperator fileOperator;
 
-        private ArchiveFolder path;
+        private ArchiveFolder archive;
+        private bool isSelectingExtractFolder;
 
-        private void Update()
+        private void Start()
         {
-            if (tabs.ActiveTab.Folder is ArchiveFolder archiveFolder)
-            {
-                content.SetActive(true);
-                filesScrollView.offsetMax = new Vector2(filesScrollView.offsetMax.x, -42);
-
-                path = archiveFolder;
-                pathText.text = new FileInfo(archiveFolder.ArchiveFilePath).Name;
-            }
-            else
-            {
-                content.SetActive(false);
-                filesScrollView.offsetMax = new Vector2(filesScrollView.offsetMax.x, 0);
-            }
+            tabs.onActiveTabPathChanged += OnPathChanged;
+        }
+        private void OnDestroy()
+        {
+            tabs.onActiveTabPathChanged -= OnPathChanged;
         }
         public void OnDefaultAppClicked()
         {
-            System.Diagnostics.Process.Start(path.ArchiveFilePath);
+            System.Diagnostics.Process.Start(archive.ArchiveFilePath);
         }
         public void OnBackClicked()
         {
-            tabs.ActiveTab.TryUndoUntil(f => f is ArchiveFolder == false);
+            if (isSelectingExtractFolder)
+            {
+                isSelectingExtractFolder = false;
+            }
+            else
+            {
+                ClearHistory();
+            }
+        }
+        public void OnExtractClicked()
+        {
+            isSelectingExtractFolder = true;
+
+            ClearHistory();
+        }
+        public void OnExtractConfirmClicked()
+        {
+            archive.Close();
+
+            string source = archive.ExtractedFolderPath;
+            string dest = tabs.ActiveTab.Folder.GetFullPath();
+            fileOperator.Run(new FolderMoveOperation(source, dest, FolderMoveOperation.Type.ContentWithFolderRemove));
+            isSelectingExtractFolder = false;
         }
 
+        private void UpdateDisabled()
+        {
+            content.SetActive(false);
+            filesScrollView.offsetMax = new Vector2(filesScrollView.offsetMax.x, 0);
+        }
+        private void UpdateEnabled(bool isExtractionState)
+        {
+            content.SetActive(true);
+            filesScrollView.offsetMax = new Vector2(filesScrollView.offsetMax.x, -42);
+
+            defaultRightSide.SetActive(isExtractionState == false);
+            extractRightSide.SetActive(isExtractionState);
+        }
+        private void ClearHistory()
+        {
+            tabs.ActiveTab.TryUndoUntil(f => f is ArchiveFolder == false);
+        }
         private void OnPathChanged()
         {
-            preview.RequestIcon(path.ArchiveFilePath, icon);
+            Debug.Log("On path changed");
+
+            if (isSelectingExtractFolder)
+            {
+                UpdateEnabled(true);
+
+                actionText.text = "распаковка архива";
+            }
+            else if (tabs.ActiveTab.Folder is ArchiveFolder archiveFolder)
+            {
+                UpdateEnabled(false);
+
+                archive = archiveFolder;
+                pathText.text = new FileInfo(archiveFolder.ArchiveFilePath).Name;
+                actionText.text = "просмотр архива";
+                preview.RequestIcon(archive.ArchiveFilePath, icon);
+            }
+            else
+            {
+                UpdateDisabled();
+            }
         }
     }
     public class ExtractArchiveCommand : BridgeCommand

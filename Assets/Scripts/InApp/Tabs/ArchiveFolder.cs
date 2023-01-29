@@ -1,6 +1,7 @@
 ﻿using InApp.UI;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 using Zenject;
 
 namespace InApp
@@ -8,17 +9,19 @@ namespace InApp
     public class ArchiveFolder : Folder
     {
         public string ArchiveFilePath { get; private set; }
+        public string ExtractedFolderPath { get; private set; }
 
-        private string ExtractedInArchivePath => extractedFolderPath + inArchiveLocalPath;
+        private string ExtractedInArchivePath => ExtractedFolderPath + inArchiveLocalPath;
 
         private string inArchiveLocalPath;
-        private string extractedFolderPath;
+        private ArchivePath archivePath;
+        private ArchiveViewer viewer;
 
         public ArchiveFolder(string archiveFilePath)
         {
             this.ArchiveFilePath = archiveFilePath;
         }
-        public ArchiveFolder(string archiveFilePath, string inArchiveLocalPath) : this(archiveFilePath)
+        private ArchiveFolder(string archiveFilePath, string inArchiveLocalPath) : this(archiveFilePath)
         {
             this.ArchiveFilePath = archiveFilePath;
             this.inArchiveLocalPath = inArchiveLocalPath;
@@ -27,8 +30,10 @@ namespace InApp
         [Inject]
         private void Construct(ArchiveViewer viewer)
         {
-            ArchivePath path = viewer.OpenArchive(ArchiveFilePath);
-            extractedFolderPath = path.GetFullPath();
+            Debug.Log("Construct, viewer = " + viewer);
+            this.viewer = viewer;
+            archivePath = viewer.OpenArchive(ArchiveFilePath);
+            ExtractedFolderPath = archivePath.GetFullPath();
         }
 
         public override string GetFullPath()
@@ -55,8 +60,13 @@ namespace InApp
             string newInArchiveLocalPath = inArchiveLocalPath + "/" + entry.name;
             return new ArchiveFolder(ArchiveFilePath, newInArchiveLocalPath)
             {
-                extractedFolderPath = extractedFolderPath
+                ExtractedFolderPath = ExtractedFolderPath
             };
+        }
+        public void Close()
+        {
+            Debug.Log("Is viewer null? " + (viewer == null));
+            viewer.CloseArchive(archivePath);
         }
     }
 }

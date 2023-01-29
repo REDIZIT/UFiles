@@ -31,7 +31,14 @@ namespace InApp.UI
         {
             foreach (string dir in Directory.EnumerateDirectories(archivesTempFolder))
             {
-                Directory.Delete(dir, true);
+                try
+                {
+                    Directory.Delete(dir, true);
+                }
+                catch
+                {
+
+                }
             }
         }
         public bool IsInArchive(string entryPath)
@@ -44,13 +51,16 @@ namespace InApp.UI
             ArchivePath opennedArchive = opennedArchives.FirstOrDefault(p => p.pathToArchive == pathToArchive);
             if (opennedArchive != null) return opennedArchive;
 
-
             return ExtractArchive(pathToArchive);
+        }
+        public void CloseArchive(ArchivePath archive)
+        {
+            opennedArchives.Remove(archive);
         }
 
         private ArchivePath ExtractArchive(string pathToArchive)
         {
-            string tempFolder = archivesTempFolder + "/" + Path.GetFileNameWithoutExtension(pathToArchive);
+            string tempFolder = archivesTempFolder + "/" + Guid.NewGuid();
             Debug.Log("Extract archive to " + tempFolder);
 
             bridgeResponse = string.Empty;
@@ -58,13 +68,13 @@ namespace InApp.UI
 
             bridge.Enqueue(new ExtractArchiveCommand(pathToArchive, tempFolder, OnExtractCompleted));
 
-            while (string.IsNullOrEmpty(bridgeResponse) && waitCount < 60 * 3)
+            while (string.IsNullOrEmpty(bridgeResponse) && waitCount < 10000)
             {
-                Thread.Sleep(16);
+                Thread.Sleep(2);
                 waitCount++;
             }
 
-            Debug.Log("Response: " + bridgeResponse + ", waited: " + (waitCount * 16) + "ms");
+            Debug.Log("Response: " + bridgeResponse + ", waited: " + (waitCount * 2) + "ms");
 
             ArchivePath path = new ArchivePath(pathToArchive, tempFolder);
             opennedArchives.Add(path);

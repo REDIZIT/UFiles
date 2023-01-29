@@ -8,17 +8,8 @@ namespace InApp.UI
     {
         [SerializeField] private Image wallpaper;
 
-        [SerializeField] private float verticalOffset;
-
-        private RectTransform rect;
-
-        private void Awake()
-        {
-            rect = wallpaper.rectTransform;
-        }
         private void Update()
         {
-            float screenRatio = Screen.width / (float)Screen.height;
 
             float imageRatio = wallpaper.sprite.bounds.size.y / wallpaper.sprite.bounds.size.x;
 
