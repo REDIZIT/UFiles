@@ -2,14 +2,13 @@
 
 namespace InApp
 {
-    public class Entry
+    public struct Entry
     {
         public string name;
-        public long size;
-        public DateTime lastWriteTime;
         public bool isFolder;
 
-        public Entry metaEntry;
+        public uint size => 0;
+        public DateTime lastWriteTime => DateTime.MinValue;
 
         public string GetFullPathFor(Folder folder)
         {

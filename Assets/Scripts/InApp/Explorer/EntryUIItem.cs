@@ -12,8 +12,10 @@ namespace InApp.UI
     public class EntryUIItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler
     {
         public bool IsSelected { get; private set; }
-        public Entry Entry { get; private set; }
+        public Entry Entry => Model.entry;
+        public EntryUIItemModel Model { get; private set; }
         public string Path => Entry.GetFullPathFor(tabs.ActiveTab.Folder);
+        public RectTransform Rect { get; private set; }
 
         [SerializeField] private TextMeshProUGUI name, size, modifyDate;
         [SerializeField] private RawImage icon;
@@ -33,7 +35,7 @@ namespace InApp.UI
         private bool isHovered, isLinkedHovered, isLinkedExpanded;
         private List<EntryUIItem> linkedItems = new List<EntryUIItem>();    
         private EntryUIItem linkedParent;
-        private RectTransform rect;
+        
         private DateTime lastClickTime;
         private FilePreview preview;
         private AppDragDrop dragDrop;
@@ -59,7 +61,7 @@ namespace InApp.UI
             this.picturePreview = picturePreview;
             this.preview = preview;
 
-            rect = GetComponent<RectTransform>();
+            Rect = GetComponent<RectTransform>();
 
             BindPointerHandlers();
         }
@@ -135,7 +137,7 @@ namespace InApp.UI
         }
 
 
-        public void Refresh(Entry entry)
+        public void Refresh(EntryUIItemModel model)
         {
             linkedParent = null;
             isHovered = false;
@@ -143,14 +145,14 @@ namespace InApp.UI
             isLinkedExpanded = false;
             SetSelection(false);
 
-            Entry = entry;
+            Model = model;
 
-            if (entry.isFolder)
+            if (Entry.isFolder)
             {
-                name.text = entry.name;
-                modifyDate.text = FileSizeUtil.PrettyModifyDate(entry.lastWriteTime);
+                name.text = Entry.name;
+                modifyDate.text = FileSizeUtil.PrettyModifyDate(Entry.lastWriteTime);
 
-                long entriesCount = entry.size;
+                long entriesCount = Entry.size;
                 if (entriesCount == -1)
                 {
                     name.text += " [нет доступа]";
@@ -171,9 +173,9 @@ namespace InApp.UI
             else
             {
                 icon.texture = icons.defaultFile.texture;
-                name.text = entry.name;
-                size.text = FileSizeUtil.BytesToString(entry.size);
-                modifyDate.text = FileSizeUtil.PrettyModifyDate(entry.lastWriteTime);
+                name.text = Entry.name;
+                size.text = FileSizeUtil.BytesToString(Entry.size);
+                modifyDate.text = FileSizeUtil.PrettyModifyDate(Entry.lastWriteTime);
             }
 
             ClearLinkedItems();
@@ -182,7 +184,7 @@ namespace InApp.UI
 
             UpdateColor();
 
-            if (entry.isFolder == false)
+            if (Entry.isFolder == false)
             {
                 preview.RequestIcon(Path, icon);
             }
@@ -210,20 +212,20 @@ namespace InApp.UI
         }
         private void CheckAndCreateLinkedFiles()
         {
-            bool hasLinkedItems = Entry.metaEntry != null;
+            bool hasLinkedItems = Model.metaModel != null;
 
             if (hasLinkedItems)
             {
-                CreateLinkedItem(Entry.metaEntry);
+                CreateLinkedItem(Model.metaModel);
             }
 
             linkButton.SetActive(hasLinkedItems);
             linkedFilesGroup.gameObject.SetActive(hasLinkedItems);
         }
-        private void CreateLinkedItem(Entry entry)
+        private void CreateLinkedItem(EntryUIItemModel model)
         {
             var inst = pool.Spawn();
-            inst.Refresh(entry);
+            inst.Refresh(model);
             inst.transform.parent = linkedFilesContent;
             inst.linkedParent = this;
             linkedItems.Add(inst);
@@ -250,7 +252,7 @@ namespace InApp.UI
             {
                 height += linkedHeight;
             }
-            rect.sizeDelta = new Vector2(rect.sizeDelta.x, height);
+            Rect.sizeDelta = new Vector2(Rect.sizeDelta.x, height);
             linkedFilesGroup.sizeDelta = new Vector2(linkedFilesGroup.sizeDelta.x, linkedHeight);
         }
         private void OnLinkedItemEnter()

@@ -18,6 +18,7 @@ namespace InApp.UI
 
         [SerializeField] private Transform content;
         [SerializeField] private FilesViewMessager messager;
+        [SerializeField] private EntriesGrid grid;
 
         private List<EntryUIItem> spawnedItems = new List<EntryUIItem>();
         private HashSet<EntryUIItem> selectedEntries = new HashSet<EntryUIItem>();
@@ -89,45 +90,34 @@ namespace InApp.UI
             // Handling files and folders
             var folderSortingData = settings.folderSortingData.FirstOrDefault(d => d.path == path);
 
-            //IEnumerable<string> folderEnties = Directory.GetDirectories(path).Union(Directory.GetFiles(path));
-
-            //folderEnties = folderEnties.Where(p =>
-            //{
-            //    if (Path.GetExtension(p) == ".meta")
-            //    {
-            //        string metaTargetFile = p.Substring(0, p.Length - ".meta".Length);
-            //        if (EntryUtils.Exists(metaTargetFile)) return false;
-            //    }
-            //    return true;
-            //});
-
-            //folderEnties = EntriesSorter.Sort(folderEnties, folderSortingData == null ? FolderSortingData.Type.None : folderSortingData.type);
-            //if (folderSortingData != null && folderSortingData.isReversed)
-            //{
-            //    folderEnties = folderEnties.Reverse();
-            //}
-            var entries = tab.Folder.GetEntries().ToArray();
-
-            // Spawning and despawning UIItems
-            SetUIItemsCount(entries.Length);
+            //// Spawning and despawning UIItems
+            //SetUIItemsCount(entries.Length);
 
             // Refreshing UIItems
-            int j = 0;
-            foreach (var entry in entries)
-            {
-                spawnedItems[j].Refresh(entry);
-                j++;
-            }
+            //List<EntryUIItemModel> models = new List<EntryUIItemModel>();
+            //int j = 0;
+            //foreach (Entry entry in entries)
+            //{
+            //    //var model = new EntryUIItemModel(entry);
+            //    //models.Add(model);
+
+            //    //EntryUIItem item = spawnedItems[j];
+            //    //item.Refresh(model);
+            //    //model.item = item;
+
+            //    j++;
+            //}
+            grid.Recalculate(tab.Folder);
 
             // Updating FileWatcher
-            fileWatcher.Path = CurrentPath;
+            //fileWatcher.Path = CurrentPath;
             onPathChanged?.Invoke();
 
             messager.ClearMessage();
         }
         public void ShowLoading(string message)
         {
-            SetUIItemsCount(0);
+            grid.ClearItems();
             messager.SetMessage(message);
         }
         public void OnItemClicked(EntryUIItem item)
@@ -237,27 +227,27 @@ namespace InApp.UI
             item.SetSelection(true);
             selectedEntries.Add(item);
         }
-        private void SetUIItemsCount(int count)
-        {
-            int spawnedCount = spawnedItems.Count;
-            int targetCount = count;
+        //private void SetUIItemsCount(int count)
+        //{
+        //    int spawnedCount = spawnedItems.Count;
+        //    int targetCount = count;
 
-            if (spawnedCount > targetCount)
-            {
-                for (int i = 0; i < spawnedCount - targetCount; i++)
-                {
-                    pool.Despawn(spawnedItems[0]);
-                    spawnedItems.RemoveAt(0);
-                }
-            }
-            else if (spawnedCount < targetCount)
-            {
-                for (int i = 0; i < targetCount - spawnedCount; i++)
-                {
-                    SpawnItem();
-                }
-            }
-        }
+        //    if (spawnedCount > targetCount)
+        //    {
+        //        for (int i = 0; i < spawnedCount - targetCount; i++)
+        //        {
+        //            pool.Despawn(spawnedItems[0]);
+        //            spawnedItems.RemoveAt(0);
+        //        }
+        //    }
+        //    else if (spawnedCount < targetCount)
+        //    {
+        //        for (int i = 0; i < targetCount - spawnedCount; i++)
+        //        {
+        //            SpawnItem();
+        //        }
+        //    }
+        //}
         private void SpawnItem()
         {
             var item = pool.Spawn();
