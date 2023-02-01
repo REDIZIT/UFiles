@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using Zenject;
 
 namespace InApp.UI
@@ -19,6 +20,7 @@ namespace InApp.UI
         [SerializeField] private Transform content;
         [SerializeField] private FilesViewMessager messager;
         [SerializeField] private EntriesGrid grid;
+        [SerializeField] private ScrollRect scrollRect;
 
         private List<EntryUIItem> spawnedItems = new List<EntryUIItem>();
         private HashSet<EntryUIItem> selectedEntries = new HashSet<EntryUIItem>();
@@ -90,23 +92,6 @@ namespace InApp.UI
             // Handling files and folders
             var folderSortingData = settings.folderSortingData.FirstOrDefault(d => d.path == path);
 
-            //// Spawning and despawning UIItems
-            //SetUIItemsCount(entries.Length);
-
-            // Refreshing UIItems
-            //List<EntryUIItemModel> models = new List<EntryUIItemModel>();
-            //int j = 0;
-            //foreach (Entry entry in entries)
-            //{
-            //    //var model = new EntryUIItemModel(entry);
-            //    //models.Add(model);
-
-            //    //EntryUIItem item = spawnedItems[j];
-            //    //item.Refresh(model);
-            //    //model.item = item;
-
-            //    j++;
-            //}
             grid.Recalculate(tab.Folder);
 
             // Updating FileWatcher
@@ -114,6 +99,7 @@ namespace InApp.UI
             onPathChanged?.Invoke();
 
             messager.ClearMessage();
+            scrollRect.verticalNormalizedPosition = 1;
         }
         public void ShowLoading(string message)
         {
@@ -188,6 +174,10 @@ namespace InApp.UI
                 }, Input.mousePosition);
             }
         }
+        public void OnScrollRectValueChanged(Vector2 value)
+        {
+            scrollRect.verticalScrollbar.size = Mathf.Max(scrollRect.verticalScrollbar.size, 0.075f);
+        }
 
         private void UpdateHotkeys()
         {
@@ -226,35 +216,6 @@ namespace InApp.UI
         {
             item.SetSelection(true);
             selectedEntries.Add(item);
-        }
-        //private void SetUIItemsCount(int count)
-        //{
-        //    int spawnedCount = spawnedItems.Count;
-        //    int targetCount = count;
-
-        //    if (spawnedCount > targetCount)
-        //    {
-        //        for (int i = 0; i < spawnedCount - targetCount; i++)
-        //        {
-        //            pool.Despawn(spawnedItems[0]);
-        //            spawnedItems.RemoveAt(0);
-        //        }
-        //    }
-        //    else if (spawnedCount < targetCount)
-        //    {
-        //        for (int i = 0; i < targetCount - spawnedCount; i++)
-        //        {
-        //            SpawnItem();
-        //        }
-        //    }
-        //}
-        private void SpawnItem()
-        {
-            var item = pool.Spawn();
-            item.transform.parent = content;
-            item.transform.SetAsLastSibling();
-
-            spawnedItems.Add(item);
         }
         private void DeselectAll()
         {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 using Zenject;
 
@@ -15,7 +16,11 @@ namespace InApp.UI
         [Inject] private EntryUIItem.Pool itemsCreationPool;
 
         private EntryUIItem[] pool;
+        private IEnumerator<Entry> enumerator;
         private List<EntryUIItemModel> models = new List<EntryUIItemModel>();
+
+        private Thread thread;
+        private Folder folder;
         private RectTransform contentRect;
         private int framesToSkip;
 
@@ -31,6 +36,38 @@ namespace InApp.UI
             }
         }
         private void Update()
+        {
+            UpdateUIItems();
+            FitContentSize();
+
+            if (framesToSkip >= 0)
+            {
+                framesToSkip--;
+            }
+        }
+        public void Recalculate(Folder folder)
+        {
+            this.folder = folder;
+
+            thread = new Thread(LoadModels);
+            thread.Start();
+
+            framesToSkip = 1;
+        }
+        public void ClearItems()
+        {
+            models.Clear();
+        }
+
+        private void LoadModels()
+        {
+            models.Clear();
+            foreach (Entry entry in folder.GetEntries())
+            {
+                models.Add(new EntryUIItemModel(entry));
+            }
+        }
+        private void UpdateUIItems()
         {
             for (int i = 0; i < pool.Length; i++)
             {
@@ -55,27 +92,8 @@ namespace InApp.UI
                     }
                 }
             }
-            if (framesToSkip >= 0)
-            {
-                framesToSkip--;
-            }
         }
-        public void Recalculate(Folder folder)
-        {
-            models.Clear();
-            foreach (Entry entry in folder.GetEntries())
-            {
-                models.Add(new EntryUIItemModel(entry));
-            }
-            Recalculate();
-
-            framesToSkip = 1;
-        }
-        public void ClearItems()
-        {
-            models.Clear();
-        }
-        private void Recalculate()
+        private void FitContentSize()
         {
             contentRect.sizeDelta = new Vector2(0, models.Count * itemHeight);
         }
