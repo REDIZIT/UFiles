@@ -3,8 +3,6 @@
     public class EntryUIItemModel
     {
         public Entry entry;
-        public EntryUIItemModel metaModel;
-        public bool isShowed;
 
         public EntryUIItemModel(Entry entry)
         {

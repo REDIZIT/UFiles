@@ -136,9 +136,14 @@ namespace InApp.UI
             UpdateColor();
         }
 
-
+        public void PlayShowAnimation()
+        {
+            animator.SetTrigger("PlayShow");
+        }
         public void Refresh(EntryUIItemModel model)
         {
+            if (Model == model) return;
+
             linkedParent = null;
             isHovered = false;
             isLinkedHovered = false;
@@ -188,8 +193,6 @@ namespace InApp.UI
             {
                 preview.RequestIcon(Path, icon);
             }
-
-            animator.SetTrigger("PlayShow");
         }
         private void BindPointerHandlers()
         {
@@ -212,12 +215,14 @@ namespace InApp.UI
         }
         private void CheckAndCreateLinkedFiles()
         {
-            bool hasLinkedItems = Model.metaModel != null;
+            //bool hasLinkedItems = Model.metaModel != null;
 
-            if (hasLinkedItems)
-            {
-                CreateLinkedItem(Model.metaModel);
-            }
+            //if (hasLinkedItems)
+            //{
+            //    CreateLinkedItem(Model.metaModel);
+            //}
+
+            bool hasLinkedItems = false;
 
             linkButton.SetActive(hasLinkedItems);
             linkedFilesGroup.gameObject.SetActive(hasLinkedItems);

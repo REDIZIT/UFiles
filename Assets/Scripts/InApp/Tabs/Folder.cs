@@ -38,7 +38,7 @@ namespace InApp
 
             return new Entry()
             {
-                name = path.Substring(path.LastIndexOf('/')),
+                name = Path.GetFileName(path),
                 //size = subEntriesCount,
                 isFolder = true,
                 //lastWriteTime = info.LastWriteTime,
@@ -51,7 +51,7 @@ namespace InApp
 
             return new Entry()
             {
-                name = path.Substring(path.LastIndexOf('/')),
+                name = Path.GetFileName(path),
                 //size = (uint)info.Length,
                 isFolder = false,
                 //lastWriteTime = info.LastWriteTime,

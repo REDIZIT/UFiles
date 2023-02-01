@@ -82,9 +82,13 @@ namespace InApp
         {
             //OpenNew(new LocalFolder("C:/Users/redizit/Downloads"), true);
             d1 = DateTime.Now;
+
             Profiler.BeginSample("Open tab");
             OpenNew(new LocalFolder("C:/Windows/WinSxS"), true);
             Profiler.EndSample();
+
+            Debug.Log("Openned in " + (DateTime.Now - d1).TotalMilliseconds + "ms");
+            d1 = default;
         }
         public void OnTabClicked(Tab model)
         {
