@@ -28,18 +28,18 @@ namespace InApp
         public override Folder Open(Entry entry)
         {
             string entryFullPath = path + "/" + entry.name;
+            Folder folder;
             if (ArchiveViewer.IsArchive(entryFullPath))
             {
-                ArchiveFolder folder = new ArchiveFolder(entryFullPath);
-                container.Inject(folder);
-                return folder;
+                folder = new ArchiveFolder(entryFullPath);
             }
             else
             {
-                LocalFolder folder = new LocalFolder(entryFullPath);
-                container.Inject(folder);
-                return folder;
+                folder = new LocalFolder(entryFullPath);
             }
+
+            container.Inject(folder);
+            return folder;
         }
     }
 }

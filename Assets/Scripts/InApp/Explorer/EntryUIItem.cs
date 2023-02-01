@@ -206,16 +206,15 @@ namespace InApp.UI
         }
         private void CheckAndCreateLinkedFiles()
         {
-            Debug.Log("Linked items disabled");
-            //bool hasLinkedItems = File.Exists(Path + ".meta");
+            bool hasLinkedItems = Entry.metaEntry != null;
 
-            //if (hasLinkedItems)
-            //{
-            //    CreateLinkedItem(Path + ".meta");
-            //}
+            if (hasLinkedItems)
+            {
+                CreateLinkedItem(Entry.metaEntry);
+            }
 
-            //linkButton.SetActive(hasLinkedItems);
-            //linkedFilesGroup.gameObject.SetActive(hasLinkedItems);
+            linkButton.SetActive(hasLinkedItems);
+            linkedFilesGroup.gameObject.SetActive(hasLinkedItems);
         }
         private void CreateLinkedItem(Entry entry)
         {

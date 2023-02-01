@@ -17,6 +17,7 @@ namespace InApp.UI
         public Action onPathChanged;
 
         [SerializeField] private Transform content;
+        [SerializeField] private FilesViewMessager messager;
 
         private List<EntryUIItem> spawnedItems = new List<EntryUIItem>();
         private HashSet<EntryUIItem> selectedEntries = new HashSet<EntryUIItem>();
@@ -108,24 +109,7 @@ namespace InApp.UI
             var entries = tab.Folder.GetEntries().ToArray();
 
             // Spawning and despawning UIItems
-            int spawnedCount = spawnedItems.Count;
-            int targetCount = entries.Count();
-
-            if (spawnedCount > targetCount)
-            {
-                for (int i = 0; i < spawnedCount - targetCount; i++)
-                {
-                    pool.Despawn(spawnedItems[0]);
-                    spawnedItems.RemoveAt(0);
-                }
-            }
-            else if (spawnedCount < targetCount)
-            {
-                for (int i = 0; i < targetCount - spawnedCount; i++)
-                {
-                    SpawnItem();
-                }
-            }
+            SetUIItemsCount(entries.Length);
 
             // Refreshing UIItems
             int j = 0;
@@ -135,10 +119,16 @@ namespace InApp.UI
                 j++;
             }
 
-            
             // Updating FileWatcher
             fileWatcher.Path = CurrentPath;
             onPathChanged?.Invoke();
+
+            messager.ClearMessage();
+        }
+        public void ShowLoading(string message)
+        {
+            SetUIItemsCount(0);
+            messager.SetMessage(message);
         }
         public void OnItemClicked(EntryUIItem item)
         {
@@ -246,6 +236,27 @@ namespace InApp.UI
         {
             item.SetSelection(true);
             selectedEntries.Add(item);
+        }
+        private void SetUIItemsCount(int count)
+        {
+            int spawnedCount = spawnedItems.Count;
+            int targetCount = count;
+
+            if (spawnedCount > targetCount)
+            {
+                for (int i = 0; i < spawnedCount - targetCount; i++)
+                {
+                    pool.Despawn(spawnedItems[0]);
+                    spawnedItems.RemoveAt(0);
+                }
+            }
+            else if (spawnedCount < targetCount)
+            {
+                for (int i = 0; i < targetCount - spawnedCount; i++)
+                {
+                    SpawnItem();
+                }
+            }
         }
         private void SpawnItem()
         {

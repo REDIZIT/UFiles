@@ -1,4 +1,7 @@
-﻿using System;
+﻿using InApp.UI;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 
@@ -7,26 +10,47 @@ namespace InApp
     public class Tab
     {
         public Folder Folder { get; private set; }
+        public bool IsLoading { get; private set; }
 
         public Action onPathChanged;
 
         private History<Folder> history = new History<Folder>(HistoryPointerType.TargetFrame);
         private DiContainer container;
+        private Thread folderOpenThread;
+        private FilesView files;
 
         public Tab(Folder startFolder, DiContainer container)
         {
             this.container = container;
             Folder = startFolder;
             history.Add(Folder);
+
+            files = container.Resolve<FilesView>();
         }
 
         public void Open(Entry entry)
         {
-            Folder = Folder.Open(entry);
+            if (IsLoading) return;
 
-            history.Add(Folder);
+            IsLoading = true;
+            files.ShowLoading("Папка открывается");
 
-            onPathChanged?.Invoke();
+            folderOpenThread = new Thread(() =>
+            {
+                Folder = Folder.Open(entry);
+
+                UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                {
+                    history.Add(Folder);
+
+                    onPathChanged?.Invoke();
+                    IsLoading = false;
+                });
+            });
+
+            
+
+            folderOpenThread.Start();
         }
         public void Open(string localFolderPath)
         {

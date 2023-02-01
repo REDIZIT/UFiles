@@ -18,29 +18,49 @@ namespace InApp
         {
             foreach (string folder in Directory.EnumerateDirectories(path))
             {
-                DirectoryInfo info = new DirectoryInfo(folder);
-                int subEntriesCount = TryGetSubElementsCount(folder);
-
-                yield return new Entry()
-                {
-                    name = info.Name,
-                    size = subEntriesCount,
-                    isFolder = true,
-                    lastWriteTime = info.LastWriteTime
-                };
+                yield return GetFolderEntry(folder);
             }
             foreach (string file in Directory.EnumerateFiles(path))
             {
-                FileInfo info = new FileInfo(file);
-
-                yield return new Entry()
-                {
-                    name = info.Name,
-                    size = info.Length,
-                    isFolder = false,
-                    lastWriteTime = info.LastWriteTime
-                };
+                if (file.EndsWith(".meta")) continue;
+                yield return GetFileEntry(file);
             }
+        }
+        private Entry GetFolderEntry(string path)
+        {
+            DirectoryInfo info = new DirectoryInfo(path);
+            int subEntriesCount = TryGetSubElementsCount(path);
+
+            return new Entry()
+            {
+                name = info.Name,
+                size = subEntriesCount,
+                isFolder = true,
+                lastWriteTime = info.LastWriteTime,
+                metaEntry = GetMetaEntry(path)
+            };
+        }
+        private Entry GetFileEntry(string path)
+        {
+            FileInfo info = new FileInfo(path);
+
+            return new Entry()
+            {
+                name = info.Name,
+                size = info.Length,
+                isFolder = false,
+                lastWriteTime = info.LastWriteTime,
+                metaEntry = GetMetaEntry(path)
+            };
+        }
+        private Entry GetMetaEntry(string assetFilePath)
+        {
+            string metaPath = assetFilePath + ".meta";
+            if (File.Exists(metaPath))
+            {
+                return GetFileEntry(metaPath);
+            }
+            return null;
         }
         private int TryGetSubElementsCount(string folder)
         {
