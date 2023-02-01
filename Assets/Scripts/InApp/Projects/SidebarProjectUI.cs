@@ -39,7 +39,7 @@ namespace InApp
             foreach (ProjectLink link in project.links)
             {
                 var inst = urlPool.Spawn(link);
-                inst.transform.parent = urlsContent;
+                inst.transform.SetParent(urlsContent);
             }
         }
 

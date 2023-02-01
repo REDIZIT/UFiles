@@ -18,21 +18,19 @@ namespace InApp.Sidebar
 
         private IPath path;
 
-        private FilesView files;
         private ContextMenuCreator contextCreator;
         private TabUI tabs;
         private SidebarGroup group;
 
         [Inject]
-        private void Construct(FilesView files, ContextMenuCreator contextCreator, TabUI tabs, SidebarGroup group, string path, Transform parent)
+        private void Construct(ContextMenuCreator contextCreator, TabUI tabs, SidebarGroup group, string path, Transform parent)
         {
-            this.files = files;
             this.contextCreator = contextCreator;
             this.tabs = tabs;
             this.group = group;
 
             Refresh(new EntryPath(path));
-            transform.parent = parent;
+            transform.SetParent(parent);
         }
 
         public void OnClick()

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using Zenject;
 
 namespace InApp.UI
@@ -18,6 +19,8 @@ namespace InApp.UI
 
         [SerializeField] private Transform content;
         [SerializeField] private FilesViewMessager messager;
+        [SerializeField] private EntriesGrid grid;
+        [SerializeField] private ScrollRect scrollRect;
 
         private List<EntryUIItem> spawnedItems = new List<EntryUIItem>();
         private HashSet<EntryUIItem> selectedEntries = new HashSet<EntryUIItem>();
@@ -89,45 +92,18 @@ namespace InApp.UI
             // Handling files and folders
             var folderSortingData = settings.folderSortingData.FirstOrDefault(d => d.path == path);
 
-            //IEnumerable<string> folderEnties = Directory.GetDirectories(path).Union(Directory.GetFiles(path));
-
-            //folderEnties = folderEnties.Where(p =>
-            //{
-            //    if (Path.GetExtension(p) == ".meta")
-            //    {
-            //        string metaTargetFile = p.Substring(0, p.Length - ".meta".Length);
-            //        if (EntryUtils.Exists(metaTargetFile)) return false;
-            //    }
-            //    return true;
-            //});
-
-            //folderEnties = EntriesSorter.Sort(folderEnties, folderSortingData == null ? FolderSortingData.Type.None : folderSortingData.type);
-            //if (folderSortingData != null && folderSortingData.isReversed)
-            //{
-            //    folderEnties = folderEnties.Reverse();
-            //}
-            var entries = tab.Folder.GetEntries().ToArray();
-
-            // Spawning and despawning UIItems
-            SetUIItemsCount(entries.Length);
-
-            // Refreshing UIItems
-            int j = 0;
-            foreach (var entry in entries)
-            {
-                spawnedItems[j].Refresh(entry);
-                j++;
-            }
+            grid.Recalculate(tab.Folder);
 
             // Updating FileWatcher
-            fileWatcher.Path = CurrentPath;
+            //fileWatcher.Path = CurrentPath;
             onPathChanged?.Invoke();
 
             messager.ClearMessage();
+            scrollRect.verticalNormalizedPosition = 1;
         }
         public void ShowLoading(string message)
         {
-            SetUIItemsCount(0);
+            grid.ClearItems();
             messager.SetMessage(message);
         }
         public void OnItemClicked(EntryUIItem item)
@@ -198,6 +174,10 @@ namespace InApp.UI
                 }, Input.mousePosition);
             }
         }
+        public void OnScrollRectValueChanged(Vector2 value)
+        {
+            scrollRect.verticalScrollbar.size = Mathf.Max(scrollRect.verticalScrollbar.size, 0.075f);
+        }
 
         private void UpdateHotkeys()
         {
@@ -236,35 +216,6 @@ namespace InApp.UI
         {
             item.SetSelection(true);
             selectedEntries.Add(item);
-        }
-        private void SetUIItemsCount(int count)
-        {
-            int spawnedCount = spawnedItems.Count;
-            int targetCount = count;
-
-            if (spawnedCount > targetCount)
-            {
-                for (int i = 0; i < spawnedCount - targetCount; i++)
-                {
-                    pool.Despawn(spawnedItems[0]);
-                    spawnedItems.RemoveAt(0);
-                }
-            }
-            else if (spawnedCount < targetCount)
-            {
-                for (int i = 0; i < targetCount - spawnedCount; i++)
-                {
-                    SpawnItem();
-                }
-            }
-        }
-        private void SpawnItem()
-        {
-            var item = pool.Spawn();
-            item.transform.parent = content;
-            item.transform.SetAsLastSibling();
-
-            spawnedItems.Add(item);
         }
         private void DeselectAll()
         {

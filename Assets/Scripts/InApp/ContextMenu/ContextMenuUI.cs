@@ -30,7 +30,7 @@ namespace InApp.UI
             foreach (var item in items)
             {
                 var inst = pool.Spawn(item);
-                inst.transform.parent = content;
+                inst.transform.SetParent(content);
                 spawnedItems.Add(inst);
             }
         }
