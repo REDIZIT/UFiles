@@ -28,6 +28,8 @@ namespace InApp.UI
         [SerializeField] private GameObject selectionIndicator;
         [SerializeField] private PointerHandler previewImage;
 
+        [SerializeField] private Animator animator;
+
         private bool isHovered, isLinkedHovered, isLinkedExpanded;
         private List<EntryUIItem> linkedItems = new List<EntryUIItem>();    
         private EntryUIItem linkedParent;
@@ -184,6 +186,8 @@ namespace InApp.UI
             {
                 preview.RequestIcon(Path, icon);
             }
+
+            animator.SetTrigger("PlayShow");
         }
         private void BindPointerHandlers()
         {
