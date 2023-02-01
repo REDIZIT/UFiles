@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine.Profiling;
@@ -31,16 +32,29 @@ namespace InApp
             }
             Profiler.EndSample();
         }
+
+        public bool TryGetEntry(string entryName, out Entry entry)
+        {
+            string path = GetFullPath() + "/" + entryName;
+            if (File.Exists(path))
+            {
+                entry = GetFileEntry(path);
+                return true;
+            }
+            entry = default;
+            return false;
+        }
+
         private Entry GetFolderEntry(string path)
         {
             //DirectoryInfo info = new DirectoryInfo(path);
-            //uint subEntriesCount = TryGetSubElementsCount(path);
+            long subEntriesCount = TryGetSubElementsCount(path);
 
             return new Entry()
             {
                 name = Path.GetFileName(path),
-                //size = subEntriesCount,
-                isFolder = true,
+                size = subEntriesCount,
+                isFolder = true
                 //lastWriteTime = info.LastWriteTime,
                 //metaEntry = GetMetaEntry(path)
             };
@@ -53,31 +67,21 @@ namespace InApp
             {
                 name = Path.GetFileName(path),
                 //size = (uint)info.Length,
-                isFolder = false,
+                isFolder = false
                 //lastWriteTime = info.LastWriteTime,
                 //metaEntry = GetMetaEntry(path)
             };
         }
-        //private Entry GetMetaEntry(string assetFilePath)
-        //{
-        //    string metaPath = assetFilePath + ".meta";
-        //    if (File.Exists(metaPath))
-        //    {
-        //        return GetFileEntry(metaPath);
-        //    }
-        //    return null;
-        //}
-        private uint TryGetSubElementsCount(string folder)
+        private long TryGetSubElementsCount(string folder)
         {
-            return 0;
-            //try
-            //{
-            //    return Directory.EnumerateFileSystemEntries(folder).Count();
-            //}
-            //catch
-            //{
-            //    return -1;
-            //}
+            try
+            {
+                return Directory.EnumerateFileSystemEntries(folder).Count();
+            }
+            catch
+            {
+                return -1;
+            }
         }
     }
 }

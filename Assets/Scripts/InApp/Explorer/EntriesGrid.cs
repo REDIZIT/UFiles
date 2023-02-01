@@ -16,7 +16,6 @@ namespace InApp.UI
         [Inject] private EntryUIItem.Pool itemsCreationPool;
 
         private EntryUIItem[] pool;
-        private IEnumerator<Entry> enumerator;
         private List<EntryUIItemModel> models = new List<EntryUIItemModel>();
 
         private Thread thread;
@@ -32,7 +31,7 @@ namespace InApp.UI
             for (int i = 0; i < pool.Length; i++)
             {
                 pool[i] = itemsCreationPool.Spawn();
-                pool[i].transform.parent = contentRect;
+                pool[i].transform.SetParent(contentRect);
             }
         }
         private void Update()
@@ -49,6 +48,8 @@ namespace InApp.UI
         {
             this.folder = folder;
 
+            ClearItems();
+
             thread = new Thread(LoadModels);
             thread.Start();
 
@@ -57,6 +58,7 @@ namespace InApp.UI
         public void ClearItems()
         {
             models.Clear();
+            Update();
         }
 
         private void LoadModels()
@@ -64,38 +66,56 @@ namespace InApp.UI
             models.Clear();
             foreach (Entry entry in folder.GetEntries())
             {
-                models.Add(new EntryUIItemModel(entry));
+                models.Add(new EntryUIItemModel(entry, folder));
             }
         }
         private void UpdateUIItems()
         {
-            for (int i = 0; i < pool.Length; i++)
+            float currentHeight = 0;
+            int poolIndex = 0;
+            for (int i = 0; i < models.Count; i++)
             {
-                EntryUIItem item = pool[i];
-                int modelIndex = TopBorderIndex + i;
+                EntryUIItemModel model = models[i];
 
-                if (modelIndex >= models.Count)
+                float nextHeight = currentHeight + model.Height + 2;
+
+                bool isVisible = nextHeight >= contentRect.anchoredPosition.y;
+
+                if (isVisible && poolIndex < pool.Length)
                 {
-                    item.gameObject.SetActive(false);
-                }
-                else
-                {
+                    EntryUIItem item = pool[poolIndex];
+                    poolIndex++;
+
                     item.gameObject.SetActive(framesToSkip <= 0);
 
-                    SetHeight(item, modelIndex * itemHeight);
+                    SetHeight(item, currentHeight);
 
-                    item.Refresh(models[modelIndex]);
+                    item.Refresh(model);
 
                     if (framesToSkip == 0)
                     {
                         item.PlayShowAnimation();
                     }
                 }
+
+                currentHeight = nextHeight;
+            }
+
+            // Hide unused items
+            while (poolIndex < pool.Length - 1)
+            {
+                poolIndex++;
+                pool[poolIndex].gameObject.SetActive(false);
             }
         }
         private void FitContentSize()
         {
-            contentRect.sizeDelta = new Vector2(0, models.Count * itemHeight);
+            float height = 0;
+            for (int i = 0; i < models.Count; i++)
+            {
+                height += models[i].Height + 2;
+            }
+            contentRect.sizeDelta = new Vector2(0, height);
         }
         private void SetHeight(EntryUIItem item, float height)
         {

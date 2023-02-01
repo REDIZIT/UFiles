@@ -32,7 +32,7 @@ namespace InApp.UI
 
         [SerializeField] private Animator animator;
 
-        private bool isHovered, isLinkedHovered, isLinkedExpanded;
+        private bool isHovered, isLinkedHovered;
         private List<EntryUIItem> linkedItems = new List<EntryUIItem>();    
         private EntryUIItem linkedParent;
         
@@ -126,7 +126,7 @@ namespace InApp.UI
 
         public void ClickExpandLinkedItems()
         {
-            isLinkedExpanded = !isLinkedExpanded;
+            Model.isExpanded = !Model.isExpanded;
             UpdateExpandLinkedItems();
         }
         public void SetSelection(bool isSelected)
@@ -144,13 +144,13 @@ namespace InApp.UI
         {
             if (Model == model) return;
 
+            Model = model;
+
             linkedParent = null;
             isHovered = false;
             isLinkedHovered = false;
-            isLinkedExpanded = false;
             SetSelection(false);
 
-            Model = model;
 
             if (Entry.isFolder)
             {
@@ -215,14 +215,12 @@ namespace InApp.UI
         }
         private void CheckAndCreateLinkedFiles()
         {
-            //bool hasLinkedItems = Model.metaModel != null;
+            bool hasLinkedItems = Model.metaModel != null;
 
-            //if (hasLinkedItems)
-            //{
-            //    CreateLinkedItem(Model.metaModel);
-            //}
-
-            bool hasLinkedItems = false;
+            if (hasLinkedItems)
+            {
+                CreateLinkedItem(Model.metaModel);
+            }
 
             linkButton.SetActive(hasLinkedItems);
             linkedFilesGroup.gameObject.SetActive(hasLinkedItems);
@@ -231,7 +229,7 @@ namespace InApp.UI
         {
             var inst = pool.Spawn();
             inst.Refresh(model);
-            inst.transform.parent = linkedFilesContent;
+            inst.transform.SetParent(linkedFilesContent);
             inst.linkedParent = this;
             linkedItems.Add(inst);
 
@@ -239,8 +237,8 @@ namespace InApp.UI
         }
         private void UpdateExpandLinkedItems()
         {
-            linkArrow.eulerAngles = new Vector3(0, 0, isLinkedExpanded ? 90 : -90);
-            linkedFilesGroup.gameObject.SetActive(isLinkedExpanded);
+            linkArrow.eulerAngles = new Vector3(0, 0, Model.isExpanded ? 90 : -90);
+            linkedFilesGroup.gameObject.SetActive(Model.isExpanded);
             FitSize();
         }
 
@@ -253,7 +251,7 @@ namespace InApp.UI
         {
             float height = 32;
             float linkedHeight = linkedFilesContent.childCount * 32;
-            if (isLinkedExpanded)
+            if (Model.isExpanded)
             {
                 height += linkedHeight;
             }

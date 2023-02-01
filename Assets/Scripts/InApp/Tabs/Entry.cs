@@ -6,8 +6,7 @@ namespace InApp
     {
         public string name;
         public bool isFolder;
-
-        public uint size => 0;
+        public long size;
         public DateTime lastWriteTime => DateTime.MinValue;
 
         public string GetFullPathFor(Folder folder)

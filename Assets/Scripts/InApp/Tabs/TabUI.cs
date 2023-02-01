@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Profiling;
 using Zenject;
 
 namespace InApp
@@ -21,7 +20,6 @@ namespace InApp
         [SerializeField] private WindowScript window;
 
         private List<Tab> tabs = new List<Tab>();
-        private DateTime d1;
 
         private TabUIItem.Pool pool;
         private FilesView files;
@@ -41,12 +39,6 @@ namespace InApp
         }
         private void Update()
         {
-            if (d1 != default)
-            {
-                Debug.Log("Openned in " + (DateTime.Now - d1).TotalMilliseconds + "ms");
-                d1 = default;
-            }
-
             // History
             if (Input.GetMouseButtonDown(3))
             {
@@ -65,7 +57,7 @@ namespace InApp
             container.Inject(model);
 
             var inst = pool.Spawn(model);
-            inst.transform.parent = tabsContent;
+            inst.transform.SetParent(tabsContent);
 
             tabs.Add(model);
 
@@ -80,15 +72,10 @@ namespace InApp
 
         public void OnAddTabClicked()
         {
-            //OpenNew(new LocalFolder("C:/Users/redizit/Downloads"), true);
-            d1 = DateTime.Now;
-
-            Profiler.BeginSample("Open tab");
-            OpenNew(new LocalFolder("C:/Windows/WinSxS"), true);
-            Profiler.EndSample();
+            var d1 = DateTime.Now;
+            OpenNew(new LocalFolder("C:/Windows"), true);
 
             Debug.Log("Openned in " + (DateTime.Now - d1).TotalMilliseconds + "ms");
-            d1 = default;
         }
         public void OnTabClicked(Tab model)
         {

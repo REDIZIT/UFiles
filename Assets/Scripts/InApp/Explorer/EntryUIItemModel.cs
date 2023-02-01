@@ -2,16 +2,21 @@
 {
     public class EntryUIItemModel
     {
-        public Entry entry;
+        public float Height => 32 + (isExpanded ? 32 : 0);
 
-        public EntryUIItemModel(Entry entry)
+        public Entry entry;
+        public EntryUIItemModel metaModel;
+
+        public bool isExpanded;
+
+        public EntryUIItemModel(Entry entry, Folder folder)
         {
             this.entry = entry;
 
-            //if (entry.metaEntry != null)
-            //{
-            //    metaModel = new EntryUIItemModel(entry.metaEntry);
-            //}
+            if (folder.TryGetEntry(entry.name + ".meta", out Entry metaEntry))
+            {
+                metaModel = new EntryUIItemModel(metaEntry, folder);
+            }
         }
     }
 }
