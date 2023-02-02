@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using UnityEngine;
 using Zenject;
@@ -89,6 +87,11 @@ namespace InApp.UI
                     item.gameObject.SetActive(framesToSkip <= 0);
 
                     SetHeight(item, currentHeight);
+
+                    if (model.isAdditionalInformationRead == false)
+                    {
+                        model.GetAdditionalInformation(folder);
+                    }
 
                     item.Refresh(model);
 

@@ -155,7 +155,7 @@ namespace InApp.UI
             if (Entry.isFolder)
             {
                 name.text = Entry.name;
-                modifyDate.text = FileSizeUtil.PrettyModifyDate(Entry.lastWriteTime);
+                modifyDate.text = FileSizeUtil.PrettyModifyDate(model.lastWriteTime);
 
                 long entriesCount = Entry.size;
                 if (entriesCount == -1)
@@ -180,7 +180,7 @@ namespace InApp.UI
                 icon.texture = icons.defaultFile.texture;
                 name.text = Entry.name;
                 size.text = FileSizeUtil.BytesToString(Entry.size);
-                modifyDate.text = FileSizeUtil.PrettyModifyDate(Entry.lastWriteTime);
+                modifyDate.text = FileSizeUtil.PrettyModifyDate(model.lastWriteTime);
             }
 
             ClearLinkedItems();
