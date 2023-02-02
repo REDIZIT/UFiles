@@ -91,12 +91,12 @@ namespace InApp.UI
         private void UpdateDisabled()
         {
             content.SetActive(false);
-            filesScrollView.offsetMax = new Vector2(filesScrollView.offsetMax.x, 0);
+            filesScrollView.offsetMax = new Vector2(filesScrollView.offsetMax.x, -24);
         }
         private void UpdateEnabled(bool isExtractionState)
         {
             content.SetActive(true);
-            filesScrollView.offsetMax = new Vector2(filesScrollView.offsetMax.x, -42);
+            filesScrollView.offsetMax = new Vector2(filesScrollView.offsetMax.x, -66);
 
             defaultRightSide.SetActive(isExtractionState == false);
             extractRightSide.SetActive(isExtractionState);

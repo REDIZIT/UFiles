@@ -12,8 +12,10 @@ namespace InApp.UI
     public class EntryUIItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler
     {
         public bool IsSelected { get; private set; }
-        public Entry Entry { get; private set; }
+        public Entry Entry => Model.entry;
+        public EntryUIItemModel Model { get; private set; }
         public string Path => Entry.GetFullPathFor(tabs.ActiveTab.Folder);
+        public RectTransform Rect { get; private set; }
 
         [SerializeField] private TextMeshProUGUI name, size, modifyDate;
         [SerializeField] private RawImage icon;
@@ -30,10 +32,10 @@ namespace InApp.UI
 
         [SerializeField] private Animator animator;
 
-        private bool isHovered, isLinkedHovered, isLinkedExpanded;
+        private bool isHovered, isLinkedHovered;
         private List<EntryUIItem> linkedItems = new List<EntryUIItem>();    
         private EntryUIItem linkedParent;
-        private RectTransform rect;
+        
         private DateTime lastClickTime;
         private FilePreview preview;
         private AppDragDrop dragDrop;
@@ -59,7 +61,7 @@ namespace InApp.UI
             this.picturePreview = picturePreview;
             this.preview = preview;
 
-            rect = GetComponent<RectTransform>();
+            Rect = GetComponent<RectTransform>();
 
             BindPointerHandlers();
         }
@@ -124,7 +126,7 @@ namespace InApp.UI
 
         public void ClickExpandLinkedItems()
         {
-            isLinkedExpanded = !isLinkedExpanded;
+            Model.isExpanded = !Model.isExpanded;
             UpdateExpandLinkedItems();
         }
         public void SetSelection(bool isSelected)
@@ -134,23 +136,28 @@ namespace InApp.UI
             UpdateColor();
         }
 
-
-        public void Refresh(Entry entry)
+        public void PlayShowAnimation()
         {
+            animator.SetTrigger("PlayShow");
+        }
+        public void Refresh(EntryUIItemModel model)
+        {
+            if (Model == model) return;
+
+            Model = model;
+
             linkedParent = null;
             isHovered = false;
             isLinkedHovered = false;
-            isLinkedExpanded = false;
             SetSelection(false);
 
-            Entry = entry;
 
-            if (entry.isFolder)
+            if (Entry.isFolder)
             {
-                name.text = entry.name;
-                modifyDate.text = FileSizeUtil.PrettyModifyDate(entry.lastWriteTime);
+                name.text = Entry.name;
+                modifyDate.text = FileSizeUtil.PrettyModifyDate(Entry.lastWriteTime);
 
-                long entriesCount = entry.size;
+                long entriesCount = Entry.size;
                 if (entriesCount == -1)
                 {
                     name.text += " [нет доступа]";
@@ -171,9 +178,9 @@ namespace InApp.UI
             else
             {
                 icon.texture = icons.defaultFile.texture;
-                name.text = entry.name;
-                size.text = FileSizeUtil.BytesToString(entry.size);
-                modifyDate.text = FileSizeUtil.PrettyModifyDate(entry.lastWriteTime);
+                name.text = Entry.name;
+                size.text = FileSizeUtil.BytesToString(Entry.size);
+                modifyDate.text = FileSizeUtil.PrettyModifyDate(Entry.lastWriteTime);
             }
 
             ClearLinkedItems();
@@ -182,12 +189,10 @@ namespace InApp.UI
 
             UpdateColor();
 
-            if (entry.isFolder == false)
+            if (Entry.isFolder == false)
             {
                 preview.RequestIcon(Path, icon);
             }
-
-            animator.SetTrigger("PlayShow");
         }
         private void BindPointerHandlers()
         {
@@ -210,21 +215,21 @@ namespace InApp.UI
         }
         private void CheckAndCreateLinkedFiles()
         {
-            bool hasLinkedItems = Entry.metaEntry != null;
+            bool hasLinkedItems = Model.metaModel != null;
 
             if (hasLinkedItems)
             {
-                CreateLinkedItem(Entry.metaEntry);
+                CreateLinkedItem(Model.metaModel);
             }
 
             linkButton.SetActive(hasLinkedItems);
             linkedFilesGroup.gameObject.SetActive(hasLinkedItems);
         }
-        private void CreateLinkedItem(Entry entry)
+        private void CreateLinkedItem(EntryUIItemModel model)
         {
             var inst = pool.Spawn();
-            inst.Refresh(entry);
-            inst.transform.parent = linkedFilesContent;
+            inst.Refresh(model);
+            inst.transform.SetParent(linkedFilesContent);
             inst.linkedParent = this;
             linkedItems.Add(inst);
 
@@ -232,8 +237,8 @@ namespace InApp.UI
         }
         private void UpdateExpandLinkedItems()
         {
-            linkArrow.eulerAngles = new Vector3(0, 0, isLinkedExpanded ? 90 : -90);
-            linkedFilesGroup.gameObject.SetActive(isLinkedExpanded);
+            linkArrow.eulerAngles = new Vector3(0, 0, Model.isExpanded ? 90 : -90);
+            linkedFilesGroup.gameObject.SetActive(Model.isExpanded);
             FitSize();
         }
 
@@ -246,11 +251,11 @@ namespace InApp.UI
         {
             float height = 32;
             float linkedHeight = linkedFilesContent.childCount * 32;
-            if (isLinkedExpanded)
+            if (Model.isExpanded)
             {
                 height += linkedHeight;
             }
-            rect.sizeDelta = new Vector2(rect.sizeDelta.x, height);
+            Rect.sizeDelta = new Vector2(Rect.sizeDelta.x, height);
             linkedFilesGroup.sizeDelta = new Vector2(linkedFilesGroup.sizeDelta.x, linkedHeight);
         }
         private void OnLinkedItemEnter()

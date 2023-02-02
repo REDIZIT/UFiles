@@ -57,7 +57,7 @@ namespace InApp
             container.Inject(model);
 
             var inst = pool.Spawn(model);
-            inst.transform.parent = tabsContent;
+            inst.transform.SetParent(tabsContent);
 
             tabs.Add(model);
 
@@ -72,7 +72,10 @@ namespace InApp
 
         public void OnAddTabClicked()
         {
-            OpenNew(new LocalFolder("C:/Users/redizit/Downloads"), true);
+            var d1 = DateTime.Now;
+            OpenNew(new LocalFolder("C:/Windows"), true);
+
+            Debug.Log("Openned in " + (DateTime.Now - d1).TotalMilliseconds + "ms");
         }
         public void OnTabClicked(Tab model)
         {

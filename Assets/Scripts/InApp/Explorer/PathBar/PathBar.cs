@@ -106,7 +106,7 @@ namespace InApp.UI
                 if (i == 0) path += "/";
 
                 var inst = pool.Spawn(segment, path);
-                inst.transform.parent = content;
+                inst.transform.SetParent(content);
                 inst.transform.SetAsLastSibling();
                 segments.Add(inst);
             }
