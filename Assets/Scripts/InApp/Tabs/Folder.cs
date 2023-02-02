@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using UnityEngine.Profiling;
 using Zenject;
 
 namespace InApp
@@ -18,19 +16,15 @@ namespace InApp
 
         protected IEnumerable<Entry> EnumerateEntries(string path)
         {
-            Profiler.BeginSample("Enumerate folders");
             foreach (string folder in Directory.EnumerateDirectories(path))
             {
                 yield return GetFolderEntry(folder);
             }
-            Profiler.EndSample();
-            Profiler.BeginSample("Enumerate files");
             foreach (string file in Directory.EnumerateFiles(path))
             {
                 if (file.EndsWith(".meta")) continue;
                 yield return GetFileEntry(file);
             }
-            Profiler.EndSample();
         }
 
         public bool TryGetEntry(string entryName, out Entry entry)

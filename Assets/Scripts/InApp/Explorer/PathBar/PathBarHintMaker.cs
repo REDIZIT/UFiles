@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TMPro;
@@ -132,8 +133,19 @@ namespace InApp.UI
         }
         private IEnumerable<IPathBarHint> GetHints()
         {
-            yield return new LocalFolderHint("C:/Windows", "Shindows");
-            yield return new LocalFolderHint("C:/Users/REDIZIT/AppData/Roaming", "Roaming");
+            string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            yield return GetFolderHint(userFolder);
+            yield return GetFolderHint(userFolder + "/AppData");
+            yield return GetFolderHint(userFolder + "/AppData/Roaming");
+            yield return GetFolderHint(userFolder + "/AppData/LocalLow");
+            yield return GetFolderHint(userFolder + "/AppData/Local");
+            yield return GetFolderHint(userFolder + "/Downloads");
+            yield return GetFolderHint(userFolder + "/Videos");
+        }
+        private LocalFolderHint GetFolderHint(string folder)
+        {
+            folder = folder.Replace(@"\", "/");
+            return new LocalFolderHint(folder, Path.GetFileName(folder));
         }
         private IEnumerable<IPathBarHint> GetSubFolderHints()
         {
