@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.IO;
 using TMPro;
 using UnityEngine;
@@ -72,7 +72,7 @@ namespace InApp.UI
             {
                 UpdateEnabled(true);
 
-                actionText.text = "распаковка архива";
+                actionText.text = "СЂР°СЃРїР°РєРѕРІРєР° Р°СЂС…РёРІР°";
             }
             else if (tabs.ActiveTab.Folder is ArchiveFolder archiveFolder)
             {
@@ -80,7 +80,7 @@ namespace InApp.UI
 
                 archive = archiveFolder;
                 pathText.text = new FileInfo(archiveFolder.ArchiveFilePath).Name;
-                actionText.text = "просмотр архива";
+                actionText.text = "РїСЂРѕСЃРјРѕС‚СЂ Р°СЂС…РёРІР°";
                 preview.RequestIcon(archive.ArchiveFilePath, icon);
             }
             else

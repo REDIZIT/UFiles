@@ -1,10 +1,10 @@
-using System;
+ï»¿using System;
 
 public static class FileSizeUtil
 {
-    private static readonly string[] SizeSuffixes = { "áàéò", "ÊÁ", "ÌÁ", "ÃÁ", "ÒÁ", "ÏÁ", "ÅÁ", "ÇÁ", "ÉÁ" };
-    private static readonly string[] minutesStrings = { "ìèíóòà", "ìèíóòû", "ìèíóò" };
-    private static readonly string[] hoursStrings = { "÷àñ", "÷àñîâ", "÷àñà" };
+    private static readonly string[] SizeSuffixes = { "Ğ±Ğ°Ğ¹Ñ‚", "ĞšĞ‘", "ĞœĞ‘", "Ğ“Ğ‘", "Ğ¢Ğ‘", "ĞŸĞ‘", "Ğ•Ğ‘", "Ğ—Ğ‘", "Ğ™Ğ‘" };
+    private static readonly string[] minutesStrings = { "Ğ¼Ğ¸Ğ½ÑƒÑ‚Ğ°", "Ğ¼Ğ¸Ğ½ÑƒÑ‚Ñ‹", "Ğ¼Ğ¸Ğ½ÑƒÑ‚" };
+    private static readonly string[] hoursStrings = { "Ñ‡Ğ°Ñ", "Ñ‡Ğ°ÑĞ¾Ğ²", "Ñ‡Ğ°ÑĞ°" };
 
     public static string BytesToString(long bytesCount)
     {
@@ -22,59 +22,59 @@ public static class FileSizeUtil
         if (delta.TotalDays >= 1)
         {
             var days = Math.Floor(delta.TotalDays);
-            return days + " " + GetDays(days) + " íàçàä";
+            return days + " " + GetDays(days) + " Ğ½Ğ°Ğ·Ğ°Ğ´";
         }
         if (delta.TotalHours >= 1)
         {
             var hours = Math.Floor(delta.TotalHours);
-            return hours + " " + GetHours(hours) + " íàçàä";
+            return hours + " " + GetHours(hours) + " Ğ½Ğ°Ğ·Ğ°Ğ´";
         }
         if (delta.TotalMinutes >= 1)
         {
             var minutes = Math.Floor(delta.TotalMinutes);
-            return minutes + " " + GetMinutes(minutes) + " íàçàä";
+            return minutes + " " + GetMinutes(minutes) + " Ğ½Ğ°Ğ·Ğ°Ğ´";
         }
         else
         {
             var seconds = Math.Floor(delta.TotalSeconds);
-            return seconds + " " + GetSeconds(seconds) + " íàçàä";
+            return seconds + " " + GetSeconds(seconds) + " Ğ½Ğ°Ğ·Ğ°Ğ´";
         }
     }
 
     private static string GetSeconds(double seconds)
     {
-        if (seconds == 1) return "ñåêóíäó";
-        if (seconds >= 2 && seconds <= 4) return "ñåêóíäû";
-        if (seconds >= 5 && seconds <= 20) return "ñåêóíä";
+        if (seconds == 1) return "ÑĞµĞºÑƒĞ½Ğ´Ñƒ";
+        if (seconds >= 2 && seconds <= 4) return "ÑĞµĞºÑƒĞ½Ğ´Ñ‹";
+        if (seconds >= 5 && seconds <= 20) return "ÑĞµĞºÑƒĞ½Ğ´";
 
-        return seconds % 10 == 1 ? "ñåêóíäó" : "ñåêóíäû";
+        return seconds % 10 == 1 ? "ÑĞµĞºÑƒĞ½Ğ´Ñƒ" : "ÑĞµĞºÑƒĞ½Ğ´Ñ‹";
     }
     private static string GetMinutes(double minutes)
     {
-        if (minutes == 1) return "ìèíóòó";
-        if (minutes >= 2 && minutes <= 4) return "ìèíóòû";
-        if (minutes >= 5 && minutes <= 20) return "ìèíóò";
+        if (minutes == 1) return "Ğ¼Ğ¸Ğ½ÑƒÑ‚Ñƒ";
+        if (minutes >= 2 && minutes <= 4) return "Ğ¼Ğ¸Ğ½ÑƒÑ‚Ñ‹";
+        if (minutes >= 5 && minutes <= 20) return "Ğ¼Ğ¸Ğ½ÑƒÑ‚";
 
         double last = minutes % 10;
-        if (last == 0 || last >= 5) return "ìèíóò";
-        if (last == 1) return "ìèíóòó";
-        return "ìèíóòû";
+        if (last == 0 || last >= 5) return "Ğ¼Ğ¸Ğ½ÑƒÑ‚";
+        if (last == 1) return "Ğ¼Ğ¸Ğ½ÑƒÑ‚Ñƒ";
+        return "Ğ¼Ğ¸Ğ½ÑƒÑ‚Ñ‹";
     }
     private static string GetHours(double hours)
     {
-        if (hours == 1) return "÷àñ";
-        if (hours >= 2 && hours <= 4) return "÷àñà";
-        if (hours >= 5 && hours <= 20) return "÷àñîâ";
+        if (hours == 1) return "Ñ‡Ğ°Ñ";
+        if (hours >= 2 && hours <= 4) return "Ñ‡Ğ°ÑĞ°";
+        if (hours >= 5 && hours <= 20) return "Ñ‡Ğ°ÑĞ¾Ğ²";
 
-        return hours % 10 == 1 ? "÷àñ" : "÷àñîâ";
+        return hours % 10 == 1 ? "Ñ‡Ğ°Ñ" : "Ñ‡Ğ°ÑĞ¾Ğ²";
     }
     private static string GetDays(double days)
     {
-        if (days == 1) return "äåíü";
-        if (days >= 2 && days <= 4) return "äíÿ";
-        if (days >= 5 && days <= 20) return "äíåé";
+        if (days == 1) return "Ğ´ĞµĞ½ÑŒ";
+        if (days >= 2 && days <= 4) return "Ğ´Ğ½Ñ";
+        if (days >= 5 && days <= 20) return "Ğ´Ğ½ĞµĞ¹";
 
-        return days % 10 == 1 ? "äåíü" : "äíÿ";
+        return days % 10 == 1 ? "Ğ´ĞµĞ½ÑŒ" : "Ğ´Ğ½Ñ";
     }
 
     private static string SizeSuffix(long value, int decimalPlaces = 1)

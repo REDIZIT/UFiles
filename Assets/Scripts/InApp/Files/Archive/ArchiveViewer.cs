@@ -29,15 +29,18 @@ namespace InApp.UI
         }
         public void Dispose()
         {
-            foreach (string dir in Directory.EnumerateDirectories(archivesTempFolder))
+            if (Directory.Exists(archivesTempFolder))
             {
-                try
+                foreach (string dir in Directory.EnumerateDirectories(archivesTempFolder))
                 {
-                    Directory.Delete(dir, true);
-                }
-                catch
-                {
+                    try
+                    {
+                        Directory.Delete(dir, true);
+                    }
+                    catch
+                    {
 
+                    }
                 }
             }
         }

@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.IO;
 using TMPro;
@@ -160,19 +160,19 @@ namespace InApp.UI
                 long entriesCount = Entry.size;
                 if (entriesCount == -1)
                 {
-                    name.text += " [нет доступа]";
-                    size.text = "нет доступа";
+                    name.text += " [РЅРµС‚ РґРѕСЃС‚СѓРїР°]";
+                    size.text = "РЅРµС‚ РґРѕСЃС‚СѓРїР°";
                     icon.texture = icons.folderEmpty.texture;
                 }
                 else if (entriesCount > 0)
                 {
                     icon.texture = icons.folderFill.texture;
-                    size.text = entriesCount + " элементов";
+                    size.text = entriesCount + " СЌР»РµРјРµРЅС‚РѕРІ";
                 }
                 else
                 {
                     icon.texture = icons.folderEmpty.texture;
-                    size.text = "Нет элементов";
+                    size.text = "РќРµС‚ СЌР»РµРјРµРЅС‚РѕРІ";
                 }
             }
             else
