@@ -29,12 +29,12 @@ namespace InApp
         private Entry GetFolderEntry(string path)
         {
             DirectoryInfo info = new DirectoryInfo(path);
-            int subEntriesCount = TryGetSubElementsCount(path);
+            //int subEntriesCount = TryGetSubElementsCount(path);
 
             return new Entry()
             {
                 name = info.Name,
-                size = subEntriesCount,
+                //size = subEntriesCount,
                 isFolder = true,
                 lastWriteTime = info.LastWriteTime,
                 metaEntry = GetMetaEntry(path)

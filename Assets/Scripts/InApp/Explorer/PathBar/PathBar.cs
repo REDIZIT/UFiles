@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Zenject;
 
 namespace InApp.UI
@@ -11,6 +12,7 @@ namespace InApp.UI
     {
         [SerializeField] private Transform content;
         [SerializeField] private TMP_InputField field;
+        [SerializeField] private PathBarHintMaker hints;
 
         private List<PathBarSegment> segments = new List<PathBarSegment>();
 
@@ -38,8 +40,34 @@ namespace InApp.UI
             field.Select();
 
             field.text = view.CurrentPath;
+
+            hints.Show(view.CurrentPath);
         }
         public void StopEdit()
+        {
+            var ls = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current)
+            {
+                position = Input.mousePosition
+            }, ls);
+            bool isClickedInside = ls.Any(r => r.gameObject.transform.IsChildOf(transform));
+
+            if (isClickedInside == false || Input.GetKeyDown(KeyCode.Escape))
+            {
+                CancelFieldEdit();
+            }
+        }
+        public void OnHintClicked(IPathBarHint hint)
+        {
+            if (hint != null)
+            {
+                field.text = hint.GetFullPath();
+            }
+
+            CancelFieldEdit();
+        }
+
+        private void CancelFieldEdit()
         {
             content.gameObject.SetActive(true);
             field.gameObject.SetActive(false);
@@ -55,8 +83,9 @@ namespace InApp.UI
                     Debug.Log("Written directory doesn't exist");
                 }
             }
-        }
 
+            hints.Hide();
+        }
         private void Build()
         {
             string[] pathSegments = tabs.ActiveTab.Folder.GetFullPath().Split('/');
