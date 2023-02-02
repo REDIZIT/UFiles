@@ -11,14 +11,14 @@ namespace InApp.UI
         [SerializeField] private RectTransform rectToResize;
 
         private string path;
-        private FilesView view;
+        private TabUI tabs;
         private AppDragDrop dragDrop;
         private IconsSO icons;
 
         [Inject]
-        private void Construct(FilesView view, AppDragDrop dragDrop, IconsSO icons)
+        private void Construct(TabUI tabs, AppDragDrop dragDrop, IconsSO icons)
         {
-            this.view = view;
+            this.tabs = tabs;
             this.dragDrop = dragDrop;
             this.icons = icons;
         }
@@ -31,7 +31,7 @@ namespace InApp.UI
         }
         public void OnClick()
         {
-            view.Show(path);
+            tabs.ActiveTab.Open(path);
         }
 
         public void OnDrag(PointerEventData eventData)
