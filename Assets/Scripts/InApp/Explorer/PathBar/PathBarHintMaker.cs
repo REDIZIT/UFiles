@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Zenject;
 
 namespace InApp.UI
 {
@@ -15,6 +16,8 @@ namespace InApp.UI
         [SerializeField] private PathBarHintItem prefab;
         [SerializeField] private TMP_InputField field;
         [SerializeField] private PathBar pathBar;
+
+        [Inject] private IconsSO icons;
 
         private PathBarHintItem[] pool = new PathBarHintItem[10];
         private List<IPathBarHint> staticHints = new List<IPathBarHint>();
@@ -145,7 +148,7 @@ namespace InApp.UI
         private LocalFolderHint GetFolderHint(string folder)
         {
             folder = folder.Replace(@"\", "/");
-            return new LocalFolderHint(folder, Path.GetFileName(folder));
+            return new LocalFolderHint(folder, Path.GetFileName(folder), icons);
         }
         private IEnumerable<IPathBarHint> GetSubFolderHints()
         {
@@ -162,7 +165,7 @@ namespace InApp.UI
                     var folders = Directory.EnumerateDirectories(inputtedParentFolder);
                     foreach (string folder in folders)
                     {
-                        var hint = new SubFolderHint(inputtedParentFolder, Path.GetFileName(folder));
+                        var hint = new SubFolderHint(inputtedParentFolder, Path.GetFileName(folder), icons);
                         subFolderHints.Add(hint);
                         yield return hint;
                     }

@@ -22,11 +22,11 @@ namespace InApp
 
         public EntryPath(string path)
         {
-            this.path = path;
+            this.path = path.Replace(@"\", "/");
         }
         public void Set(string path)
         {
-            this.path = path;
+            this.path = path.Replace(@"\", "/");
         }
         public string GetDisplayName()
         {

@@ -23,4 +23,8 @@ MonoBehaviour:
     copy: {fileID: 21300000, guid: 5106a328f26ae7b4a86303031822dcf6, type: 3}
     cut: {fileID: 21300000, guid: 38ce7766b2440d4428e3e7d15f33f9f3, type: 3}
     paste: {fileID: 21300000, guid: d7f1c30e2a5e6e74a996bc80c57ec279, type: 3}
+  pathBar:
+    subFolder: {fileID: 21300000, guid: e607cf358d05b5e4a8d5702e0cd2a6ef, type: 3}
+    systemFolder: {fileID: 21300000, guid: 7c957880732cd6747a429bad01909029, type: 3}
+    userFolder: {fileID: 21300000, guid: 7f4f7b235c489044baa4862359437469, type: 3}
   favourite: {fileID: 21300000, guid: 71d98e680696e8b4ca925356f0af543b, type: 3}

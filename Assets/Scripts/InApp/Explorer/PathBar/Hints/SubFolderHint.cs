@@ -6,11 +6,13 @@ namespace InApp.UI
     {
         private string parentFolder, subFolder;
         private string targetFolder;
+        private IconsSO icons;
 
-        public SubFolderHint(string parentFolder, string subFolder)
+        public SubFolderHint(string parentFolder, string subFolder, IconsSO icons)
         {
             this.parentFolder = parentFolder;
             this.subFolder = subFolder;
+            this.icons = icons;
 
             targetFolder = parentFolder + subFolder;
         }
@@ -42,6 +44,10 @@ namespace InApp.UI
         {
             return parentFolder + subFolder;
         }
+        public string GetTypeText()
+        {
+            return "Подпапка";
+        }
         public int GetMatchesCount(string input)
         {
             int matches = 0;
@@ -64,6 +70,10 @@ namespace InApp.UI
                 if (matches < 0) return 0;
             }
             return matches - Mathf.Max(0, input.Length - targetFolder.Length);
+        }
+        public Sprite GetIcon()
+        {
+            return icons.pathBar.subFolder;
         }
     }
 }

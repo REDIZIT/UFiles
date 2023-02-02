@@ -9,6 +9,7 @@ namespace InApp.UI
         public Sprite defaultFile;
 
         public ContextIcons context;
+        public PathBarIcons pathBar;
 
         public Sprite favourite;
 
@@ -17,6 +18,12 @@ namespace InApp.UI
         {
             public Sprite create, rename, delete;
             public Sprite copy, cut, paste;
+        }
+
+        [System.Serializable]
+        public class PathBarIcons
+        {
+            public Sprite subFolder, systemFolder, userFolder;
         }
     }
 }

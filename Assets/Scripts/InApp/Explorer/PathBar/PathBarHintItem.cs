@@ -7,8 +7,8 @@ namespace InApp.UI
 {
     public class PathBarHintItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
-        [SerializeField] private TextMeshProUGUI displayText;
-        [SerializeField] private Image background;
+        [SerializeField] private TextMeshProUGUI displayText, typeText;
+        [SerializeField] private Image background, icon;
         [SerializeField] private Color defaultColor, highlightedColor;
 
         private bool isHovered, isSelected;
@@ -26,7 +26,10 @@ namespace InApp.UI
             this.hint = hint;
             this.maker = maker;
             this.isSelected = isSelected;
+
             displayText.text = hint.GetDisplayText(input);
+            typeText.text = hint.GetTypeText();
+            icon.sprite = hint.GetIcon();
         }
         public void OnClick()
         {

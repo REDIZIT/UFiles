@@ -5,11 +5,13 @@ namespace InApp.UI
     public class LocalFolderHint : IPathBarHint
     {
         private string path, displayText;
+        private IconsSO icons;
 
-        public LocalFolderHint(string path, string displayText)
+        public LocalFolderHint(string path, string displayText, IconsSO icons)
         {
             this.path = path;
             this.displayText = displayText;
+            this.icons = icons;
         }
 
         public string GetDisplayText(string input)
@@ -19,6 +21,10 @@ namespace InApp.UI
         public string GetFullPath()
         {
             return path;
+        }
+        public string GetTypeText()
+        {
+            return "Системная папка";
         }
         public int GetMatchesCount(string input)
         {
@@ -39,6 +45,10 @@ namespace InApp.UI
                 }
             }
             return matches;
+        }
+        public Sprite GetIcon()
+        {
+            return icons.pathBar.userFolder;
         }
     }
 }
