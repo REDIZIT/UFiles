@@ -16,38 +16,38 @@ namespace InApp.UI
         [SerializeField] private PathBar pathBar;
 
         private PathBarHintItem[] pool = new PathBarHintItem[10];
-        private bool isShowed;
-        private string startFolder;
-        private List<IPathBarHint> hints = new List<IPathBarHint>();
+        private List<IPathBarHint> staticHints = new List<IPathBarHint>();
+        private List<SubFolderHint> subFolderHints = new List<SubFolderHint>();
         private int selectedHint;
         private int prevCaretPos;
+        private string prevParentFolder;
 
-        //private void Awake()
-        //{
-        //    for (int i = 0; i < pool.Length; i++)
-        //    {
-        //        pool[i] = Instantiate(prefab, content);
-        //    }
-        //}
-        //private void Update()
-        //{
-        //    if (isShowed == false) return;
-
-        //    UpdateKeyboard();
-        //    UpdateHintItems();
-        //}
-        public void Show(string startFolder)
+        private void Awake()
         {
-            //container.gameObject.SetActive(true);
-            //isShowed = true;
-            //this.startFolder = startFolder;
+            for (int i = 0; i < pool.Length; i++)
+            {
+                pool[i] = Instantiate(prefab, content);
+            }
 
-            //hints = GetHints().ToList();
+            staticHints = GetHints().ToList();
+        }
+        private void Update()
+        {
+            UpdateKeyboard();
+            UpdateHintItems();
+        }
+        public void Show()
+        {
+            container.gameObject.SetActive(true);
         }
         public void Hide()
         {
-            //container.gameObject.SetActive(false);
-            //isShowed = false;
+            container.gameObject.SetActive(false);
+        }
+
+        public void OnFieldChanged()
+        {
+            
         }
         public void OnClick(IPathBarHint hint)
         {
@@ -56,17 +56,6 @@ namespace InApp.UI
 
         private void UpdateKeyboard()
         {
-            if (Input.GetKeyDown(KeyCode.Tab))
-            {
-                if (Input.GetKey(KeyCode.LeftShift))
-                {
-                    selectedHint--;
-                }
-                else
-                {
-                    selectedHint++;
-                }
-            }
             bool isArrowPressed = false;
             if (Input.GetKeyDown(KeyCode.DownArrow))
             {
@@ -89,8 +78,19 @@ namespace InApp.UI
         }
         private void UpdateHintItems()
         {
-            var sortedHints = hints.Select(h => new KeyValuePair<IPathBarHint, int>(h, h.GetMatchesCount(field.text))).Where(kv => kv.Value > 0).OrderByDescending(kv => kv.Value);
+            var sortedHints =
+                staticHints.Union(GetSubFolderHints())
+                .Select(h => new KeyValuePair<IPathBarHint, int>(h, h.GetMatchesCount(field.text)))
+                .Where(kv => kv.Value > 0)
+                .OrderByDescending(kv => kv.Value);
+
             int hintsCount = Mathf.Min(pool.Length, sortedHints.Count());
+
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                field.text = sortedHints.ElementAt(selectedHint).Key.GetFullPath();
+                field.caretPosition = field.text.Length;
+            }
 
             if (Input.GetKeyDown(KeyCode.Return))
             {
@@ -134,15 +134,36 @@ namespace InApp.UI
         {
             yield return new LocalFolderHint("C:/Windows", "Shindows");
             yield return new LocalFolderHint("C:/Users/REDIZIT/AppData/Roaming", "Roaming");
+        }
+        private IEnumerable<IPathBarHint> GetSubFolderHints()
+        {
+            int index = field.text.LastIndexOf("/");
 
-            var folders = Directory.EnumerateDirectories(startFolder);
-            if (folders.Count() <= 100)
+            if (index > 0)
             {
-                foreach (string folder in folders)
+                string inputtedParentFolder = field.text.Substring(0, index + 1);
+
+                if (prevParentFolder != inputtedParentFolder && Directory.Exists(inputtedParentFolder))
                 {
-                    yield return new SubFolderHint(startFolder, Path.GetFileName(folder));
+                    prevParentFolder = inputtedParentFolder;
+                    subFolderHints.Clear();
+                    var folders = Directory.EnumerateDirectories(inputtedParentFolder);
+                    foreach (string folder in folders)
+                    {
+                        var hint = new SubFolderHint(inputtedParentFolder, Path.GetFileName(folder));
+                        subFolderHints.Add(hint);
+                        yield return hint;
+                    }
+                }
+                else
+                {
+                    foreach (SubFolderHint hint in subFolderHints)
+                    {
+                        yield return hint;
+                    }
                 }
             }
+           
         }
     }
 }

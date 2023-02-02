@@ -113,6 +113,7 @@ namespace InApp.UI
             float height = 0;
             for (int i = 0; i < models.Count; i++)
             {
+                if (models[i] == null) continue;
                 height += models[i].Height + 2;
             }
             contentRect.sizeDelta = new Vector2(0, height);

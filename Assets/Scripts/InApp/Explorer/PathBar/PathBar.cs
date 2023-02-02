@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -28,6 +29,23 @@ namespace InApp.UI
             this.tabs = tabs;
             view.onPathChanged += Build;
         }
+        private void Update()
+        {
+            if (field.gameObject.activeSelf)
+            {
+                if (Input.GetKeyDown(KeyCode.Backspace) && Input.GetKey(KeyCode.LeftControl))
+                {
+                    for (int i = field.caretPosition - 1; i >= 0; i--)
+                    {
+                        if (field.text[i] == '/')
+                        {
+                            field.text = field.text.Substring(0, i + 1);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
         private void OnDestroy()
         {
             view.onPathChanged -= Build;
@@ -41,7 +59,7 @@ namespace InApp.UI
 
             field.text = view.CurrentPath;
 
-            hints.Show(view.CurrentPath);
+            hints.Show();
         }
         public void StopEdit()
         {

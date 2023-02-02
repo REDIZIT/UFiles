@@ -12,7 +12,7 @@ namespace InApp.UI
             this.parentFolder = parentFolder;
             this.subFolder = subFolder;
 
-            targetFolder = parentFolder + "/" + subFolder;
+            targetFolder = parentFolder + subFolder;
         }
 
         public string GetDisplayText(string input)
@@ -21,7 +21,7 @@ namespace InApp.UI
             string targetLowered = targetFolder.ToLower();
 
             int boldEndIndex = 0;
-            for (int i = parentFolder.Length + 1; i < Mathf.Min(inputLowered.Length, targetLowered.Length); i++)
+            for (int i = parentFolder.Length; i < Mathf.Min(inputLowered.Length, targetLowered.Length); i++)
             {
                 if (targetLowered[i] == inputLowered[i])
                 {
@@ -33,14 +33,14 @@ namespace InApp.UI
                 }
             }
 
-            string boldText = targetFolder.Substring(parentFolder.Length + 1, boldEndIndex);
-            string unboldedText = targetFolder.Substring(parentFolder.Length + 1 + boldEndIndex);
+            string boldText = targetFolder.Substring(parentFolder.Length, boldEndIndex);
+            string unboldedText = targetFolder.Substring(parentFolder.Length + boldEndIndex);
 
-            return "<color=#888>" + parentFolder + "/</color>" + boldText + "<color=#888>" + unboldedText + "</color>";
+            return "<color=#888>" + parentFolder + "</color>" + boldText + "<color=#888>" + unboldedText + "</color>";
         }
         public string GetFullPath()
         {
-            return parentFolder + "/" + subFolder;
+            return parentFolder + subFolder;
         }
         public int GetMatchesCount(string input)
         {
@@ -51,7 +51,7 @@ namespace InApp.UI
 
             if (input.EndsWith("/")) return 1;
 
-            for (int i = parentFolder.Length + 1; i < Mathf.Min(input.Length, targetFolder.Length); i++)
+            for (int i = parentFolder.Length; i < Mathf.Min(input.Length, targetFolder.Length); i++)
             {
                 if (input[i] == targetFolderLowered[i])
                 {
@@ -59,10 +59,11 @@ namespace InApp.UI
                 }
                 else
                 {
-                    return matches;
+                    matches--;
                 }
+                if (matches < 0) return 0;
             }
-            return matches;
+            return matches - Mathf.Max(0, input.Length - targetFolder.Length);
         }
     }
 }

@@ -10266,10 +10266,10 @@ GameObject:
   m_Component:
   - component: {fileID: 861416851}
   - component: {fileID: 861416854}
+  - component: {fileID: 861416856}
   - component: {fileID: 861416853}
   - component: {fileID: 861416852}
   - component: {fileID: 861416855}
-  - component: {fileID: 861416856}
   m_Layer: 5
   m_Name: Hints
   m_TagString: Untagged
@@ -11603,7 +11603,19 @@ MonoBehaviour:
       m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 861416856}
+        m_TargetAssemblyTypeName: InApp.UI.PathBarHintMaker, Assembly-CSharp
+        m_MethodName: OnFieldChanged
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnTouchScreenKeyboardStatusChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -17004,7 +17016,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1130, y: 635.625}
+  m_SizeDelta: {x: 1101, y: 619.3125}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1474639567
 MonoBehaviour:
