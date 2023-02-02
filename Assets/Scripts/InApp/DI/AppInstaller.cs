@@ -1,6 +1,5 @@
 using InApp.Sidebar;
 using InApp.UI;
-using System.ComponentModel;
 using UnityEngine;
 using Zenject;
 
@@ -17,6 +16,7 @@ namespace InApp.DI
         [SerializeField] private TabUI tabs;
         [SerializeField] private AppDragDrop dragDrop;
         [SerializeField] private PicturePreview picturePreview;
+        [SerializeField] private PathBar pathBar;
 
         [Header("Prefabs")]
         [SerializeField] private EntryUIItem entryPrefab;
@@ -76,6 +76,7 @@ namespace InApp.DI
             Container.BindInstance(tabs);
             Container.BindInstance(dragDrop);
             Container.BindInstance(picturePreview);
+            Container.BindInstance(pathBar);
         }
         private void BindWindows()
         {

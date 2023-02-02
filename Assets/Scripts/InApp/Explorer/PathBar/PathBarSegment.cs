@@ -5,7 +5,7 @@ using Zenject;
 
 namespace InApp.UI
 {
-    public class PathBarSegment : MonoBehaviour, IDragHandler
+    public class PathBarSegment : MonoBehaviour, IDragHandler, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField] private TextMeshProUGUI name;
         [SerializeField] private RectTransform rectToResize;
@@ -14,20 +14,26 @@ namespace InApp.UI
         private TabUI tabs;
         private AppDragDrop dragDrop;
         private IconsSO icons;
+        private PathBar bar;
+
+        private RectTransform rect;
 
         [Inject]
-        private void Construct(TabUI tabs, AppDragDrop dragDrop, IconsSO icons)
+        private void Construct(TabUI tabs, AppDragDrop dragDrop, IconsSO icons, PathBar bar)
         {
             this.tabs = tabs;
             this.dragDrop = dragDrop;
             this.icons = icons;
+            this.bar = bar;
+
+            rect = GetComponent<RectTransform>();
         }
 
         public void Refresh(string segment, string path)
         {
             this.path = path;
             name.text = segment;
-            rectToResize.sizeDelta = new Vector2(name.preferredWidth + 10, rectToResize.sizeDelta.y);
+            rectToResize.sizeDelta = new Vector2(name.preferredWidth + 14, rectToResize.sizeDelta.y);
         }
         public void OnClick()
         {
@@ -43,6 +49,15 @@ namespace InApp.UI
                 icon = icons.folderFill,
                 path = path,
             });
+        }
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            bar.OnSegmentEnter(rect);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            bar.OnSegmentExit();
         }
 
         public class Pool : MemoryPool<string, string, PathBarSegment>

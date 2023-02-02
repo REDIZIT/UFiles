@@ -9,13 +9,15 @@ using Zenject;
 
 namespace InApp.UI
 {
-    public class PathBar : MonoBehaviour
+    public class PathBar : MonoBehaviour, IPointerExitHandler
     {
         [SerializeField] private Transform content;
         [SerializeField] private TMP_InputField field;
         [SerializeField] private PathBarHintMaker hints;
+        [SerializeField] private PathBarCursorFollower follower;
 
         private List<PathBarSegment> segments = new List<PathBarSegment>();
+        private int followerHideFramesToSkip = -1;
 
         private FilesView view;
         private PathBarSegment.Pool pool;
@@ -44,6 +46,16 @@ namespace InApp.UI
                         }
                     }
                 }
+            }
+
+            if (followerHideFramesToSkip > 0)
+            {
+                followerHideFramesToSkip--;
+            }
+            else if (followerHideFramesToSkip == 0)
+            {
+                followerHideFramesToSkip = -1;
+                follower.Hide();
             }
         }
         private void OnDestroy()
@@ -84,6 +96,17 @@ namespace InApp.UI
 
             CancelFieldEdit();
         }
+        public void OnSegmentEnter(RectTransform rect)
+        {
+            follower.Show(rect);
+            follower.MoveTo(rect);
+
+            followerHideFramesToSkip = -1;
+        }
+        public void OnSegmentExit()
+        {
+            followerHideFramesToSkip = 1;
+        }
 
         private void CancelFieldEdit()
         {
@@ -121,13 +144,18 @@ namespace InApp.UI
                 if (string.IsNullOrWhiteSpace(segment)) continue;
 
                 string path = string.Join("/", pathSegments.Take(i + 1));
-                if (i == 0) path += "/";
+                if (i != 0) path += "/";
 
                 var inst = pool.Spawn(segment, path);
                 inst.transform.SetParent(content);
                 inst.transform.SetAsLastSibling();
                 segments.Add(inst);
             }
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            follower.Hide();
         }
     }
 }
