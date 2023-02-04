@@ -11,6 +11,7 @@ namespace InApp
     {
         [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private RawImage icon;
+        [SerializeField] private Animator animator;
 
         [Inject] private DownloadsWatcherUI ui;
         [Inject] private Pool pool;
@@ -27,12 +28,21 @@ namespace InApp
             }
         }
 
-        public void OnApplyClicked()
+        public void OnMoveClicked()
         {
-            ui.OnApplyClicked(path);
+            ui.OnMoveClicked(path);
+            Hide();
+        }
+        public void OnOpenClicked()
+        {
+            ui.OnOpenClicked(path);
             Hide();
         }
         public void Hide()
+        {
+            animator.Play("Hide");
+        }
+        public void Despawn()
         {
             pool.Despawn(this);
         }
@@ -42,6 +52,7 @@ namespace InApp
             this.path = path;
             nameText.text = Path.GetFileName(path);
             preview.RequestIcon(path, icon);
+            animator.Play("Show");
         }
         
 

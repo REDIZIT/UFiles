@@ -130,7 +130,7 @@ namespace InApp.UI
 
         public void PlayShowAnimation()
         {
-            animator.SetTrigger("PlayShow");
+            //animator.Play("Show");
         }
         public void Refresh(EntryUIItemModel model)
         {

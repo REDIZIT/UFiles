@@ -34,7 +34,7 @@ namespace InApp
             }
         }
 
-        public void OnApplyClicked(string filepath)
+        public void OnMoveClicked(string filepath)
         {
             string targetFilename = files.CurrentPath + "/" + Path.GetFileName(filepath);
             if (File.Exists(targetFilename) || File.Exists(filepath) == false)
@@ -45,6 +45,10 @@ namespace InApp
             {
                 File.Move(filepath, targetFilename);
             }
+        }
+        public void OnOpenClicked(string filepath)
+        {
+            System.Diagnostics.Process.Start(filepath);
         }
         private void CreateItem(string filepath)
         {
