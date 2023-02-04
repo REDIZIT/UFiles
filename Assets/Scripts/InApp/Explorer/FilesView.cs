@@ -159,6 +159,7 @@ namespace InApp.UI
                 new CopyFileItem(UClipboard.CopyType.Cut),
                 new PasteFileItem(),
                 new DeleteFileItem(),
+                new CopyEntryPathItem(item.Path, item.Entry.isFolder),
                 new OpenConsoleItem(tab.Folder.GetFullPath())
             };
             context.ShowMenu(items, Input.mousePosition);
