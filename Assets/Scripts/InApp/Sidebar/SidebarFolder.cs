@@ -29,7 +29,7 @@ namespace InApp.Sidebar
             this.tabs = tabs;
             this.group = group;
 
-            Refresh(new EntryPath(path));
+            Refresh(new EntryPath(path.Replace(@"\", "/")));
             transform.SetParent(parent);
         }
 

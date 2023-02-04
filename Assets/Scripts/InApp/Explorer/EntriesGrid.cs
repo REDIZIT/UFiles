@@ -20,6 +20,7 @@ namespace InApp.UI
         private Folder folder;
         private RectTransform contentRect;
         private int framesToSkip;
+        private bool playAnimations;
 
         private void Awake()
         {
@@ -42,9 +43,10 @@ namespace InApp.UI
                 framesToSkip--;
             }
         }
-        public void Recalculate(Folder folder)
+        public void Recalculate(Folder folder, bool playAnimations)
         {
             this.folder = folder;
+            this.playAnimations = playAnimations;
 
             ClearItems();
 
@@ -96,7 +98,7 @@ namespace InApp.UI
 
                     item.Refresh(model);
 
-                    if (framesToSkip == 0)
+                    if (framesToSkip == 0 && playAnimations)
                     {
                         item.PlayShowAnimation();
                     }

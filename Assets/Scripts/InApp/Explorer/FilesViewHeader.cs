@@ -51,7 +51,7 @@ namespace InApp.UI
                 settings.folderSortingData.Add(data);
             }
 
-            files.Refresh();
+            files.RefreshWithoutAnimations();
             settings.Save();
         }
     }

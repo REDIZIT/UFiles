@@ -60,7 +60,7 @@ namespace InApp.UI
 
             if (hasFileSystemChanges)
             {
-                Refresh();
+                RefreshWithoutAnimations();
                 hasFileSystemChanges = false;
             }
         }
@@ -69,32 +69,34 @@ namespace InApp.UI
         {
             if (this.tab != null)
             {
-                this.tab.onPathChanged -= Refresh;
+                this.tab.onPathChanged -= RefreshWithAnimations;
             }
 
             this.tab = tab;
 
-            this.tab.onPathChanged += Refresh;
+            this.tab.onPathChanged += RefreshWithAnimations;
 
-            Refresh();
+            RefreshWithAnimations();
         }
-        public void Refresh()
+        public void RefreshWithAnimations()
         {
-            Show(CurrentPath);
+            Show(true);
         }
-        public void Show(string path)
+        public void RefreshWithoutAnimations()
         {
-            path = path.Replace("\\", "/").Replace(@"\", "/");
-
+            Show(false);
+        }
+        public void Show(bool playAnimations)
+        {
             DeselectAll();
 
             // Handling files and folders
-            var folderSortingData = settings.folderSortingData.FirstOrDefault(d => d.path == path);
+            var folderSortingData = settings.folderSortingData.FirstOrDefault(d => d.path == CurrentPath);
 
-            grid.Recalculate(tab.Folder);
+            grid.Recalculate(tab.Folder, playAnimations);
 
             // Updating FileWatcher
-            //fileWatcher.Path = CurrentPath;
+            fileWatcher.Path = CurrentPath;
             onPathChanged?.Invoke();
 
             messager.ClearMessage();

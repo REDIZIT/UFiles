@@ -43,7 +43,7 @@ namespace InApp
                 {
                     // Entry is drive
                     var info = new DriveInfo(path);
-                    return GetDriveLabel(path) + " (" + info.VolumeLabel + ")";
+                    return GetDriveLabel(path) + " (" + info.VolumeLabel.Replace(@"\", "/") + ")";
                 }
                 else
                 {

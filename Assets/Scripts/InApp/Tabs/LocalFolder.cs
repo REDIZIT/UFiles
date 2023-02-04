@@ -1,6 +1,7 @@
 ﻿using InApp.UI;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 
 namespace InApp
 {
@@ -10,7 +11,7 @@ namespace InApp
 
         public LocalFolder(string localFolderPath)
         {
-            path = localFolderPath;
+            path = localFolderPath.Replace("//", "/");
         }
 
         public override string GetFullPath()
@@ -19,7 +20,7 @@ namespace InApp
         }
         public override string GetShortName()
         {
-            return new DirectoryInfo(path).Name;
+            return new DirectoryInfo(path).Name.Replace(@"\", "/");
         }
         public override IEnumerable<Entry> GetEntries()
         {
