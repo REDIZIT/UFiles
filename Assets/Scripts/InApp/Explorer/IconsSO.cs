@@ -18,6 +18,7 @@ namespace InApp.UI
         {
             public Sprite create, rename, delete;
             public Sprite copy, cut, paste;
+            public Sprite cmd;
         }
 
         [System.Serializable]

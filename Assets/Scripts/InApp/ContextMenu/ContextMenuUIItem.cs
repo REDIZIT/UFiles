@@ -50,7 +50,7 @@ namespace InApp.UI
             {
                 childMenu = creator.ShowMenu(model.children, Vector2.zero);
                 childMenu.transform.parent = transform;
-                childMenu.rect.anchoredPosition = new Vector3(-5, 4);
+                childMenu.rect.anchoredPosition = new Vector3(-2, 2);
             }
         }
         public void OnPointerExit(PointerEventData eventData)

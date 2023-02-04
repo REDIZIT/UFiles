@@ -150,6 +150,18 @@ namespace InApp.UI
                 DeselectAll();
                 SelectItem(item);
             }
+
+            List<ContextItem> items = new List<ContextItem>()
+            {
+                new CreateEntryItem(),
+                new RenameFileItem(),
+                new CopyFileItem(UClipboard.CopyType.Copy),
+                new CopyFileItem(UClipboard.CopyType.Cut),
+                new PasteFileItem(),
+                new DeleteFileItem(),
+                new OpenConsoleItem(tab.Folder.GetFullPath())
+            };
+            context.ShowMenu(items, Input.mousePosition);
         }
 
         public IEnumerable<string> EnumerateSelectedFIles()
@@ -171,6 +183,7 @@ namespace InApp.UI
                 {
                     new CreateEntryItem(),
                     new PasteFileItem(),
+                    new OpenConsoleItem(tab.Folder.GetFullPath()),
                 }, Input.mousePosition);
             }
         }

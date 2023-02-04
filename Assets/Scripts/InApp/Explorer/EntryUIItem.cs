@@ -81,17 +81,6 @@ namespace InApp.UI
             else if (eventData.button == PointerEventData.InputButton.Right)
             {
                 files.OnItemRightClick(this);
-
-                List<ContextItem> items = new List<ContextItem>()
-                {
-                    new CreateEntryItem(),
-                    new RenameFileItem(),
-                    new CopyFileItem(UClipboard.CopyType.Copy),
-                    new CopyFileItem(UClipboard.CopyType.Cut),
-                    new PasteFileItem(),
-                    new DeleteFileItem(),
-                };
-                contextCreator.ShowMenu(items, Input.mousePosition);
             }
             else if (eventData.button == PointerEventData.InputButton.Middle)
             {
