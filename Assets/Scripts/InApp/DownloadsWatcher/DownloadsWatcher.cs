@@ -38,7 +38,7 @@ namespace InApp
         }
         private void OnDownloadsChange(object sender, FileSystemEventArgs e)
         {
-            if (Path.GetExtension(e.FullPath) == "~") return;
+            if (Path.GetExtension(e.FullPath) == "~" || EntryUtils.GetType(e.FullPath) == EntryType.Directory) return;
 
             changedFiles.Add(e.FullPath);
         }
