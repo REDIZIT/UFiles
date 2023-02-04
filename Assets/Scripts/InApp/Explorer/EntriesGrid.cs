@@ -51,7 +51,7 @@ namespace InApp.UI
             thread = new Thread(LoadModels);
             thread.Start();
 
-            framesToSkip = 1;
+            framesToSkip = 2;
         }
         public void ClearItems()
         {
@@ -108,8 +108,8 @@ namespace InApp.UI
             // Hide unused items
             while (poolIndex < pool.Length - 1)
             {
-                poolIndex++;
                 pool[poolIndex].gameObject.SetActive(false);
+                poolIndex++;
             }
         }
         private void FitContentSize()

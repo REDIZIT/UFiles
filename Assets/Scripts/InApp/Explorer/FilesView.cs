@@ -102,7 +102,7 @@ namespace InApp.UI
         }
         public void ShowLoading(string message)
         {
-            grid.ClearItems();
+            //grid.ClearItems();
             messager.SetMessage(message);
         }
         public void OnItemClicked(EntryUIItem item)

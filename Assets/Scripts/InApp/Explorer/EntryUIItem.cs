@@ -30,7 +30,7 @@ namespace InApp.UI
         [SerializeField] private GameObject selectionIndicator;
         [SerializeField] private PointerHandler previewImage;
 
-        [SerializeField] private Animator animator;
+        [SerializeField] private EntryUIItemAnimator animator;
 
         private bool isHovered, isLinkedHovered;
         private List<EntryUIItem> linkedItems = new List<EntryUIItem>();    
@@ -130,7 +130,7 @@ namespace InApp.UI
 
         public void PlayShowAnimation()
         {
-            //animator.Play("Show");
+            animator.Show();
         }
         public void Refresh(EntryUIItemModel model)
         {

@@ -73,7 +73,7 @@ namespace InApp
         public void OnAddTabClicked()
         {
             var d1 = DateTime.Now;
-            OpenNew(new LocalFolder("C:/Windows"), true);
+            OpenNew(new LocalFolder("C:/Users/REDIZIT/Downloads"), true);
 
             Debug.Log("Openned in " + (DateTime.Now - d1).TotalMilliseconds + "ms");
         }

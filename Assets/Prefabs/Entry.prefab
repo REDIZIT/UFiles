@@ -32,11 +32,11 @@ RectTransform:
   m_Father: {fileID: 8281337149340484768}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 21, y: 0}
-  m_SizeDelta: {x: -42, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 42, y: 0}
+  m_SizeDelta: {x: 679.8, y: 32}
+  m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &2849166017127849213
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -218,7 +218,7 @@ GameObject:
   - component: {fileID: 1216328239326628480}
   - component: {fileID: 1216328239326628483}
   - component: {fileID: 6337139691321223918}
-  - component: {fileID: 173941809983361674}
+  - component: {fileID: 9126039639296840383}
   m_Layer: 5
   m_Name: Entry
   m_TagString: Untagged
@@ -312,26 +312,24 @@ MonoBehaviour:
   linkArrow: {fileID: 4070952746911418555}
   selectionIndicator: {fileID: 6662871613460924390}
   previewImage: {fileID: 4426111406021658562}
-  animator: {fileID: 173941809983361674}
---- !u!95 &173941809983361674
-Animator:
-  serializedVersion: 3
+  animator: {fileID: 9126039639296840383}
+--- !u!114 &9126039639296840383
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1216328239326628485}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 5749fc937c27271448f01a43eb673117, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b2b5f6e579085244ab00a31e34cc1c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  progress: 1
+  image: {fileID: 7135452519281948630}
+  name: {fileID: 578544253105792697}
+  size: {fileID: 7547765773279177129}
+  time: {fileID: 157607037201512517}
 --- !u!1 &1720815067608618312
 GameObject:
   m_ObjectHideFlags: 0
