@@ -8,13 +8,11 @@ namespace InApp.UI
 {
     public class DeleteFileItem : ContextItem
     {
-        [Inject] private FilesView files;
-
         private bool isShifted;
 
         public DeleteFileItem()
         {
-            text = "Удалить";
+            UpdateText();
         }
 
         public override Texture2D GetIcon()
@@ -24,8 +22,7 @@ namespace InApp.UI
         public override void Update()
         {
             base.Update();
-            isShifted = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-            text = isShifted ? "Удалить" : "В корзину";
+            UpdateText();
         }
 
         public override void OnClick(ContextItemEnvironment env)
@@ -41,6 +38,12 @@ namespace InApp.UI
                     FileOperationAPIWrapper.Send(filepath);
                 }
             }
+        }
+
+        private void UpdateText()
+        {
+            isShifted = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+            text = isShifted ? "Удалить" : "В корзину";
         }
 
 

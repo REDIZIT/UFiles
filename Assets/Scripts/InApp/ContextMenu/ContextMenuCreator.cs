@@ -36,9 +36,8 @@ namespace InApp.UI
                 container.Inject(item);
             }
 
-            var menu = pool.Spawn(items);
-            menu.transform.parent = transform;
-            menu.transform.position = screenPosition == default ? (Vector2)Input.mousePosition : screenPosition;
+            var menu = pool.Spawn(items, screenPosition == default ? (Vector2)Input.mousePosition : screenPosition);
+            menu.transform.SetParent(transform);
             menues.Add(menu);
             locker.SetActive(true);
 

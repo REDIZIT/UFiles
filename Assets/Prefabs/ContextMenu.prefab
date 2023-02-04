@@ -53,8 +53,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 4
-    m_Right: 4
+    m_Left: 3
+    m_Right: 3
     m_Top: 2
     m_Bottom: 2
   m_ChildAlignment: 0
@@ -193,3 +193,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rect: {fileID: 6811362658030901879}
   content: {fileID: 6811362657691944323}
+  layoutGroup: {fileID: 6811362657691944327}
