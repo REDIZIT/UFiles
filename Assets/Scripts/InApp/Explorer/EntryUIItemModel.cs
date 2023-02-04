@@ -34,6 +34,7 @@ namespace InApp.UI
                 {
                     FileInfo info = new FileInfo(path);
                     lastWriteTime = info.LastWriteTime;
+                    entry.size = info.Length;
                 }
                 else
                 {
