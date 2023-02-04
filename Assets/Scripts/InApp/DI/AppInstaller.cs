@@ -17,6 +17,7 @@ namespace InApp.DI
         [SerializeField] private AppDragDrop dragDrop;
         [SerializeField] private PicturePreview picturePreview;
         [SerializeField] private PathBar pathBar;
+        [SerializeField] private MouseScroll mouseScroll;
 
         [Header("Prefabs")]
         [SerializeField] private EntryUIItem entryPrefab;
@@ -77,6 +78,7 @@ namespace InApp.DI
             Container.BindInstance(dragDrop);
             Container.BindInstance(picturePreview);
             Container.BindInstance(pathBar);
+            Container.BindInstance(mouseScroll);
         }
         private void BindWindows()
         {

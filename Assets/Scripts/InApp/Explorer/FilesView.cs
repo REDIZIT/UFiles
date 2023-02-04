@@ -9,7 +9,7 @@ using Zenject;
 
 namespace InApp.UI
 {
-    public class FilesView : MonoBehaviour, IPointerClickHandler
+    public class FilesView : MonoBehaviour, IPointerClickHandler, IDragHandler
     {
         public string CurrentPath => tab == null ? "C:/" : tab.Folder.GetFullPath();
         public int EntriesCount => spawnedItems.Count;
@@ -17,7 +17,6 @@ namespace InApp.UI
 
         public Action onPathChanged;
 
-        [SerializeField] private Transform content;
         [SerializeField] private FilesViewMessager messager;
         [SerializeField] private EntriesGrid grid;
         [SerializeField] private ScrollRect scrollRect;
@@ -27,22 +26,22 @@ namespace InApp.UI
         private FileSystemWatcher fileWatcher = new FileSystemWatcher();
         private bool hasFileSystemChanges;
 
-        private EntryUIItem.Pool pool;
         private ContextMenuCreator context;
         private FileOperator fileOperator;
         private UClipboard clipboard;
         private Settings settings;
+        private MouseScroll scroll;
 
         private Tab tab;
 
         [Inject]
-        private void Construct(EntryUIItem.Pool pool, ContextMenuCreator context, FileOperator fileOperator, UClipboard clipboard, Settings settings)
+        private void Construct(ContextMenuCreator context, FileOperator fileOperator, UClipboard clipboard, Settings settings, MouseScroll scroll)
         {
-            this.pool = pool;
             this.context = context;
             this.fileOperator = fileOperator;
             this.clipboard = clipboard;
             this.settings = settings;
+            this.scroll = scroll;
 
             fileOperator.onAnyOperationApplied += () => FilesChanged(null, null);
 
@@ -262,6 +261,20 @@ namespace InApp.UI
         private void FilesChanged(object sender, FileSystemEventArgs e)
         {
             hasFileSystemChanges = true;
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            if (scroll.IsScrolling == false)
+            {
+                scroll.Begin(OnMouseScroll);
+            }
+        }
+
+        private void OnMouseScroll(float delta)
+        {
+            delta = Mathf.Pow(delta, 2) * Mathf.Sign(delta) / 200f;
+            scrollRect.verticalNormalizedPosition = Mathf.Clamp01(scrollRect.verticalNormalizedPosition + delta / grid.ContentHeight);
         }
     }
 

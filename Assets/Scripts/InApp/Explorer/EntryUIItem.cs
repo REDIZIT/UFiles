@@ -44,22 +44,22 @@ namespace InApp.UI
         private IconsSO icons;
         private FilesView files;
         private Pool pool;
-        private ContextMenuCreator contextCreator;
         private TabUI tabs;
+        private MouseScroll scroll;
 
         private const int DOUBLE_CLICK_MS = 250;
 
         [Inject]
-        private void Construct(IconsSO icons, FilesView files, Pool pool, ContextMenuCreator contextCreator, TabUI tabs, AppDragDrop dragDrop, PicturePreview picturePreview, FilePreview preview)
+        private void Construct(IconsSO icons, FilesView files, Pool pool, TabUI tabs, AppDragDrop dragDrop, PicturePreview picturePreview, FilePreview preview, MouseScroll scroll)
         {
             this.icons = icons;
             this.files = files;
             this.pool = pool;
-            this.contextCreator = contextCreator;
             this.tabs = tabs;
             this.dragDrop = dragDrop;
             this.picturePreview = picturePreview;
             this.preview = preview;
+            this.scroll = scroll;
 
             Rect = GetComponent<RectTransform>();
 
@@ -84,8 +84,11 @@ namespace InApp.UI
             }
             else if (eventData.button == PointerEventData.InputButton.Middle)
             {
-                bool switchToNew = Input.GetKey(KeyCode.LeftShift) == false;
-                tabs.OpenNew(new LocalFolder(Path), switchToNew);
+                if (scroll.IsScrolling == false)
+                {
+                    bool switchToNew = Input.GetKey(KeyCode.LeftShift) == false;
+                    tabs.OpenNew(new LocalFolder(Path), switchToNew);
+                }
             }
         }
 
@@ -282,13 +285,17 @@ namespace InApp.UI
 
         public void OnDrag(PointerEventData eventData)
         {
-            if (dragDrop.IsDragging == false)
+            if (eventData.button == PointerEventData.InputButton.Left && dragDrop.IsDragging == false)
             {
                 dragDrop.StartDrag(new EntryData()
                 {
                     path = Path,
                     icon = icon.texture.ToSprite()
                 });
+            }
+            if (eventData.button == PointerEventData.InputButton.Middle)
+            {
+                files.OnDrag(eventData);
             }
         }
 

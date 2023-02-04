@@ -7,7 +7,7 @@ namespace InApp.UI
 {
     public class EntriesGrid : MonoBehaviour
     {
-        private int TopBorderIndex => (int)(contentRect.anchoredPosition.y / itemHeight);
+        public float ContentHeight => contentRect.sizeDelta.y;
 
         [SerializeField] private float itemHeight, spacing;
 
@@ -32,7 +32,7 @@ namespace InApp.UI
                 pool[i].transform.SetParent(contentRect);
             }
         }
-        private void Update()
+        private void LateUpdate()
         {
             UpdateUIItems();
             FitContentSize();
@@ -56,7 +56,6 @@ namespace InApp.UI
         public void ClearItems()
         {
             models.Clear();
-            Update();
         }
 
         private void LoadModels()
@@ -74,6 +73,8 @@ namespace InApp.UI
             for (int i = 0; i < models.Count; i++)
             {
                 EntryUIItemModel model = models[i];
+
+                if (model == null) continue;
 
                 float nextHeight = currentHeight + model.Height + 2;
 
