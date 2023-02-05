@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace InApp
 {
@@ -7,6 +8,7 @@ namespace InApp
     {
         public List<FolderSortingData> folderSortingData = new List<FolderSortingData>();
         public SidebarData sidebar = new SidebarData();
+        public ProjectsData projects = new ProjectsData();
 
         public SettingsManager manager;
 
@@ -72,5 +74,25 @@ namespace InApp
     public class SidebarData
     {
         public List<string> favourite = new List<string>();
+    }
+
+    [Serializable]
+    public class ProjectsData
+    {
+        public List<Project> projects = new List<Project>();
+    }
+
+    [Serializable]
+    public class Project
+    {
+        public string mainFolder;
+        public string buildFolder;
+        public List<ProjectLink> links = new List<ProjectLink>();
+    }
+
+    [Serializable]
+    public class ProjectLink
+    {
+        public string displayText, url;
     }
 }

@@ -57,6 +57,11 @@ namespace InApp.UI
                 followerHideFramesToSkip = -1;
                 follower.Hide();
             }
+
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
+            {
+                OnClickStartEdit();
+            }
         }
         private void OnDestroy()
         {
@@ -67,9 +72,10 @@ namespace InApp.UI
         {
             content.gameObject.SetActive(false);
             field.gameObject.SetActive(true);
-            field.Select();
-
             field.text = view.CurrentPath;
+
+            field.ActivateInputField();
+            field.Select();
 
             hints.Show();
         }
@@ -112,6 +118,8 @@ namespace InApp.UI
         {
             content.gameObject.SetActive(true);
             field.gameObject.SetActive(false);
+
+            field.text = field.text.Replace(@"\", "/");
 
             if (field.text != view.CurrentPath)
             {

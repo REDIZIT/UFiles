@@ -1,48 +1,23 @@
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Zenject;
 
 namespace InApp
 {
-    [System.Serializable]
-    public class Project
-    {
-        public string mainFolder;
-        public string buildPath;
-        public List<ProjectLink> links = new List<ProjectLink>();
-    }
-    public class UrlButton : MonoBehaviour
+    public class UrlButton : UILot<ProjectLink>
     {
         [SerializeField] private TextMeshProUGUI text;
         [SerializeField] private Image image;
 
-        private ProjectLink link;
-
-        private void Start()
+        public override void Refresh(ProjectLink model)
         {
-            text.text = link.displayText;
+            base.Refresh(model);
+            text.text = model.displayText;
         }
 
         public void OnClick()
         {
-            Application.OpenURL(link.url);
+            Application.OpenURL(Model.url);
         }
-
-        public class Pool : MonoMemoryPool<ProjectLink, UrlButton>
-        {
-            protected override void Reinitialize(ProjectLink p1, UrlButton item)
-            {
-                item.link = p1;
-                base.Reinitialize(p1, item);
-            }
-        }
-    }
-    [System.Serializable]
-    public class ProjectLink
-    {
-        public string displayText, url;
-        public Sprite icon;
     }
 }

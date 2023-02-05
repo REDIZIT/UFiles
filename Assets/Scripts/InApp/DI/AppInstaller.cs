@@ -46,9 +46,7 @@ namespace InApp.DI
             InstallSettings();
 
             BindInstances();
-            
-            Container.Bind<FileOperator>().AsSingle();
-            Container.Bind<UClipboard>().AsSingle();
+            BindSingletons();
 
             Container.BindInterfacesAndSelfTo<FilePreview>().AsSingle();
 
@@ -80,6 +78,13 @@ namespace InApp.DI
             Container.BindInstance(pathBar);
             Container.BindInstance(mouseScroll);
         }
+        private void BindSingletons()
+        {
+            BindSingle<FileOperator>();
+            BindSingle<UClipboard>();
+            BindSingle<UIHelper>();
+            BindSingle<ProjectService>();
+        }
         private void BindWindows()
         {
             Container.BindInstance(createRename);
@@ -95,13 +100,18 @@ namespace InApp.DI
             BindPool<ContextMenuUI, ContextMenuUI.Pool>(contextMenuPrefab);
 
             BindPool<DownloadUIItem, DownloadUIItem.Pool>(downloadPrefab);
-            BindPool<UrlButton, UrlButton.Pool>(urlButtonPrefab);
 
             BindPool<TabUIItem, TabUIItem.Pool>(tabPrefab);
         }
+
+
         private void BindPool<Item, Pool>(Item prefab) where Item : MonoBehaviour where Pool : IMemoryPool
         {
             Container.BindMemoryPool<Item, Pool>().FromComponentInNewPrefab(prefab).UnderTransform(entriesPool);
+        }
+        private void BindSingle<T>()
+        {
+            Container.Bind<T>().AsSingle();
         }
     }
 }
