@@ -38,7 +38,7 @@ namespace InApp
         }
         private void OnPathChanged()
         {
-            currentProject = projects.TryGetProjectAt(tabs.ActiveTab.Folder.GetFullPath());
+            currentProject = projects.TryGetActiveProject();
 
             group.SetActive(currentProject != null);
 

@@ -86,8 +86,13 @@ namespace InApp
     public class Project
     {
         public string mainFolder;
-        public string buildExecutable;
+        public string buildExecutable = "Build";
+        public string folderToIndex = "Assets";
+
         public List<ProjectLink> links = new List<ProjectLink>();
+
+        [NonSerialized]
+        public ProjectFolderData[] indexedFolders = new ProjectFolderData[0];
     }
 
     [Serializable]
@@ -95,5 +100,11 @@ namespace InApp
     {
         public string displayText, url;
         public string iconID;
+    }
+
+    public class ProjectFolderData
+    {
+        public string path;
+        public string displayText;
     }
 }

@@ -2,10 +2,11 @@
 
 namespace InApp.UI
 {
+
     public class LocalFolderHint : IPathBarHint
     {
-        private string path, displayText;
-        private IconsSO icons;
+        protected string path, displayText;
+        protected IconsSO icons;
 
         public LocalFolderHint(string path, string displayText, IconsSO icons)
         {
@@ -22,7 +23,7 @@ namespace InApp.UI
         {
             return path;
         }
-        public string GetTypeText()
+        public virtual string GetTypeText()
         {
             return "Системная папка";
         }
@@ -46,7 +47,7 @@ namespace InApp.UI
             }
             return matches;
         }
-        public Sprite GetIcon()
+        public virtual Sprite GetIcon()
         {
             return icons.pathBar.userFolder;
         }

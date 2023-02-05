@@ -18,6 +18,7 @@ namespace InApp.UI
         [SerializeField] private PathBar pathBar;
 
         [Inject] private IconsSO icons;
+        [Inject] private ProjectService projects;
 
         private PathBarHintItem[] pool = new PathBarHintItem[10];
         private List<IPathBarHint> staticHints = new List<IPathBarHint>();
@@ -43,6 +44,12 @@ namespace InApp.UI
         public void Show()
         {
             container.gameObject.SetActive(true);
+
+            Project activeProject = projects.TryGetActiveProject();
+            if (activeProject != null)
+            {
+                projects.IndexProject(activeProject);
+            }
         }
         public void Hide()
         {
@@ -57,7 +64,6 @@ namespace InApp.UI
         {
             pathBar.OnHintClicked(hint);
         }
-
         private void UpdateKeyboard()
         {
             bool isArrowPressed = false;
@@ -83,7 +89,7 @@ namespace InApp.UI
         private void UpdateHintItems()
         {
             var sortedHints =
-                staticHints.Union(GetSubFolderHints())
+                staticHints.Union(GetSubFolderHints()).Union(EnumerateProjectHints())
                 .Select(h => new KeyValuePair<IPathBarHint, int>(h, h.GetMatchesCount(field.text)))
                 .Where(kv => kv.Value > 0)
                 .OrderByDescending(kv => kv.Value);
@@ -178,7 +184,17 @@ namespace InApp.UI
                     }
                 }
             }
-           
+        }
+        private IEnumerable<IPathBarHint> EnumerateProjectHints()
+        {
+            Project project = projects.TryGetActiveProject();
+            if (project != null)
+            {
+                foreach (ProjectFolderData data in project.indexedFolders)
+                {
+                    yield return new ProjectFolderHint(data, icons);
+                }
+            }
         }
     }
 }
