@@ -13,6 +13,8 @@ namespace InApp
         [SerializeField] private UrlButton urlPrefab;
         [SerializeField] private GameObject addNewUrlButton;
 
+        private Project currentProject;
+
         private ProjectService projects;
         private TabUI tabs;
         private UIHelper uiHelper;
@@ -30,17 +32,21 @@ namespace InApp
         {
             tabs.onActiveTabPathChanged -= OnPathChanged;
         }
+        public void RunBuild()
+        {
+            projects.RunBuild(currentProject);
+        }
         private void OnPathChanged()
         {
-            Project project = projects.TryGetProjectAt(tabs.ActiveTab.Folder.GetFullPath());
+            currentProject = projects.TryGetProjectAt(tabs.ActiveTab.Folder.GetFullPath());
 
-            group.SetActive(project != null);
+            group.SetActive(currentProject != null);
 
-            if (project != null)
+            if (currentProject != null)
             {
-                projectName.text = Path.GetFileName(project.mainFolder);
-                uiHelper.Refresh(project.links, urlPrefab, urlsContent);
-                uiHelper.Append(addNewUrlButton, urlsContent);
+                projectName.text = Path.GetFileName(currentProject.mainFolder);
+                uiHelper.Refresh(currentProject.links, urlPrefab, urlsContent);
+                //uiHelper.Append(addNewUrlButton, urlsContent);
             }
         }
     }

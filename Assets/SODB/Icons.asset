@@ -29,3 +29,4 @@ MonoBehaviour:
     systemFolder: {fileID: 21300000, guid: 7c957880732cd6747a429bad01909029, type: 3}
     userFolder: {fileID: 21300000, guid: 7f4f7b235c489044baa4862359437469, type: 3}
   favourite: {fileID: 21300000, guid: 71d98e680696e8b4ca925356f0af543b, type: 3}
+  browser: {fileID: 21300000, guid: 2d620698073081941bc4ffb0b62898fd, type: 3}

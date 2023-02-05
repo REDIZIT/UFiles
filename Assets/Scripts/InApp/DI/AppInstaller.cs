@@ -41,8 +41,6 @@ namespace InApp.DI
         {
             Texture.allowThreadedTextureCreation = true;
 
-            Container.BindInstance(icons);
-
             InstallSettings();
 
             BindInstances();
@@ -63,9 +61,13 @@ namespace InApp.DI
         }
         private void InstallSettings()
         {
+            Container.BindInstance(icons);
+            icons.LoadCustomIcons();
+
             SettingsManager manager = new SettingsManager();
             Container.BindInstance(manager);
             manager.InstallBindings(Container);
+            
         }
         private void BindInstances()
         {

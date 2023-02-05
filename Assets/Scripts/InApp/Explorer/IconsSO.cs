@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
 
 namespace InApp.UI
 {
@@ -12,6 +14,9 @@ namespace InApp.UI
         public PathBarIcons pathBar;
 
         public Sprite favourite;
+        public Sprite browser;
+
+        public Dictionary<string, Sprite> customIcons = new Dictionary<string, Sprite>();
 
         [System.Serializable]
         public class ContextIcons
@@ -25,6 +30,23 @@ namespace InApp.UI
         public class PathBarIcons
         {
             public Sprite subFolder, systemFolder, userFolder;
+        }
+
+        public void LoadCustomIcons()
+        {
+            string folder = Application.persistentDataPath + "/Icons";
+            if (Directory.Exists(folder) == false) Directory.CreateDirectory(folder);
+
+            customIcons.Clear();
+            foreach (string file in Directory.GetFiles(folder))
+            {
+                byte[] bytes = File.ReadAllBytes(file);
+                Texture2D tex = new Texture2D(1, 1);
+                tex.LoadImage(bytes);
+                
+                string name = Path.GetFileNameWithoutExtension(file);
+                customIcons.Add(name, tex.ToSprite());
+            }
         }
     }
 }

@@ -29,9 +29,5 @@ namespace InApp
                 parent.GetChild(index).GetComponent<UILot<T>>().Refresh(model);
             }
         }
-        public void Append(GameObject prefab, Transform parent)
-        {
-            container.InstantiatePrefab(prefab, parent);
-        }
     }
 }

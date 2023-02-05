@@ -86,7 +86,7 @@ namespace InApp
     public class Project
     {
         public string mainFolder;
-        public string buildFolder;
+        public string buildExecutable;
         public List<ProjectLink> links = new List<ProjectLink>();
     }
 
@@ -94,5 +94,6 @@ namespace InApp
     public class ProjectLink
     {
         public string displayText, url;
+        public string iconID;
     }
 }
