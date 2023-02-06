@@ -93,6 +93,7 @@ namespace InApp
 
         [NonSerialized]
         public ProjectFolderData[] indexedFolders = new ProjectFolderData[0];
+        public bool isIndexing;
     }
 
     [Serializable]

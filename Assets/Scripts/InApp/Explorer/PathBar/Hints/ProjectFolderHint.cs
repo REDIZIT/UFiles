@@ -25,7 +25,7 @@ namespace InApp.UI
 
         public Sprite GetIcon()
         {
-            return icons.browser;
+            return icons.pathBar.projectSubFolder;
         }
 
         public float GetMatchesCount(string input)
@@ -45,7 +45,7 @@ namespace InApp.UI
                 int currentMatch = 0;
                 int wordIndex = 0;
                 bool isStartsWith = true;
-                for (int i = 0; i < data.displayText.Length; i++)
+                for (int i = 0; i < displayTextLowered.Length; i++)
                 {
                     if (word[wordIndex] == displayTextLowered[i])
                     {

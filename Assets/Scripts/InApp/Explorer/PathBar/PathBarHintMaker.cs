@@ -154,7 +154,7 @@ namespace InApp.UI
         private LocalFolderHint GetFolderHint(string folder)
         {
             folder = folder.Replace(@"\", "/");
-            return new LocalFolderHint(folder, Path.GetFileName(folder), icons);
+            return new LocalFolderHint(icons, folder, Path.GetFileName(folder));
         }
         private IEnumerable<IPathBarHint> GetSubFolderHints()
         {
@@ -187,10 +187,17 @@ namespace InApp.UI
         }
         private IEnumerable<IPathBarHint> EnumerateProjectHints()
         {
-            Project project = projects.TryGetActiveProject();
-            if (project != null)
+            // Enumerate all projects
+            foreach (Project project in projects.EnumerateProjects())
             {
-                foreach (ProjectFolderData data in project.indexedFolders)
+                yield return new ProjectHint(icons, project);
+            }
+
+            // Enumerate active project indexed folders
+            Project activeProject = projects.TryGetActiveProject();
+            if (activeProject != null && activeProject.isIndexing == false)
+            {
+                foreach (ProjectFolderData data in activeProject.indexedFolders)
                 {
                     yield return new ProjectFolderHint(data, icons);
                 }

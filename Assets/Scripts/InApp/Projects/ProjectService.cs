@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Zenject;
 using Debug = UnityEngine.Debug;
 
@@ -9,6 +10,9 @@ namespace InApp
 {
     public class ProjectService
     {
+        private Thread indexThread;
+        private Project projectToIndex;
+
         private Settings settings;
         private TabUI tabs;
 
@@ -32,7 +36,25 @@ namespace InApp
         }
         public void IndexProject(Project project)
         {
+            projectToIndex = project;
+            indexThread = new Thread(ReindexProject);
+            indexThread.Start();
+        }
+        public IEnumerable<Project> EnumerateProjects()
+        {
+            return settings.projects.projects;
+        }
+
+        private Project TryGetProjectAt(string currentFolder)
+        {
+            return settings.projects.projects.FirstOrDefault(p => currentFolder.StartsWith(p.mainFolder));
+        }
+        private void ReindexProject()
+        {
             Stopwatch w = Stopwatch.StartNew();
+
+            Project project = projectToIndex;
+            project.isIndexing = true;
 
             string folderToIndex = project.mainFolder + "/" + project.folderToIndex;
 
@@ -56,13 +78,8 @@ namespace InApp
                 };
             }
 
+            project.isIndexing = false;
             Debug.Log("Indexed in " + w.ElapsedMilliseconds + "ms");
         }
-
-        private Project TryGetProjectAt(string currentFolder)
-        {
-            return settings.projects.projects.FirstOrDefault(p => currentFolder.StartsWith(p.mainFolder));
-        }
-       
     }
 }

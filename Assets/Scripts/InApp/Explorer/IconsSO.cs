@@ -30,6 +30,7 @@ namespace InApp.UI
         public class PathBarIcons
         {
             public Sprite subFolder, systemFolder, userFolder;
+            public Sprite projectSubFolder, project;
         }
 
         public void LoadCustomIcons()
