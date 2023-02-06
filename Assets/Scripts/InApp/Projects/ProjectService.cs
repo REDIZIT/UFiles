@@ -44,14 +44,15 @@ namespace InApp
 
             for (int i = 0; i < allFolders.Length; i++)
             {
-                //displayPathes[i] = allFolders[i].Substring(substringStartIndex + 1).NormalizePath();
                 string path = allFolders[i].Substring(substringStartIndex + 1).NormalizePath();
                 int lastSeparatorIndex = path.LastIndexOf("/");
-                displayPathes[i] = path.Substring(lastSeparatorIndex + 1) + " - " + path.Substring(0, lastSeparatorIndex == -1 ? path.Length : lastSeparatorIndex);
+                displayPathes[i] = path.Substring(lastSeparatorIndex + 1) + " - " + (lastSeparatorIndex == -1 ? "/" : path.Substring(0, lastSeparatorIndex));
+
                 project.indexedFolders[i] = new ProjectFolderData()
                 {
                     path = allFolders[i],
-                    displayText = displayPathes[i]
+                    displayText = displayPathes[i],
+                    depth = path.Count(c => c == '/')
                 };
             }
 

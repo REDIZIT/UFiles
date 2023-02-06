@@ -28,13 +28,14 @@ namespace InApp.UI
             return icons.browser;
         }
 
-        public int GetMatchesCount(string input)
+        public float GetMatchesCount(string input)
         {
-            int matches = 0;
+            float matches = 0;
 
             input = input.ToLower();
             string[] inputWords = input.Split();
             string displayTextLowered = data.displayText.ToLower();
+            int missedChars = 0;
 
             foreach (string word in inputWords)
             {
@@ -43,6 +44,7 @@ namespace InApp.UI
                 int maxMatches = 0;
                 int currentMatch = 0;
                 int wordIndex = 0;
+                bool isStartsWith = true;
                 for (int i = 0; i < data.displayText.Length; i++)
                 {
                     if (word[wordIndex] == displayTextLowered[i])
@@ -59,13 +61,15 @@ namespace InApp.UI
                     else
                     {
                         wordIndex = 0;
+                        isStartsWith = false;
                         maxMatches = Mathf.Max(maxMatches, currentMatch);
                         currentMatch = 0;
+                        missedChars++;
                     }
                 }
-                matches += maxMatches;
+                // TODO: include overword as missing chars
+                matches += maxMatches * 2 + (isStartsWith ? 10 : 0)/* - data.depth*/ - missedChars / 5f;
             }
-            
             return matches;
         }
 

@@ -90,7 +90,7 @@ namespace InApp.UI
         {
             var sortedHints =
                 staticHints.Union(GetSubFolderHints()).Union(EnumerateProjectHints())
-                .Select(h => new KeyValuePair<IPathBarHint, int>(h, h.GetMatchesCount(field.text)))
+                .Select(h => new KeyValuePair<IPathBarHint, float>(h, h.GetMatchesCount(field.text)))
                 .Where(kv => kv.Value > 0)
                 .OrderByDescending(kv => kv.Value);
 

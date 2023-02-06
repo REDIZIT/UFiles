@@ -106,5 +106,6 @@ namespace InApp
     {
         public string path;
         public string displayText;
+        public int depth;
     }
 }

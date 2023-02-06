@@ -27,7 +27,7 @@ namespace InApp.UI
         {
             return "Системная папка";
         }
-        public int GetMatchesCount(string input)
+        public float GetMatchesCount(string input)
         {
             int matches = 0;
 

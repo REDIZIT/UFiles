@@ -48,7 +48,7 @@ namespace InApp.UI
         {
             return "Подпапка";
         }
-        public int GetMatchesCount(string input)
+        public float GetMatchesCount(string input)
         {
             int matches = 0;
 

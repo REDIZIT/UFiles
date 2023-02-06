@@ -7,7 +7,7 @@ namespace InApp.UI
         string GetDisplayText(string input);
         string GetFullPath();
         string GetTypeText();
-        int GetMatchesCount(string input);
+        float GetMatchesCount(string input);
         Sprite GetIcon();
     }
 }
