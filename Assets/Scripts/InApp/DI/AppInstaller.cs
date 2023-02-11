@@ -1,3 +1,4 @@
+using InApp.Background;
 using InApp.Sidebar;
 using InApp.UI;
 using UnityEngine;
@@ -86,6 +87,7 @@ namespace InApp.DI
             BindSingle<UClipboard>();
             BindSingle<UIHelper>();
             BindSingle<ProjectService>();
+            //BindSingle<BackgroundService>();
         }
         private void BindWindows()
         {
@@ -113,7 +115,7 @@ namespace InApp.DI
         }
         private void BindSingle<T>()
         {
-            Container.Bind<T>().AsSingle();
+            Container.Bind<T>().AsSingle().NonLazy();
         }
     }
 }

@@ -58,6 +58,7 @@ namespace InApp
                     cmd.process = process;
                     cmd.Perform();
                 }
+                Thread.Sleep(10);
             }
         }        
     }

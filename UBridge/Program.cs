@@ -3,6 +3,8 @@ using System.Drawing.Imaging;
 using System.Drawing;
 using System.Reflection;
 using System.Text;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace UBridge
 {
@@ -10,10 +12,48 @@ namespace UBridge
     {
         private static Dictionary<string, Type> typeByName = new Dictionary<string, Type>();
 
-        public static void Main()
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetActiveWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        const int SW_HIDE = 0;
+        const int SW_SHOW = 5;
+
+        public static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
 
+            if (args.Length >= 1)
+            {
+                string cmd = args[0];
+                if (cmd == "run-or-show")
+                {
+                    Process unityProcess = Process.GetProcessesByName("UFiles").FirstOrDefault();
+                    if (unityProcess == null)
+                    {
+                        unityProcess = Process.Start("C:\\Users\\REDIZIT\\Documents\\GitHub\\UFiles\\Build\\UFiles.exe");
+                    }
+                    else
+                    {
+                        IntPtr handle = unityProcess.MainWindowHandle;
+                        ShowWindow(handle, SW_SHOW);
+                    }
+                }
+            }
+            else
+            {
+                StartUpCommandHandling();
+            }
+        }
+
+        private static void FixTaskbar()
+        {
+
+        }
+        private static void StartUpCommandHandling()
+        {
             BakeCommandTypes();
 
             while (true)

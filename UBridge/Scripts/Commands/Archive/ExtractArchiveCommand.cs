@@ -1,4 +1,4 @@
-﻿namespace UBridge.Scripts.Archive
+﻿namespace UBridge.Scripts.Commands.Archive
 {
     public class ExtractArchiveCommand : ICommand
     {
@@ -38,9 +38,9 @@
             {
                 Console.WriteLine(ex.Message);
             }
-           
 
-            
+
+
         }
     }
 }

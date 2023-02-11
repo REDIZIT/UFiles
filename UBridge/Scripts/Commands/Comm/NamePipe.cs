@@ -2,7 +2,7 @@
 using System.IO.Pipes;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace FunWithNamedPipes
+namespace UBridge.Scripts.Commands.Comm
 {
     /// <summary>Contains event data for <see cref="NamedPipeMessageReceiveHandler{TMessage}" /> events.</summary>
     /// <typeparam name="TMessage"></typeparam>
@@ -12,7 +12,7 @@ namespace FunWithNamedPipes
         /// <param name="message">The message passed by the event.</param>
         public NamedPipeListenerMessageReceivedEventArgs(TMessage message)
         {
-            this.Message = message;
+            Message = message;
         }
 
         /// <summary>Gets the message passed by the event.</summary>
@@ -27,8 +27,8 @@ namespace FunWithNamedPipes
         /// <param name="ex">The <see cref="Exception" /> that was thrown.</param>
         public NamedPipeListenerErrorEventArgs(NamedPipeListenerErrorType errorType, Exception ex)
         {
-            this.ErrorType = errorType;
-            this.Exception = ex;
+            ErrorType = errorType;
+            Exception = ex;
         }
 
         /// <summary>Gets a <see cref="NamedPipeListenerErrorType" /> describing the part of the listener process where the error was caught.</summary>
@@ -42,12 +42,12 @@ namespace FunWithNamedPipes
     /// <typeparam name="TMessage">The type of message that will be received.</typeparam>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The event data passed by the event, which includes the message that was received.</param>
-    public delegate void NamedPipeMessageReceivedHandler<TMessage>(Object sender, NamedPipeListenerMessageReceivedEventArgs<TMessage> e);
+    public delegate void NamedPipeMessageReceivedHandler<TMessage>(object sender, NamedPipeListenerMessageReceivedEventArgs<TMessage> e);
 
     /// <summary>Represents a method that will handle an event that is fired when an exception is caught.</summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The event data passed by the event, included the error type and exception that was caught.</param>
-    public delegate void NamedPipeMessageErrorHandler(Object sender, NamedPipeListenerErrorEventArgs e);
+    public delegate void NamedPipeMessageErrorHandler(object sender, NamedPipeListenerErrorEventArgs e);
 
     /// <summary>Includes different types of errors that describe where in the listening process an exception was caught.</summary>
     public enum NamedPipeListenerErrorType : byte
@@ -78,16 +78,16 @@ namespace FunWithNamedPipes
         /// <summary>Occurs when an exception is caught.</summary>
         public event NamedPipeMessageErrorHandler Error;
 
-        static readonly String DEFAULT_PIPENAME = typeof(NamedPipeListener<TMessage>).FullName;
+        static readonly string DEFAULT_PIPENAME = typeof(NamedPipeListener<TMessage>).FullName;
         static readonly BinaryFormatter formatter = new BinaryFormatter();
 
         NamedPipeServerStream pipeServer;
 
         /// <summary>Initializes a new instance of <see cref="NamedPipeListener{TMessage}" /> using the specified <paramref name="pipeName" />.</summary>
         /// <param name="pipeName">The name of the named pipe that will be used to listen on.</param>
-        public NamedPipeListener(String pipeName)
+        public NamedPipeListener(string pipeName)
         {
-            this.PipeName = pipeName;
+            PipeName = pipeName;
         }
 
         /// <summary>Initializes a new instance of <see cref="NamedPipeListener{TMessage}" /> using the default pipe name.</summary>
@@ -96,7 +96,7 @@ namespace FunWithNamedPipes
             : this(DEFAULT_PIPENAME) { }
 
         /// <summary>The name of the named pipe that will be used to listen on.</summary>
-        public String PipeName { get; private set; }
+        public string PipeName { get; private set; }
 
         /// <summary>Starts listening on the named pipe specified for the instance.</summary>
         internal void Start()
@@ -104,7 +104,7 @@ namespace FunWithNamedPipes
             if (pipeServer == null) pipeServer = new NamedPipeServerStream(DEFAULT_PIPENAME, PipeDirection.In, 1, PipeTransmissionMode.Message, PipeOptions.Asynchronous);
 
             try { pipeServer.BeginWaitForConnection(new AsyncCallback(PipeConnectionCallback), null); }
-            catch (Exception ex) { this.OnError(NamedPipeListenerErrorType.BeginWaitForConnection, ex); }
+            catch (Exception ex) { OnError(NamedPipeListenerErrorType.BeginWaitForConnection, ex); }
         }
 
         private void PipeConnectionCallback(IAsyncResult result)
@@ -115,7 +115,7 @@ namespace FunWithNamedPipes
             }
             catch (Exception ex)
             {
-                this.OnError(NamedPipeListenerErrorType.EndWaitForConnection, ex);
+                OnError(NamedPipeListenerErrorType.EndWaitForConnection, ex);
                 return;
             }
 
@@ -128,27 +128,27 @@ namespace FunWithNamedPipes
             }
             catch (Exception ex)
             {
-                this.OnError(NamedPipeListenerErrorType.DeserializeMessage, ex);
+                OnError(NamedPipeListenerErrorType.DeserializeMessage, ex);
                 return;
             }
 
             try
             {
-                this.OnMessageReceived(new NamedPipeListenerMessageReceivedEventArgs<TMessage>(message));
+                OnMessageReceived(new NamedPipeListenerMessageReceivedEventArgs<TMessage>(message));
             }
             catch (Exception ex)
             {
-                this.OnError(NamedPipeListenerErrorType.NotifyMessageReceived, ex);
+                OnError(NamedPipeListenerErrorType.NotifyMessageReceived, ex);
                 return;
             }
 
-            if (this.End())
+            if (End())
             {
-                this.Start();
+                Start();
             }
         }
 
-        internal Boolean End()
+        internal bool End()
         {
             try
             {
@@ -160,34 +160,34 @@ namespace FunWithNamedPipes
             }
             catch (Exception ex)
             {
-                this.OnError(NamedPipeListenerErrorType.CloseAndDisposePipe, ex);
+                OnError(NamedPipeListenerErrorType.CloseAndDisposePipe, ex);
                 return false;
             }
         }
 
         private void OnMessageReceived(TMessage message)
         {
-            this.OnMessageReceived(new NamedPipeListenerMessageReceivedEventArgs<TMessage>(message));
+            OnMessageReceived(new NamedPipeListenerMessageReceivedEventArgs<TMessage>(message));
         }
 
         protected virtual void OnMessageReceived(NamedPipeListenerMessageReceivedEventArgs<TMessage> e)
         {
-            if (this.MessageReceived != null)
+            if (MessageReceived != null)
             {
-                this.MessageReceived(this, e);
+                MessageReceived(this, e);
             }
         }
 
         private void OnError(NamedPipeListenerErrorType errorType, Exception ex)
         {
-            this.OnError(new NamedPipeListenerErrorEventArgs(errorType, ex));
+            OnError(new NamedPipeListenerErrorEventArgs(errorType, ex));
         }
 
         protected virtual void OnError(NamedPipeListenerErrorEventArgs e)
         {
-            if (this.Error != null)
+            if (Error != null)
             {
-                this.Error(this, e);
+                Error(this, e);
             }
         }
 
@@ -210,13 +210,13 @@ namespace FunWithNamedPipes
         /// <param name="message">The message to send.</param>
         public static void SendMessage(TMessage message)
         {
-            NamedPipeListener<TMessage>.SendMessage(DEFAULT_PIPENAME, message);
+            SendMessage(DEFAULT_PIPENAME, message);
         }
 
         /// <summary>Sends the specified <paramref name="message" /> to the specified named pipe.</summary>
         /// <param name="pipeName">The name of the named pipe the message will be sent to.</param>
         /// <param name="message">The message to send.</param>
-        public static void SendMessage(String pipeName, TMessage message)
+        public static void SendMessage(string pipeName, TMessage message)
         {
             using (var pipeClient = new NamedPipeClientStream(".", DEFAULT_PIPENAME, PipeDirection.Out, PipeOptions.None))
             {
