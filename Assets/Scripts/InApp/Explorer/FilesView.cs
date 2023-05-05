@@ -31,17 +31,19 @@ namespace InApp.UI
         private UClipboard clipboard;
         private Settings settings;
         private MouseScroll scroll;
+        private BlockChecker shortcuts;
 
         private Tab tab;
 
         [Inject]
-        private void Construct(ContextMenuCreator context, FileOperator fileOperator, UClipboard clipboard, Settings settings, MouseScroll scroll)
+        private void Construct(ContextMenuCreator context, FileOperator fileOperator, UClipboard clipboard, Settings settings, MouseScroll scroll, BlockChecker shortcuts)
         {
             this.context = context;
             this.fileOperator = fileOperator;
             this.clipboard = clipboard;
             this.settings = settings;
             this.scroll = scroll;
+            this.shortcuts = shortcuts;
 
             fileOperator.onAnyOperationApplied += () => FilesChanged(null, null);
 
@@ -51,6 +53,8 @@ namespace InApp.UI
             fileWatcher.Deleted += FilesChanged;
             fileWatcher.Renamed += FilesChanged;
             fileWatcher.EnableRaisingEvents = true;
+
+            shortcuts.Add(this);
         }
 
        
@@ -197,6 +201,8 @@ namespace InApp.UI
 
         private void UpdateHotkeys()
         {
+            if (shortcuts.IsPointerOverInput() || shortcuts.IsBlocked(this)) return;
+
             bool isControlled = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
 
             // Selection

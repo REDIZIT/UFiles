@@ -2781,6 +2781,7 @@ GameObject:
   - component: {fileID: 298434919}
   - component: {fileID: 298434918}
   - component: {fileID: 298434920}
+  - component: {fileID: 298434921}
   m_Layer: 0
   m_Name: Systems
   m_TagString: Untagged
@@ -2827,6 +2828,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8eec9d71f4ccea840b546bc4840acd0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &298434921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 298434917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd2233408f1498747a3ae1a08601fd9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsShifted: 0
 --- !u!1 &298544876
 GameObject:
   m_ObjectHideFlags: 0
@@ -8925,6 +8939,7 @@ MonoBehaviour:
   picturePreview: {fileID: 184750585}
   pathBar: {fileID: 1716689451}
   mouseScroll: {fileID: 1401387292}
+  shortcuts: {fileID: 298434921}
   entryPrefab: {fileID: 6337139691321223918, guid: ca2e1f1053926e046b3b848ff283b6f2, type: 3}
   pathBarSegment: {fileID: 5416607260857373432, guid: 0be6ed843d120cc428122541bb2f829b, type: 3}
   contextMenuItemPrefab: {fileID: 2132699091597521461, guid: 1d973c765df443d4ba5f632af88a4ff9, type: 3}

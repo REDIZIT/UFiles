@@ -19,6 +19,7 @@ namespace InApp.DI
         [SerializeField] private PicturePreview picturePreview;
         [SerializeField] private PathBar pathBar;
         [SerializeField] private MouseScroll mouseScroll;
+        [SerializeField] private BlockChecker shortcuts;
 
         [Header("Prefabs")]
         [SerializeField] private EntryUIItem entryPrefab;
@@ -80,6 +81,7 @@ namespace InApp.DI
             Container.BindInstance(picturePreview);
             Container.BindInstance(pathBar);
             Container.BindInstance(mouseScroll);
+            Container.BindInstance(shortcuts);
         }
         private void BindSingletons()
         {
@@ -87,7 +89,6 @@ namespace InApp.DI
             BindSingle<UClipboard>();
             BindSingle<UIHelper>();
             BindSingle<ProjectService>();
-            //BindSingle<BackgroundService>();
         }
         private void BindWindows()
         {
