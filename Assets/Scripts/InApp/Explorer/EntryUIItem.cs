@@ -11,7 +11,6 @@ namespace InApp.UI
 {
     public class EntryUIItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler
     {
-        public bool IsSelected { get; private set; }
         public Entry Entry => Model.entry;
         public EntryUIItemModel Model { get; private set; }
         public string Path => Entry.GetFullPathFor(tabs.ActiveTab.Folder);
@@ -121,10 +120,9 @@ namespace InApp.UI
             Model.isExpanded = !Model.isExpanded;
             UpdateExpandLinkedItems();
         }
-        public void SetSelection(bool isSelected)
+        private void UpdateSelection()
         {
-            IsSelected = isSelected;
-            selectionIndicator.SetActive(isSelected);
+            selectionIndicator.SetActive(Model.isSelected);
             UpdateColor();
         }
 
@@ -136,12 +134,18 @@ namespace InApp.UI
         {
             if (Model == model) return;
 
+            if (Model != null)
+            {
+                Model.onSelectChanged -= UpdateSelection;
+                model.onSelectChanged += UpdateSelection;
+            }
+
             Model = model;
 
             linkedParent = null;
             isHovered = false;
             isLinkedHovered = false;
-            SetSelection(false);
+            UpdateSelection();
 
 
             if (Entry.isFolder)
@@ -267,7 +271,7 @@ namespace InApp.UI
         private Color GetBackgroundColor()
         {
             if (isHovered && isLinkedHovered == false) return hoverColor;
-            if (IsSelected) return selectedColor;
+            if (Model.isSelected) return selectedColor;
 
             return linkedParent == null ? defaultColor : Color.clear;
         }

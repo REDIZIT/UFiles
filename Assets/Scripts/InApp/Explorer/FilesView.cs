@@ -12,17 +12,16 @@ namespace InApp.UI
     public class FilesView : MonoBehaviour, IPointerClickHandler, IDragHandler
     {
         public string CurrentPath => tab == null ? "C:/" : tab.Folder.GetFullPath();
-        public int EntriesCount => spawnedItems.Count;
         public int SelectedEntriesCount => selectedEntries.Count;
+        public int EntriesCount => grid.models.Count;
 
         public Action onPathChanged;
 
         [SerializeField] private FilesViewMessager messager;
         [SerializeField] private EntriesGrid grid;
         [SerializeField] private ScrollRect scrollRect;
-
-        private List<EntryUIItem> spawnedItems = new List<EntryUIItem>();
-        private HashSet<EntryUIItem> selectedEntries = new HashSet<EntryUIItem>();
+        
+        private HashSet<EntryUIItemModel> selectedEntries = new HashSet<EntryUIItemModel>();
         private FileSystemWatcher fileWatcher = new FileSystemWatcher();
         private bool hasFileSystemChanges;
 
@@ -125,35 +124,35 @@ namespace InApp.UI
             {
                 if (isShift)
                 {
-                    int startIndex = spawnedItems.IndexOf(selectedEntries.Last());
-                    int targetIndex = spawnedItems.IndexOf(item);
+                    int startIndex = grid.models.IndexOf(selectedEntries.Last());
+                    int targetIndex = grid.models.IndexOf(item.Model);
                     int min = Mathf.Min(targetIndex, startIndex);
                     int max = Mathf.Max(targetIndex, startIndex);
 
                     for (int i = min; i < max; i++)
                     {
-                        SelectItem(spawnedItems[i]);
+                        SelectItem(grid.models[i]);
                     }
                 }
                 else if (isControl)
                 {
-                    if (selectedEntries.Contains(item))
+                    if (selectedEntries.Contains(item.Model))
                     {
-                        item.SetSelection(false);
-                        selectedEntries.Remove(item);
+                        item.Model.isSelected = false;
+                        selectedEntries.Remove(item.Model);
                         return;
                     }
                 }
             }
 
-            SelectItem(item);
+            SelectItem(item.Model);
         }
         public void OnItemRightClick(EntryUIItem item)
         {
-            if (selectedEntries.Contains(item) == false)
+            if (selectedEntries.Contains(item.Model) == false)
             {
                 DeselectAll();
-                SelectItem(item);
+                SelectItem(item.Model);
             }
 
             List<ContextItem> items = new List<ContextItem>()
@@ -173,9 +172,9 @@ namespace InApp.UI
 
         public IEnumerable<string> EnumerateSelectedFIles()
         {
-            foreach (EntryUIItem item in selectedEntries)
+            foreach (EntryUIItemModel item in selectedEntries)
             {
-                yield return item.Path;
+                yield return item.entry.GetFullPathFor(tab.Folder);
             }
         }
         public void OnPointerClick(PointerEventData eventData)
@@ -234,34 +233,36 @@ namespace InApp.UI
                 if (Input.GetKeyDown(KeyCode.V)) clipboard.Paste(CurrentPath);
             }
         }
-        private void SelectItem(EntryUIItem item)
+        private void SelectItem(EntryUIItemModel model)
         {
-            item.SetSelection(true);
-            selectedEntries.Add(item);
+            model.isSelected = true;
+            selectedEntries.Add(model);
         }
         private void DeselectAll()
         {
             foreach (var selectedItem in selectedEntries)
             {
-                selectedItem.SetSelection(false);
+                selectedItem.isSelected = false;
             }
             selectedEntries.Clear();
         }
         private void DeleteSelected(bool moveToBin)
         {
-            foreach (var entry in selectedEntries)
+            foreach (EntryUIItemModel model in selectedEntries)
             {
+                string path = model.entry.GetFullPathFor(tab.Folder);
+
                 if (moveToBin)
                 {
-                    DeleteFileItem.FileOperationAPIWrapper.Send(entry.Path, DeleteFileItem.FileOperationAPIWrapper.FileOperationFlags.FOF_SILENT);
+                    DeleteFileItem.FileOperationAPIWrapper.Send(path, DeleteFileItem.FileOperationAPIWrapper.FileOperationFlags.FOF_SILENT);
                 }
                 else
                 {
-                    if (Directory.Exists(entry.Path)) Directory.Delete(entry.Path, true);
-                    else File.Delete(entry.Path);
+                    if (Directory.Exists(path)) Directory.Delete(path, true);
+                    else File.Delete(path);
                 }
-               
-                entry.SetSelection(false);
+
+                model.isSelected = false;
             }
 
             hasFileSystemChanges = true;

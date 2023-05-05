@@ -8,13 +8,15 @@ namespace InApp.UI
     public class EntriesGrid : MonoBehaviour
     {
         public float ContentHeight => contentRect.sizeDelta.y;
+        public int EntriesCount => models.Count;
+
+        public List<EntryUIItemModel> models = new List<EntryUIItemModel>();
 
         [SerializeField] private float itemHeight, spacing;
 
         [Inject] private EntryUIItem.Pool itemsCreationPool;
 
         private EntryUIItem[] pool;
-        private List<EntryUIItemModel> models = new List<EntryUIItemModel>();
 
         private Thread thread;
         private Folder folder;

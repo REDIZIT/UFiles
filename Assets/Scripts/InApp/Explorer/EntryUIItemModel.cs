@@ -14,6 +14,14 @@ namespace InApp.UI
 
         public bool isExpanded;
         public bool isAdditionalInformationRead;
+        public bool isSelected
+        {
+            get { return _isSelected; }
+            set { _isSelected = value; onSelectChanged?.Invoke(); }
+        }
+        private bool _isSelected;
+
+        public Action onSelectChanged;
 
         public EntryUIItemModel(Entry entry, Folder folder)
         {
