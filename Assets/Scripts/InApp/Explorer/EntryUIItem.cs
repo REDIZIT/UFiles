@@ -84,7 +84,7 @@ namespace InApp.UI
             }
             else if (eventData.button == PointerEventData.InputButton.Middle)
             {
-                if (scroll.IsScrolling == false)
+                if (scroll.IsScrolling == false && Entry.isFolder)
                 {
                     bool switchToNew = Input.GetKey(KeyCode.LeftShift) == false;
                     tabs.OpenNew(new LocalFolder(Path), switchToNew);
