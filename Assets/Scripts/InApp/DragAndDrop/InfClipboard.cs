@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using UnityEngine;
-using static System.Windows.Forms.DataFormats;
+//using static System.Windows.Forms.DataFormats;
 using Debug = UnityEngine.Debug;
 
 namespace Microsoft.PowerShell.Internal
@@ -42,7 +42,8 @@ namespace Microsoft.PowerShell.Internal
         {
             ExecuteOnStaThread(() =>
             {
-                System.Windows.Forms.Clipboard.SetDataObject(obj);
+                Debug.LogError("Not implemented SetDataObject");
+                //System.Windows.Forms.Clipboard.SetDataObject(obj);
                 return true;
             });
         }

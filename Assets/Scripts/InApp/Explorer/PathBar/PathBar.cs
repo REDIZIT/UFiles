@@ -72,7 +72,7 @@ namespace InApp.UI
         {
             content.gameObject.SetActive(false);
             field.gameObject.SetActive(true);
-            field.text = view.CurrentPath;
+            field.text = view.CurrentPath.NormalizeWinPath();
 
             field.ActivateInputField();
             field.Select();
@@ -119,9 +119,9 @@ namespace InApp.UI
             content.gameObject.SetActive(true);
             field.gameObject.SetActive(false);
 
-            field.text = field.text.Replace(@"\", "/");
+            field.text = field.text.NormalizePath();
 
-            if (field.text != view.CurrentPath)
+            if (field.text != view.CurrentPath.NormalizePath())
             {
                 if (Directory.Exists(field.text))
                 {

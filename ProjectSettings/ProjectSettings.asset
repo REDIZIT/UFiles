@@ -550,15 +550,15 @@ PlayerSettings:
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: UFiles
-  metroPackageVersion: 
-  metroCertificatePath: 
+  metroPackageVersion: 1.0.0.0
+  metroCertificatePath: Assets\WSATestCertificate.pfx
   metroCertificatePassword: 
-  metroCertificateSubject: 
-  metroCertificateIssuer: 
-  metroCertificateNotAfter: 0000000000000000
+  metroCertificateSubject: REDIZIT
+  metroCertificateIssuer: REDIZIT
+  metroCertificateNotAfter: 809b63dcc35eda01
   metroApplicationDescription: UFiles
   wsaImages: {}
-  metroTileShortName: 
+  metroTileShortName: UFiles
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0

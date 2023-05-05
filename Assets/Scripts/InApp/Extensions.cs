@@ -10,8 +10,14 @@ public static class Extensions
     {
         return new Color(color.r, color.g, color.b, alpha);
     }
+    /// <summary>Replace '\' with '/'. To Unix standard.</summary>
     public static string NormalizePath(this string rawPath)
     {
         return rawPath.Replace(@"\", "/");
+    }
+    /// <summary>Replace '/' with '\'. To Win standard.</summary>
+    public static string NormalizeWinPath(this string rawPath)
+    {
+        return rawPath.Replace("/", @"\");
     }
 }
