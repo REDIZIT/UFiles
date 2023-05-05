@@ -150,6 +150,8 @@ namespace InApp.UI
             yield return GetFolderHint(userFolder + "/AppData/Local");
             yield return GetFolderHint(userFolder + "/Downloads");
             yield return GetFolderHint(userFolder + "/Videos");
+            yield return GetFolderHint(userFolder + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup");
+            yield return GetFolderHint(userFolder + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs");
         }
         private LocalFolderHint GetFolderHint(string folder)
         {

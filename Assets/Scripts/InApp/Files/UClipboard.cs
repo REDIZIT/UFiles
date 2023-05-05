@@ -23,9 +23,9 @@ namespace InApp
             buffer.AddRange(items);
             this.copyType = copyType;
 
-#if UNITY_EDITOR == false
-            Program.SetClipboardData(buffer);
-#endif
+//#if UNITY_EDITOR == false
+//            Program.SetClipboardData(buffer);
+//#endif
         }
         public void Paste(string targetFolder)
         {

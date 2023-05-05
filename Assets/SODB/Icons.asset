@@ -24,6 +24,7 @@ MonoBehaviour:
     cut: {fileID: 21300000, guid: 38ce7766b2440d4428e3e7d15f33f9f3, type: 3}
     paste: {fileID: 21300000, guid: d7f1c30e2a5e6e74a996bc80c57ec279, type: 3}
     cmd: {fileID: 21300000, guid: df5ac77bcc8b978459ab3caf685560ec, type: 3}
+    list: {fileID: 21300000, guid: c2df84742b09eec4fabe38522bf57008, type: 3}
   pathBar:
     subFolder: {fileID: 21300000, guid: e607cf358d05b5e4a8d5702e0cd2a6ef, type: 3}
     systemFolder: {fileID: 21300000, guid: 7c957880732cd6747a429bad01909029, type: 3}
