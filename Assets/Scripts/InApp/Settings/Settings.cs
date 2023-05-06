@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using Zenject;
 
 namespace InApp
 {
@@ -11,6 +13,12 @@ namespace InApp
         public ProjectsData projects = new ProjectsData();
 
         public SettingsManager manager;
+
+        [Inject]
+        private void Construct(DiContainer container)
+        {
+            container.Inject(projects);
+        }
 
         private Settings(SettingsManager manager)
         {
@@ -24,7 +32,7 @@ namespace InApp
             settings.folderSortingData.Add(new FolderSortingData()
             {
                 path = "C:/Users/redizit/Downloads",
-                type = FolderSortingData.Type.BySize
+                type = FolderSortingData.Type.ByDate
             });
 
             settings.sidebar = new SidebarData()
@@ -80,6 +88,15 @@ namespace InApp
     public class ProjectsData
     {
         public List<Project> projects = new List<Project>();
+
+        [Inject]
+        private void Construct(DiContainer container)
+        {
+            foreach (Project project in projects)
+            {
+                container.Inject(project);
+            }
+        }
     }
 
     [Serializable]

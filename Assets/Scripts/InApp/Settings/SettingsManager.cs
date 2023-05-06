@@ -26,6 +26,7 @@ namespace InApp
                 settings.Save();
             }
 
+            container.Inject(settings);
             container.BindInstance(settings);
         }
 
